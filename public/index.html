@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokenForge — One API Key, Every AI Model</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <meta name="description" content="One API key. Access GPT-4o, Claude 3, and Gemini. Pay only for what you use with transparent per-token billing.">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">⚡ TokenForge</div>
+    <div class="nav-links">
+      <a href="/login.html">Sign In</a>
+      <a href="/signup.html" class="btn btn-sm">Get Access</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">🚀 Coming Soon — Join the Waitlist</div>
+    <h1>One API Key.<br>Every AI Model.</h1>
+    <p class="hero-sub">Access GPT-4o, Claude 3 Sonnet, and Gemini 1.5 Pro through a single OpenAI-compatible endpoint. Pay only for what you use.</p>
+
+    <form class="waitlist-form" id="waitlistForm">
+      <input type="email" id="waitlistEmail" placeholder="your@email.com" required>
+      <button type="submit" class="btn">Notify Me</button>
+    </form>
+    <p class="waitlist-note" id="waitlistMsg"></p>
+  </section>
+
+  <section class="features">
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <h3>One Key, All Models</h3>
+        <p>Stop managing multiple API keys. One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google models.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Transparent Billing</h3>
+        <p>Pre-pay with TFC credits. Every response includes <code>X-TFC-Cost</code> and <code>X-TFC-Balance</code> headers so you always know your spend.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Per-Project Tracking</h3>
+        <p>Create sub-keys per project or client. Track usage and costs independently without sharing your master key.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Drop-in Compatible</h3>
+        <p>Already using OpenAI's SDK? Change one line — the base URL. Everything else stays the same.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing-preview">
+    <h2>Simple, Transparent Pricing</h2>
+    <p>TFC Credits = USD. $1 = 1 TFC. You pay exactly what the model costs, plus a small markup to keep the lights on.</p>
+    <div class="model-list">
+      <div class="model-row"><span>GPT-4o Mini</span><span>~$0.001 / 1K tokens</span></div>
+      <div class="model-row"><span>Claude 3 Haiku</span><span>~$0.0004 / 1K tokens</span></div>
+      <div class="model-row"><span>Gemini 1.5 Flash</span><span>~$0.0006 / 1K tokens</span></div>
+      <div class="model-row"><span>GPT-4o</span><span>~$0.003 / 1K tokens</span></div>
+      <div class="model-row"><span>Claude 3 Sonnet</span><span>~$0.005 / 1K tokens</span></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 TokenForge · <a href="/terms.html">Terms of Service</a></p>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
