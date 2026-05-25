@@ -5,7 +5,7 @@ const isRailway = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_SE
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: isRailway || process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: { rejectUnauthorized: false }
 });
 
 // Test connection
