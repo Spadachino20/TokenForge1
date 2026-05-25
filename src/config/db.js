@@ -1,10 +1,18 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+// Parse DATABASE_URL to handle IPv6 issues on Railway
+let connectionString = process.env.DATABASE_URL || '';
+
+// If it's a Supabase URL with IPv6 address, try to use connection pooler
+if (connectionString.includes('[2600:') || connectionString.includes('@db.')) {
+  // Supabase pooler uses IPv4 and works better from Railway
+  connectionString = connectionString.replace('@db.', '@aws-0-us-east-1.pooler.supabase.com:6543/');
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-  family: 4  // Force IPv4 to avoid IPv6 issues on Railway
+  connectionString: connectionString,
+  ssl: { rejectUnauthorized: false }
 });
 
 // Test connection
