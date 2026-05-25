@@ -1,13 +1,16 @@
 const { pool } = require('../config/db');
-const redis = require('../config/redis');
 
-const CACHE_TTL = 300; // 5 minutos en segundos
-const CACHE_KEY = 'model_pricing:all';
+// Simple in-memory cache (no Redis dependency for Railway)
+let pricingCache = null;
+let cacheExpiry = 0;
+const CACHE_TTL = 300000; // 5 minutos en ms
 
 async function getAllPricing() {
-  // 1. Intentar desde cache
-  const cached = await redis.get(CACHE_KEY);
-  if (cached) return JSON.parse(cached);
+  // 1. Intentar desde cache en memoria
+  const now = Date.now();
+  if (pricingCache && cacheExpiry > now) {
+    return pricingCache;
+  }
 
   // 2. Si no hay cache, ir a DB
   const result = await pool.query(`
@@ -37,7 +40,8 @@ async function getAllPricing() {
   }
 
   // 3. Guardar en cache
-  await redis.setex(CACHE_KEY, CACHE_TTL, JSON.stringify(pricingMap));
+  pricingCache = pricingMap;
+  cacheExpiry = now + CACHE_TTL;
 
   return pricingMap;
 }
@@ -63,7 +67,8 @@ async function calculateCost(model, inputTokens, outputTokens) {
 
 // Llamar esto cuando se actualiza pricing en DB
 async function invalidatePricingCache() {
-  await redis.del(CACHE_KEY);
+  pricingCache = null;
+  cacheExpiry = 0;
   console.log('Pricing cache invalidated');
 }
 
