@@ -1,11 +1,10 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const isRailway = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_SERVICE_NAME;
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  family: 4  // Force IPv4 to avoid IPv6 issues on Railway
 });
 
 // Test connection
