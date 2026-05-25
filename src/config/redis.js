@@ -29,12 +29,4 @@ redis.on('error', (err) => {
   // Don't crash - just log
 });
 
-redis.on('connect', () => {
-  console.log('Connected to Redis');
-});
-
-redis.on('error', (err) => {
-  console.error('Redis error:', err);
-});
-
 module.exports = redis;

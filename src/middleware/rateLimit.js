@@ -1,13 +1,38 @@
 const rateLimit = require('express-rate-limit');
-const { RedisStore } = require('rate-limit-redis');
-const redis = require('../config/redis');
 
-// rate-limit-redis v4 requires sendCommand
+// Simple in-memory stores for Railway (Redis optional)
+const stores = {};
+
 function makeStore(prefix) {
-  return new RedisStore({
-    sendCommand: (...args) => redis.call(...args),
-    prefix
-  });
+  return {
+    prefix,
+    increment: (key) => {
+      const fullKey = prefix + key;
+      const now = Date.now();
+      if (!stores[fullKey]) {
+        stores[fullKey] = { count: 1, resetTime: now + 60000 };
+      } else {
+        if (now > stores[fullKey].resetTime) {
+          stores[fullKey] = { count: 1, resetTime: now + 60000 };
+        } else {
+          stores[fullKey].count++;
+        }
+      }
+      return Promise.resolve({
+        totalHits: stores[fullKey].count,
+        resetTime: new Date(stores[fullKey].resetTime)
+      });
+    },
+    decrement: (key) => {
+      const fullKey = prefix + key;
+      if (stores[fullKey]) stores[fullKey].count = Math.max(0, stores[fullKey].count - 1);
+      return Promise.resolve();
+    },
+    resetKey: (key) => {
+      delete stores[prefix + key];
+      return Promise.resolve();
+    }
+  };
 }
 
 // Rate limit for API key usage (100 req/min)
