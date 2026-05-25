@@ -5,63 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TokenForge — One API Key, Every AI Model</title>
   <link rel="stylesheet" href="/css/style.css">
-  <meta name="description" content="One API key. Access GPT-4o, Claude 3, and Gemini. Pay only for what you use with transparent per-token billing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="One API key. Access GPT-4o, Claude, and Gemini. Pay only for what you use.">
 </head>
 <body>
   <nav class="navbar">
-    <div class="nav-brand">⚡ TokenForge</div>
-    <div class="nav-links">
-      <a href="/login.html">Sign In</a>
-      <a href="/signup.html" class="btn btn-sm">Get Access</a>
+    <div class="nav-inner">
+      <div class="nav-brand">⚡ TokenForge</div>
+      <div class="nav-links">
+        <a href="/login.html">Sign In</a>
+        <a href="/signup.html" class="btn btn-nav">Get Access</a>
+      </div>
     </div>
   </nav>
 
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-badge">🚀 Coming Soon — Join the Waitlist</div>
-    <h1>One API Key.<br>Every AI Model.</h1>
-    <p class="hero-sub">Access GPT-4o, Claude 3 Sonnet, and Gemini 1.5 Pro through a single OpenAI-compatible endpoint. Pay only for what you use.</p>
-
-    <form class="waitlist-form" id="waitlistForm">
-      <input type="email" id="waitlistEmail" placeholder="your@email.com" required>
-      <button type="submit" class="btn">Notify Me</button>
-    </form>
-    <p class="waitlist-note" id="waitlistMsg"></p>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🚀 Early Access — Join the Waitlist</div>
+      <h1>One API Key.<br><span class="gradient-text">Every AI Model.</span></h1>
+      <p class="hero-sub">
+        Access GPT-4o, Claude, and Gemini through a single OpenAI-compatible endpoint.<br>
+        Pay only for what you use. No subscriptions, no surprises.
+      </p>
+      <div class="hero-cta">
+        <a href="/signup.html" class="btn btn-primary btn-lg">Start Building →</a>
+        <a href="#features" class="btn btn-ghost btn-lg">See How It Works</a>
+      </div>
+      <div class="hero-models">
+        <span class="model-badge openai">OpenAI</span>
+        <span class="model-badge anthropic">Anthropic</span>
+        <span class="model-badge google">Google</span>
+      </div>
+    </div>
   </section>
 
-  <section class="features">
+  <!-- CODE DEMO -->
+  <section class="demo-section">
+    <div class="demo-container">
+      <div class="demo-label">Drop-in replacement — change one line</div>
+      <div class="code-block">
+        <div class="code-line"><span class="code-comment"># Before — 3 different SDKs, 3 different keys</span></div>
+        <div class="code-line"><span class="code-key">base_url</span> = <span class="code-str">"https://api.openai.com/v1"</span></div>
+        <div class="code-divider"></div>
+        <div class="code-line"><span class="code-comment"># After — one key, all models</span></div>
+        <div class="code-line"><span class="code-key">base_url</span> = <span class="code-str highlight">"https://tokenforge1-production.up.railway.app/v1"</span></div>
+        <div class="code-line"><span class="code-key">api_key</span>  = <span class="code-str">"tf_sk_..."</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2>Everything you need to <span class="gradient-text">ship faster</span></h2>
+      <p>No more juggling multiple providers. One platform, full control.</p>
+    </div>
     <div class="feature-grid">
       <div class="feature-card">
         <div class="feature-icon">🔑</div>
         <h3>One Key, All Models</h3>
-        <p>Stop managing multiple API keys. One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google models.</p>
+        <p>One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google models. Switch models with a single parameter.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">💰</div>
         <h3>Transparent Billing</h3>
-        <p>Pre-pay with TFC credits. Every response includes <code>X-TFC-Cost</code> and <code>X-TFC-Balance</code> headers so you always know your spend.</p>
+        <p>Pre-pay with TFC credits. Every response shows exactly what you spent. No hidden fees, no monthly surprises.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📊</div>
         <h3>Per-Project Tracking</h3>
-        <p>Create sub-keys per project or client. Track usage and costs independently without sharing your master key.</p>
+        <p>Create sub-keys per project or client. Track usage independently without sharing your master key.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
-        <h3>Drop-in Compatible</h3>
-        <p>Already using OpenAI's SDK? Change one line — the base URL. Everything else stays the same.</p>
+        <h3>OpenAI-Compatible</h3>
+        <p>Already using OpenAI's SDK? Change one line — the base URL. Everything else stays exactly the same.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Usage Limits</h3>
+        <p>Set monthly budgets per project. Never get surprised by an unexpected bill again.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📡</div>
+        <h3>Real-Time Monitoring</h3>
+        <p>Live dashboard showing spend, model usage, and request volume. Know exactly what's happening at all times.</p>
       </div>
     </div>
   </section>
 
-  <section class="pricing-preview">
-    <h2>Simple, Transparent Pricing</h2>
-    <p>TFC Credits = USD. $1 = 1 TFC. You pay exactly what the model costs, plus a small markup to keep the lights on.</p>
-    <div class="model-list">
-      <div class="model-row"><span>GPT-4o Mini</span><span>~$0.001 / 1K tokens</span></div>
-      <div class="model-row"><span>Claude 3 Haiku</span><span>~$0.0004 / 1K tokens</span></div>
-      <div class="model-row"><span>Gemini 1.5 Flash</span><span>~$0.0006 / 1K tokens</span></div>
-      <div class="model-row"><span>GPT-4o</span><span>~$0.003 / 1K tokens</span></div>
-      <div class="model-row"><span>Claude 3 Sonnet</span><span>~$0.005 / 1K tokens</span></div>
+  <!-- WAITLIST -->
+  <section class="waitlist-section">
+    <div class="waitlist-inner">
+      <h2>Join the waitlist</h2>
+      <p>We're rolling out access gradually. Drop your email and we'll let you know when you're in.</p>
+      <form class="waitlist-form" id="waitlistForm">
+        <input type="email" id="waitlistEmail" placeholder="your@email.com" required>
+        <button type="submit" class="btn btn-primary">Notify Me</button>
+      </form>
+      <p class="waitlist-note" id="waitlistMsg"></p>
     </div>
   </section>
 
