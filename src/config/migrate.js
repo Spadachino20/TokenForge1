@@ -122,4 +122,15 @@ async function runMigrations() {
   console.log('Migrations complete!');
 }
 
+// Only run migrations if this file is executed directly
+if (require.main === module) {
+  runMigrations().then(() => {
+    console.log('Migrations finished');
+    process.exit(0);
+  }).catch(err => {
+    console.error('Migration error:', err);
+    process.exit(1);
+  });
+}
+
 module.exports = { runMigrations };

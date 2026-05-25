@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const path = require('path');
 require('dotenv').config();
 
-const { runMigrations } = require('./config/migrate');
 const errorHandler = require('./middleware/errorHandler');
 const { generalLimiter } = require('./middleware/rateLimit');
 const authRoutes = require('./routes/auth');
@@ -15,7 +14,7 @@ const projectsRoutes = require('./routes/projects');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // Security middleware
 app.use(helmet());
@@ -51,15 +50,10 @@ app.get('*', (req, res) => {
 // Error handling
 app.use(errorHandler);
 
-// Run migrations on startup
-runMigrations().then(() => {
-  app.listen(PORT, () => {
-    console.log(`TokenForge server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  });
-}).catch(err => {
-  console.error('Failed to run migrations:', err);
-  process.exit(1);
+// Start server immediately - migrations run separately or on first deploy
+app.listen(PORT, () => {
+  console.log(`TokenForge server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;
