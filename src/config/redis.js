@@ -16,7 +16,20 @@ if (redisUrl && redisUrl.startsWith('rediss://')) {
   redisConfig.tls = {};
 }
 
-const redis = new Redis(redisUrl, redisConfig);
+// Don't crash on Redis errors - just log them
+let redis;
+try {
+  redis = new Redis(redisUrl, redisConfig);
+} catch (err) {
+  console.warn('Redis connection failed, using mock:', err.message);
+  redis = {
+    get: () => Promise.resolve(null),
+    set: () => Promise.resolve('OK'),
+    setex: () => Promise.resolve('OK'),
+    del: () => Promise.resolve(1),
+    on: () => {},
+  };
+}
 
 redis.on('connect', () => {
   console.log('Connected to Redis');
