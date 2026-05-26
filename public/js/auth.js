@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = '/dashboard.html';
+                    window.location.href = '/';
                 } else {
                     messageEl.textContent = data.error || 'Login failed';
                     messageEl.className = 'message error';
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = '/dashboard.html';
+                    window.location.href = '/';
                 } else {
                     messageEl.textContent = data.error || 'Registration failed';
                     messageEl.className = 'message error';
