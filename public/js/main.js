@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Mostrar cuenta si hay sesión activa
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const navLinks = document.getElementById('navLinks');
+
+    if (token && user && navLinks) {
+        const userData = JSON.parse(user);
+        navLinks.innerHTML = `
+            <span style="color:#888;font-size:0.85rem">${userData.email}</span>
+            <a href="/dashboard.html" class="btn btn-nav">Mi cuenta</a>
+            <a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Salir</a>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.reload();
+        });
+    }
+
+    // Waitlist form
     const waitlistForm = document.getElementById('waitlistForm');
     const waitlistMsg = document.getElementById('waitlistMsg');
     if (waitlistForm) {
