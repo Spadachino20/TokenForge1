@@ -2,12 +2,17 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // Waitlist form
-    const waitlistForm = document.getElementById('waitlist-form');
+    const waitlistForm = document.getElementById('waitlistForm');
+    const waitlistMsg = document.getElementById('waitlistMsg');
+
     if (waitlistForm) {
         waitlistForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('waitlist-email').value;
-            const messageEl = document.getElementById('waitlist-message');
+            const email = document.getElementById('waitlistEmail').value;
+            const submitBtn = waitlistForm.querySelector('button[type="submit"]');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Joining...';
 
             try {
                 const response = await fetch('/auth/waitlist', {
@@ -16,19 +21,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ email })
                 });
 
-                const data = await response.json();
-
                 if (response.ok) {
-                    messageEl.textContent = 'Thanks for joining! We\'ll be in touch soon.';
-                    messageEl.className = 'message success';
-                    waitlistForm.reset();
+                    waitlistForm.style.display = 'none';
+                    waitlistMsg.innerHTML = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                            <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">You're on the waitlist!</h3>
+                            <p style="color: #94a3b8;">We'll email you at <strong>${email}</strong> when access is available.</p>
+                        </div>
+                    `;
+                    waitlistMsg.className = 'waitlist-note';
                 } else {
-                    messageEl.textContent = data.error || 'Something went wrong. Please try again.';
-                    messageEl.className = 'message error';
+                    const data = await response.json();
+                    waitlistMsg.textContent = data.error || 'Something went wrong. Please try again.';
+                    waitlistMsg.className = 'waitlist-note error';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Notify Me';
                 }
             } catch (err) {
-                messageEl.textContent = 'Network error. Please try again.';
-                messageEl.className = 'message error';
+                waitlistMsg.textContent = 'Network error. Please try again.';
+                waitlistMsg.className = 'waitlist-note error';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Notify Me';
             }
         });
     }
