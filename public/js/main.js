@@ -1,26 +1,19 @@
-// Main JavaScript for TokenForge
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Waitlist form
     const waitlistForm = document.getElementById('waitlistForm');
     const waitlistMsg = document.getElementById('waitlistMsg');
-
     if (waitlistForm) {
         waitlistForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('waitlistEmail').value;
             const submitBtn = waitlistForm.querySelector('button[type="submit"]');
-
             submitBtn.disabled = true;
             submitBtn.textContent = 'Joining...';
-
             try {
-                const response = await fetch('/auth/waitlist', {
+                const response = await fetch('/waitlist', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
-
                 if (response.ok) {
                     waitlistForm.style.display = 'none';
                     waitlistMsg.innerHTML = `
