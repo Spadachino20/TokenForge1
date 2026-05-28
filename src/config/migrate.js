@@ -77,7 +77,7 @@ const migrations = [
     output_cost_per_1k DECIMAL(12, 10) NOT NULL,
     context_window INTEGER,
     max_output_tokens INTEGER,
-    markup_multiplier DECIMAL(5, 2) DEFAULT 1.30,
+    markup_multiplier DECIMAL(5, 2) DEFAULT 1.20,
     is_active BOOLEAN DEFAULT true,
     notes TEXT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
