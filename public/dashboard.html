@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — TokenForge</title>
   <link rel="stylesheet" href="/css/dashboard.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
+<!-- NAV -->
 <nav class="db-nav">
   <a href="/" class="db-brand">⚡ TokenForge</a>
   <div class="db-nav-right">
@@ -19,56 +19,91 @@
 </nav>
 
 <div class="db-layout">
+
+  <!-- SIDEBAR -->
   <aside class="db-sidebar">
-    <a href="#" class="active" data-section="overview">Overview</a>
-    <a href="#" data-section="keys">API Keys</a>
-    <a href="#" data-section="projects">Projects</a>
-    <a href="#" data-section="billing">Billing</a>
+    <a href="#" class="active" data-section="overview">
+      <span>📊</span> Overview
+    </a>
+    <a href="#" data-section="keys">
+      <span>🔑</span> API Keys
+    </a>
+    <a href="#" data-section="projects">
+      <span>📁</span> Projects
+    </a>
+    <a href="#" data-section="billing">
+      <span>💳</span> Billing
+    </a>
   </aside>
 
+  <!-- MAIN -->
   <main class="db-main">
-    <!-- Balance -->
-    <div class="balance-card">
-      <div>
-        <div class="balance-amount" id="balanceTfc">0.00 TFC</div>
-        <div class="balance-usd" id="balanceUsd">$0.00 USD</div>
+
+    <!-- BALANCE CARD -->
+    <div class="db-balance">
+      <div class="db-balance-left">
+        <div class="db-balance-tfc" id="balanceTfc">0.00 TFC</div>
+        <div class="db-balance-usd" id="balanceUsd">$0.00 USD</div>
       </div>
-      <div class="balance-bar-wrap">
-        <div class="balance-bar-label" id="balancePct">—</div>
-        <div class="balance-bar">
-          <div class="balance-bar-fill" id="balanceBar" style="width:0%"></div>
+      <div class="db-balance-bar-wrap">
+        <div class="db-balance-pct" id="balancePct">—</div>
+        <div class="db-balance-bar">
+          <div class="db-balance-bar-fill" id="balanceBar" style="width:0%"></div>
         </div>
       </div>
-      <button class="btn-primary" id="addCreditsBtn">+ Add Credits</button>
+      <button class="db-add-btn" id="addCreditsBtn">+ Add Credits</button>
     </div>
 
     <!-- OVERVIEW -->
     <div class="db-section active" id="section-overview">
-      <div class="section-title">Usage</div>
-      <div class="chart-wrap">
-        <canvas id="usageChart" height="80"></canvas>
-        <div id="chartEmpty" style="display:none;text-align:center;padding:2rem;color:#555">
-          No usage data for today.
+      <div class="db-section-header">
+        <h2>Overview</h2>
+        <button class="db-refresh" onclick="loadAll()">🔄 Refresh</button>
+      </div>
+
+      <div class="db-chart-wrap">
+        <div class="db-filters">
+          <button class="db-filter active" data-period="today">Today</button>
+          <button class="db-filter" data-period="yesterday">Yesterday</button>
+          <button class="db-filter" data-period="7days">Last 7 days</button>
+        </div>
+        <canvas id="usageChart" height="90"></canvas>
+        <div id="chartEmpty" class="db-empty" style="display:none">
+          No usage data for this period yet.
         </div>
       </div>
     </div>
 
     <!-- API KEYS -->
     <div class="db-section" id="section-keys">
-      <div class="section-title">API Keys</div>
-      <div id="keysList">Loading...</div>
+      <div class="db-section-header">
+        <h2>API Keys</h2>
+        <button class="db-add-btn" id="createKeyBtn">+ New Key</button>
+      </div>
+      <div id="keysList">
+        <div class="db-empty">No API keys yet. Create one to get started.</div>
+      </div>
     </div>
 
     <!-- PROJECTS -->
     <div class="db-section" id="section-projects">
-      <div class="section-title">Projects</div>
-      <div id="projectsList">Loading...</div>
+      <div class="db-section-header">
+        <h2>Projects</h2>
+        <button class="db-add-btn" id="createProjectBtn">+ New Project</button>
+      </div>
+      <div id="projectsList">
+        <div class="db-empty">No projects yet. Create one to track usage separately.</div>
+      </div>
     </div>
 
     <!-- BILLING -->
     <div class="db-section" id="section-billing">
-      <div class="section-title">Billing History</div>
-      <div id="billingList">Loading...</div>
+      <div class="db-section-header">
+        <h2>Billing History</h2>
+      </div>
+      <div class="db-card" id="billingList">
+        <div class="db-empty">No transactions yet.</div>
+      </div>
     </div>
 
   </main>
