@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const userData = JSON.parse(user);
         navLinks.innerHTML = `
             <span style="color:#888;font-size:0.85rem">${userData.email}</span>
-            <a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Logout</a>
+            <a href="/dashboard.html" class="btn btn-nav" style="margin-right:0.5rem">Dashboard</a>
+<a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Log Out</a>
         `;
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();

@@ -3,6 +3,7 @@ const db = require('../config/db');
 const { authenticateApiKey } = require('../middleware/auth');
 const { apiKeyLimiter } = require('../middleware/rateLimit');
 const { reserveBalance, settleBalance, releaseReservation } = require('../services/balanceService');
+const { sendLowBalanceAlert20, sendLowBalanceAlert10 } = require('../services/email');
 const openai = require('../services/providers/openai');
 const anthropic = require('../services/providers/anthropic');
 const gemini = require('../services/providers/gemini');
@@ -143,19 +144,29 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
     const percentRemaining = (currentBalance / initialBalance) * 100;
 
     if (percentRemaining <= 10) {
-      await db.query(
+      const notif10 = await db.query(
         `INSERT INTO notifications (user_id, type, sent_at)
          VALUES ($1, 'balance_10', NOW())
-         ON CONFLICT (user_id, type) DO NOTHING`,
+         ON CONFLICT (user_id, type) DO NOTHING
+         RETURNING id`,
         [req.userId]
       );
+      if (notif10.rows.length > 0) {
+        const userEmail = await db.query('SELECT email FROM users WHERE id = $1', [req.userId]);
+        await sendLowBalanceAlert10(userEmail.rows[0].email, currentBalance);
+      }
     } else if (percentRemaining <= 20) {
-      await db.query(
+      const notif20 = await db.query(
         `INSERT INTO notifications (user_id, type, sent_at)
          VALUES ($1, 'balance_20', NOW())
-         ON CONFLICT (user_id, type) DO NOTHING`,
+         ON CONFLICT (user_id, type) DO NOTHING
+         RETURNING id`,
         [req.userId]
       );
+      if (notif20.rows.length > 0) {
+        const userEmail = await db.query('SELECT email FROM users WHERE id = $1', [req.userId]);
+        await sendLowBalanceAlert20(userEmail.rows[0].email, currentBalance);
+      }
     }
 
   } catch (err) {
