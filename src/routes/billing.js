@@ -38,8 +38,8 @@ router.get('/balance', authenticateToken, async (req, res) => {
 router.post('/checkout', authenticateToken, authLimiter, async (req, res) => {
   const { amount } = req.body; // amount in USD (e.g., 10 for $10)
 
-  if (!amount || amount < 5 || amount > 500) {
-    return res.status(400).json({ error: 'Amount must be between $5 and $500' });
+  if (!amount || amount < 10 || amount > 500) {
+    return res.status(400).json({ error: 'Amount must be between $10 and $500' });
   }
 
   try {
@@ -57,8 +57,8 @@ router.post('/checkout', authenticateToken, authLimiter, async (req, res) => {
         quantity: 1
       }],
       mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL}/dashboard?success=true`,
-      cancel_url: `${process.env.FRONTEND_URL}/dashboard?canceled=true`,
+      success_url: `${process.env.FRONTEND_URL}/?success=true`,
+      cancel_url: `${process.env.FRONTEND_URL}/?canceled=true`,
       metadata: {
         userId: req.userId,
         amountTfc: amount
