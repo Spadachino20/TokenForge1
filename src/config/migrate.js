@@ -91,6 +91,15 @@ const migrations = [
   );
   `,
   `
+  CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, type)
+  );
+  `,
+  `
   CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
   CREATE INDEX IF NOT EXISTS idx_api_keys_key_hash ON api_keys(key_hash);
   CREATE INDEX IF NOT EXISTS idx_usage_logs_user_id ON usage_logs(user_id);
@@ -100,16 +109,24 @@ const migrations = [
   `,
   `
   INSERT INTO model_pricing (model, provider, display_name, input_cost_per_1k, output_cost_per_1k, context_window, max_output_tokens, markup_multiplier) VALUES
-  ('gpt-4o',               'openai',    'GPT-4o',           0.0025,    0.01,    128000, 16384, 1.30),
-  ('gpt-4o-mini',          'openai',    'GPT-4o Mini',      0.00015,   0.0006,  128000, 16384, 1.30),
-  ('gpt-4-turbo',          'openai',    'GPT-4 Turbo',      0.01,      0.03,    128000,  4096, 1.30),
-  ('gpt-3.5-turbo',        'openai',    'GPT-3.5 Turbo',    0.0005,    0.0015,  16385,   4096, 1.30),
-  ('claude-3-opus-20240229',  'anthropic', 'Claude 3 Opus',   0.015,     0.075,   200000,  4096, 1.30),
-  ('claude-3-sonnet-20240229','anthropic', 'Claude 3 Sonnet', 0.003,     0.015,   200000,  4096, 1.30),
-  ('claude-3-haiku-20240307', 'anthropic', 'Claude 3 Haiku',  0.00025,   0.00125, 200000,  4096, 1.30),
-  ('gemini-1.5-pro',       'gemini',    'Gemini 1.5 Pro',   0.0035,    0.0105,  1000000, 8192, 1.30),
-  ('gemini-1.5-flash',     'gemini',    'Gemini 1.5 Flash', 0.00035,   0.00105, 1000000, 8192, 1.30)
-  ON CONFLICT (model) DO NOTHING;
+  ('gpt-4o',                    'openai',    'GPT-4o',              0.0025,   0.010,   128000, 16384, 1.20),
+  ('gpt-4o-mini',               'openai',    'GPT-4o Mini',         0.000150, 0.000600,128000, 16384, 1.20),
+  ('gpt-4-turbo',               'openai',    'GPT-4 Turbo',         0.010,    0.030,   128000,  4096, 1.20),
+  ('gpt-3.5-turbo',             'openai',    'GPT-3.5 Turbo',       0.0005,   0.0015,  16385,   4096, 1.20),
+  ('o1',                        'openai',    'o1',                  0.015,    0.060,   128000,  4096, 1.20),
+  ('o1-mini',                   'openai',    'o1 Mini',             0.003,    0.012,   128000,  4096, 1.20),
+  ('claude-3-5-sonnet-20241022','anthropic', 'Claude 3.5 Sonnet',   0.003,    0.015,   200000,  8192, 1.20),
+  ('claude-3-opus-20240229',    'anthropic', 'Claude 3 Opus',       0.015,    0.075,   200000,  4096, 1.20),
+  ('claude-3-haiku-20240307',   'anthropic', 'Claude 3 Haiku',      0.00025,  0.00125, 200000,  4096, 1.20),
+  ('claude-3-5-haiku-20241022', 'anthropic', 'Claude 3.5 Haiku',    0.0008,   0.004,   200000,  8192, 1.20),
+  ('gemini-1.5-pro',            'gemini',    'Gemini 1.5 Pro',      0.00125,  0.005,   1000000, 8192, 1.20),
+  ('gemini-1.5-flash',          'gemini',    'Gemini 1.5 Flash',    0.000075, 0.000300,1000000, 8192, 1.20),
+  ('gemini-2.0-flash',          'gemini',    'Gemini 2.0 Flash',    0.000100, 0.000400,1000000, 8192, 1.20)
+  ON CONFLICT (model) DO UPDATE SET 
+    markup_multiplier = EXCLUDED.markup_multiplier,
+    input_cost_per_1k = EXCLUDED.input_cost_per_1k,
+    output_cost_per_1k = EXCLUDED.output_cost_per_1k,
+    display_name = EXCLUDED.display_name;
   `
 ];
 
@@ -122,7 +139,6 @@ async function runMigrations() {
       console.log(`✅ Migration ${i + 1}/${migrations.length} completed`);
     } catch (err) {
       console.error(`❌ Migration ${i + 1} failed:`, err.message);
-      // Don't throw - some migrations may already exist
     }
   }
   
