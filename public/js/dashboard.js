@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Buy TFC
     document.getElementById('buy-tfc-btn').addEventListener('click', async () => {
-        const amount = prompt('How many TFC credits? (min $5, max $500)', '10');
+        const amount = prompt('How many TFC credits? (min $10, max $500)', '10');
         if (!amount) return;
 
         try {

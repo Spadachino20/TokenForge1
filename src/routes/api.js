@@ -15,11 +15,15 @@ const AVAILABLE_MODELS = {
   'gpt-4o-mini': 'openai',
   'gpt-4-turbo': 'openai',
   'gpt-3.5-turbo': 'openai',
-  'claude-3-sonnet-20240229': 'anthropic',
+  'o1': 'openai',
+  'o1-mini': 'openai',
+  'claude-3-5-sonnet-20241022': 'anthropic',
   'claude-3-opus-20240229': 'anthropic',
   'claude-3-haiku-20240307': 'anthropic',
+  'claude-3-5-haiku-20241022': 'anthropic',
   'gemini-1.5-pro': 'gemini',
-  'gemini-1.5-flash': 'gemini'
+  'gemini-1.5-flash': 'gemini',
+  'gemini-2.0-flash': 'gemini',
 };
 
 // List models
@@ -59,12 +63,11 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
 
   // Calculate conservative estimate based on model pricing
   const inputText = messages.map(m => m.content || '').join('');
-  const estimatedInputTokens = Math.ceil(inputText.length / 3 * 1.2); // conservative
+  const estimatedInputTokens = Math.ceil(inputText.length / 3 * 1.2);
   const estimatedOutputTokens = max_tokens || 1000;
-  // Estimate: ~$0.002 per 1k tokens for cheapest model, * output estimate
   const estimatedCost = Math.max(0.001, (estimatedInputTokens + estimatedOutputTokens) * 0.000002);
 
-  // Reserve balance atomically
+  // Block if balance insufficient
   const reservation = await reserveBalance(req.userId, estimatedCost);
 
   if (!reservation.success) {
@@ -121,7 +124,7 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
       res.json(result.response);
     }
 
-    // Settle balance (adjust for actual cost)
+    // Settle balance with actual cost
     await settleBalance(req.userId, estimatedCost, result.cost);
 
     // Log usage
@@ -130,17 +133,35 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
       [req.userId, req.apiKeyId, model, provider, result.tokensIn, result.tokensOut, result.cost]
     );
 
-    // Set usage headers
-    res.setHeader('X-TFC-Cost-This-Request', result.cost.toFixed(6));
-    res.setHeader('X-TFC-Balance-Remaining', (reservation.balanceAfterReservation + estimatedCost - result.cost).toFixed(4));
+    // Check balance alerts (20% and 10%)
+    const balanceResult = await db.query(
+      'SELECT balance_tfc FROM users WHERE id = $1',
+      [req.userId]
+    );
+    const currentBalance = parseFloat(balanceResult.rows[0].balance_tfc);
+    const initialBalance = currentBalance + result.cost;
+    const percentRemaining = (currentBalance / initialBalance) * 100;
+
+    if (percentRemaining <= 10) {
+      await db.query(
+        `INSERT INTO notifications (user_id, type, sent_at)
+         VALUES ($1, 'balance_10', NOW())
+         ON CONFLICT (user_id, type) DO NOTHING`,
+        [req.userId]
+      );
+    } else if (percentRemaining <= 20) {
+      await db.query(
+        `INSERT INTO notifications (user_id, type, sent_at)
+         VALUES ($1, 'balance_20', NOW())
+         ON CONFLICT (user_id, type) DO NOTHING`,
+        [req.userId]
+      );
+    }
 
   } catch (err) {
     console.error('API error:', err);
-
-    // Release reservation on error
     await releaseReservation(req.userId, estimatedCost);
 
-    // Log failed usage
     await db.query(
       'INSERT INTO usage_logs (user_id, api_key_id, model, provider, cost_tfc, status, error_message) VALUES ($1, $2, $3, $4, $5, $6, $7)',
       [req.userId, req.apiKeyId, model, provider, 0, 'error', err.message]
