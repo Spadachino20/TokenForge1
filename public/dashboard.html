@@ -1,70 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - TokenForge</title>
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — TokenForge</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">TokenForge</a>
-            <div class="nav-links">
-                <span id="user-email"></span>
-                <a href="#" id="logout-btn">Logout</a>
-            </div>
+
+<nav class="db-nav">
+  <a href="/" class="db-brand">⚡ TokenForge</a>
+  <div class="db-nav-right">
+    <span id="userEmail"></span>
+    <a href="#" id="logoutBtn">Log Out</a>
+  </div>
+</nav>
+
+<div class="db-layout">
+  <aside class="db-sidebar">
+    <a href="#" class="active" data-section="overview">Overview</a>
+    <a href="#" data-section="keys">API Keys</a>
+    <a href="#" data-section="projects">Projects</a>
+    <a href="#" data-section="billing">Billing</a>
+  </aside>
+
+  <main class="db-main">
+    <!-- Balance -->
+    <div class="balance-card">
+      <div>
+        <div class="balance-amount" id="balanceTfc">0.00 TFC</div>
+        <div class="balance-usd" id="balanceUsd">$0.00 USD</div>
+      </div>
+      <div class="balance-bar-wrap">
+        <div class="balance-bar-label" id="balancePct">—</div>
+        <div class="balance-bar">
+          <div class="balance-bar-fill" id="balanceBar" style="width:0%"></div>
         </div>
-    </nav>
-
-    <div class="dashboard">
-        <div class="dashboard-header">
-            <div class="container">
-                <div class="balance-card">
-                    <h2>Your Balance</h2>
-                    <div class="balance-amount" id="balance">0.00 TFC</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="dashboard-grid">
-                <aside class="sidebar">
-                    <ul class="sidebar-nav">
-                        <li><a href="#" class="active" data-section="overview">Overview</a></li>
-                        <li><a href="#" data-section="keys">API Keys</a></li>
-                        <li><a href="#" data-section="usage">Usage</a></li>
-                        <li><a href="#" data-section="billing">Billing</a></li>
-                    </ul>
-                </aside>
-
-                <main class="main-content">
-                    <section id="overview-section">
-                        <h2>Overview</h2>
-                        <p>Welcome to your TokenForge dashboard.</p>
-                        <button id="buy-tfc-btn" class="btn-primary">Buy TFC Credits</button>
-                    </section>
-
-                    <section id="keys-section" style="display:none">
-                        <h2>API Keys</h2>
-                        <button id="create-key-btn" class="btn-primary">Create New Key</button>
-                        <div id="keys-list"></div>
-                    </section>
-
-                    <section id="usage-section" style="display:none">
-                        <h2>Usage History</h2>
-                        <div id="usage-list"></div>
-                    </section>
-
-                    <section id="billing-section" style="display:none">
-                        <h2>Billing History</h2>
-                        <div id="billing-list"></div>
-                    </section>
-                </main>
-            </div>
-        </div>
+      </div>
+      <button class="btn-primary" id="addCreditsBtn">+ Add Credits</button>
     </div>
 
-    <script src="/js/dashboard.js"></script>
+    <!-- OVERVIEW -->
+    <div class="db-section active" id="section-overview">
+      <div class="section-title">Usage</div>
+      <div class="chart-wrap">
+        <canvas id="usageChart" height="80"></canvas>
+        <div id="chartEmpty" style="display:none;text-align:center;padding:2rem;color:#555">
+          No usage data for today.
+        </div>
+      </div>
+    </div>
+
+    <!-- API KEYS -->
+    <div class="db-section" id="section-keys">
+      <div class="section-title">API Keys</div>
+      <div id="keysList">Loading...</div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="db-section" id="section-projects">
+      <div class="section-title">Projects</div>
+      <div id="projectsList">Loading...</div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="db-section" id="section-billing">
+      <div class="section-title">Billing History</div>
+      <div id="billingList">Loading...</div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/dashboard.js"></script>
 </body>
 </html>
