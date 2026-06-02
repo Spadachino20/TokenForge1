@@ -3,6 +3,73 @@
 const API_URL = '';
 let usageChart = null;
 
+// ── MODAL SYSTEM ──────────────────────────────────────────────
+function showModal({ title, message, inputPlaceholder = null, confirmText = 'Confirm', confirmDanger = false, onConfirm }) {
+  const existing = document.getElementById('tf-modal');
+  if (existing) existing.remove();
+
+  const hasInput = inputPlaceholder !== null;
+
+  const modal = document.createElement('div');
+  modal.id = 'tf-modal';
+  modal.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#0d0d0d;
+      border:1px solid #1F2937;
+      border-radius:14px;
+      padding:2rem;
+      width:100%;max-width:420px;
+      margin:1rem;
+      box-shadow:0 0 40px rgba(0,212,255,0.08);
+    ">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#fff">${title}</h3>
+      <p style="font-size:0.85rem;color:#888;margin-bottom:${hasInput ? '1rem' : '1.5rem'}">${message}</p>
+      ${hasInput ? `<input id="tf-modal-input" type="text" placeholder="${inputPlaceholder}" style="
+        width:100%;background:#000;border:1px solid #1F2937;border-radius:8px;
+        padding:0.65rem 0.9rem;color:#fff;font-size:0.9rem;font-family:inherit;
+        outline:none;margin-bottom:1.5rem;
+      "/>` : ''}
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+        <button id="tf-modal-cancel" style="
+          padding:0.5rem 1.1rem;border-radius:8px;border:1px solid #1F2937;
+          background:transparent;color:#888;font-size:0.85rem;cursor:pointer;font-family:inherit;
+        ">Cancel</button>
+        <button id="tf-modal-confirm" style="
+          padding:0.5rem 1.1rem;border-radius:8px;border:none;font-weight:700;
+          font-size:0.85rem;cursor:pointer;font-family:inherit;
+          background:${confirmDanger ? '#ef4444' : '#00d4ff'};
+          color:${confirmDanger ? '#fff' : '#000'};
+        ">${confirmText}</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const input = document.getElementById('tf-modal-input');
+  if (input) {
+    input.focus();
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') handleConfirm(); });
+  }
+
+  function handleConfirm() {
+    const val = input ? input.value.trim() : null;
+    modal.remove();
+    onConfirm(val);
+  }
+
+  document.getElementById('tf-modal-confirm').addEventListener('click', handleConfirm);
+  document.getElementById('tf-modal-cancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+// ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   if (!token) { window.location.href = '/login.html'; return; }
@@ -10,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   document.getElementById('userEmail').textContent = user.email || '';
 
-  // Logout
   document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
     localStorage.removeItem('token');
@@ -18,16 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = '/';
   });
 
-  // Sidebar navigation
   document.querySelectorAll('.db-sidebar a').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      const section = e.currentTarget.dataset.section;
-      switchSection(section);
+      switchSection(e.currentTarget.dataset.section);
     });
   });
 
-  // Chart filters
   document.querySelectorAll('.db-filter').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.db-filter').forEach(b => b.classList.remove('active'));
@@ -36,25 +99,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Add credits
   document.getElementById('addCreditsBtn').addEventListener('click', () => {
-    const amount = prompt('Enter amount in USD (min $10, max $500):', '10');
-    if (!amount) return;
-    const num = parseInt(amount);
-    if (num < 10 || num > 500) { alert('Amount must be between $10 and $500'); return; }
-    buyCredits(num);
+    showModal({
+      title: 'Add Credits',
+      message: 'Enter amount in USD (min $10, max $500)',
+      inputPlaceholder: '10',
+      confirmText: 'Buy Credits',
+      onConfirm: (val) => {
+        if (!val) return;
+        const num = parseInt(val);
+        if (isNaN(num) || num < 10 || num > 500) {
+          showModal({ title: 'Invalid Amount', message: 'Amount must be between $10 and $500.', confirmText: 'OK', onConfirm: () => {} });
+          return;
+        }
+        buyCredits(num);
+      }
+    });
   });
 
-  // Create key
   document.getElementById('createKeyBtn').addEventListener('click', () => {
-    const name = prompt('API Key name:', 'Production');
-    if (!name) return;
-    createKey(name);
+    showModal({
+      title: 'New API Key',
+      message: 'Give your key a name to identify it.',
+      inputPlaceholder: 'Production',
+      confirmText: 'Create Key',
+      onConfirm: (val) => {
+        if (!val) return;
+        createKey(val);
+      }
+    });
   });
 
   loadAll();
 });
 
+// ── NAVIGATION ────────────────────────────────────────────────
 function switchSection(section) {
   document.querySelectorAll('.db-sidebar a').forEach(a => {
     a.classList.toggle('active', a.dataset.section === section);
@@ -72,6 +151,7 @@ function loadAll() {
   loadChart('today');
 }
 
+// ── BALANCE ───────────────────────────────────────────────────
 async function loadBalance() {
   const token = localStorage.getItem('token');
   try {
@@ -80,10 +160,8 @@ async function loadBalance() {
     });
     const data = await res.json();
     const bal = parseFloat(data.balance_tfc) || 0;
-
     document.getElementById('balanceTfc').textContent = `${bal.toFixed(4)} TFC`;
     document.getElementById('balanceUsd').textContent = `$${bal.toFixed(2)} USD`;
-
     const pct = bal > 0 ? Math.min(100, (bal / (bal + 1)) * 100) : 0;
     document.getElementById('balanceBar').style.width = `${pct}%`;
     document.getElementById('balancePct').textContent = bal > 0 ? `${bal.toFixed(2)} TFC remaining` : 'No balance';
@@ -92,6 +170,7 @@ async function loadBalance() {
   }
 }
 
+// ── CHART ─────────────────────────────────────────────────────
 async function loadChart(period) {
   const token = localStorage.getItem('token');
   try {
@@ -99,7 +178,6 @@ async function loadChart(period) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();
-
     const canvas = document.getElementById('usageChart');
     const empty = document.getElementById('chartEmpty');
 
@@ -111,7 +189,6 @@ async function loadChart(period) {
 
     canvas.style.display = 'block';
     empty.style.display = 'none';
-
     if (usageChart) usageChart.destroy();
 
     usageChart = new Chart(canvas, {
@@ -129,9 +206,7 @@ async function loadChart(period) {
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: { labels: { color: '#888', font: { size: 11 } } }
-        },
+        plugins: { legend: { labels: { color: '#888', font: { size: 11 } } } },
         scales: {
           x: { ticks: { color: '#555' }, grid: { color: '#111' } },
           y: { ticks: { color: '#555' }, grid: { color: '#111' } }
@@ -144,6 +219,7 @@ async function loadChart(period) {
   }
 }
 
+// ── API KEYS ──────────────────────────────────────────────────
 async function loadKeys() {
   const token = localStorage.getItem('token');
   try {
@@ -153,13 +229,15 @@ async function loadKeys() {
     const data = await res.json();
     const container = document.getElementById('keysList');
 
-    if (!data.keys || data.keys.length === 0) {
+    const activeKeys = (data.keys || []).filter(k => k.is_active);
+
+    if (activeKeys.length === 0) {
       container.innerHTML = '<div class="db-empty">No API keys yet. Create one to get started.</div>';
       return;
     }
 
-    container.innerHTML = data.keys.map(key => `
-      <div class="db-key-row">
+    container.innerHTML = activeKeys.map(key => `
+      <div class="db-key-row" id="key-row-${key.id}">
         <div>
           <div class="db-key-name">${key.name}</div>
           <div class="db-key-meta">
@@ -168,11 +246,9 @@ async function loadKeys() {
           </div>
         </div>
         <div class="db-key-actions">
-          <span class="db-badge ${key.is_active ? 'active' : 'inactive'}">
-            ${key.is_active ? 'Active' : 'Revoked'}
-          </span>
+          <span class="db-badge active">Active</span>
           <button class="db-btn" onclick="editKey('${key.id}','${key.name}')">Edit</button>
-          <button class="db-btn danger" onclick="revokeKey('${key.id}')">Revoke</button>
+          <button class="db-btn danger" onclick="deleteKey('${key.id}','${key.name}')">Delete</button>
         </div>
       </div>
     `).join('');
@@ -191,33 +267,29 @@ async function createKey(name) {
     });
     const data = await res.json();
     if (data.key) {
-      alert(`Your new API key:\n\n${data.key.value}\n\n⚠️ Save this now — it won't be shown again.`);
-      loadKeys();
+      showModal({
+        title: '⚠️ Save Your API Key',
+        message: `Your new API key — copy it now, it won't be shown again:<br><br><code style="background:#000;padding:0.4rem 0.6rem;border-radius:6px;font-size:0.8rem;color:#00d4ff;word-break:break-all">${data.key.value}</code>`,
+        confirmText: 'Done',
+        onConfirm: () => loadKeys()
+      });
     }
   } catch (err) {
     alert('Failed to create key');
   }
 }
 
-async function revokeKey(keyId) {
-  if (!confirm('Revoke this key? This cannot be undone.')) return;
-  const token = localStorage.getItem('token');
-  try {
-    await fetch(`${API_URL}/auth/keys/${keyId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ action: 'revoke' })
-    });
-    loadKeys();
-  } catch (err) {
-    alert('Failed to revoke key');
-  }
-}
-
 function editKey(keyId, currentName) {
-  const newName = prompt('New name:', currentName);
-  if (!newName || newName === currentName) return;
-  renameKey(keyId, newName);
+  showModal({
+    title: 'Rename API Key',
+    message: `Current name: <strong style="color:#fff">${currentName}</strong>`,
+    inputPlaceholder: currentName,
+    confirmText: 'Save',
+    onConfirm: (val) => {
+      if (!val || val === currentName) return;
+      renameKey(keyId, val);
+    }
+  });
 }
 
 async function renameKey(keyId, name) {
@@ -234,6 +306,34 @@ async function renameKey(keyId, name) {
   }
 }
 
+function deleteKey(keyId, keyName) {
+  showModal({
+    title: 'Delete API Key',
+    message: `Are you sure you want to delete <strong style="color:#fff">${keyName}</strong>? Any apps using this key will stop working.`,
+    confirmText: 'Delete',
+    confirmDanger: true,
+    onConfirm: async () => {
+      const token = localStorage.getItem('token');
+      try {
+        await fetch(`${API_URL}/auth/keys/${keyId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ action: 'revoke' })
+        });
+        const row = document.getElementById(`key-row-${keyId}`);
+        if (row) row.remove();
+        const container = document.getElementById('keysList');
+        if (!container.querySelector('.db-key-row')) {
+          container.innerHTML = '<div class="db-empty">No API keys yet. Create one to get started.</div>';
+        }
+      } catch (err) {
+        alert('Failed to delete key');
+      }
+    }
+  });
+}
+
+// ── PROJECTS ──────────────────────────────────────────────────
 async function loadProjects() {
   const token = localStorage.getItem('token');
   try {
@@ -275,9 +375,16 @@ async function loadProjects() {
 }
 
 function editProjectBudget(id, name, current) {
-  const newBudget = prompt(`New budget for "${name}" (TFC):`, current);
-  if (!newBudget) return;
-  updateProjectBudget(id, parseFloat(newBudget));
+  showModal({
+    title: 'Edit Budget',
+    message: `Set monthly budget for <strong style="color:#fff">${name}</strong> (TFC)`,
+    inputPlaceholder: current,
+    confirmText: 'Save',
+    onConfirm: (val) => {
+      if (!val) return;
+      updateProjectBudget(id, parseFloat(val));
+    }
+  });
 }
 
 async function updateProjectBudget(id, budget) {
@@ -294,6 +401,7 @@ async function updateProjectBudget(id, budget) {
   }
 }
 
+// ── BILLING ───────────────────────────────────────────────────
 async function loadBilling() {
   const token = localStorage.getItem('token');
   try {
