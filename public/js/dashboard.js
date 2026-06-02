@@ -227,7 +227,7 @@ async function renameKey(keyId, name) {
     await fetch(`${API_URL}/auth/keys/${keyId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ action: 'rename', name })
     });
     loadKeys();
   } catch (err) {
