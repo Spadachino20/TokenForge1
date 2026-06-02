@@ -157,5 +157,40 @@ router.delete('/keys/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to revoke API key' });
   }
 });
+router.patch('/keys/:id', authenticateToken, async (req, res) => {
+  const { action, name } = req.body;
 
+  try {
+    let result;
+
+    if (action === 'rename' && name) {
+      result = await db.query(
+        'UPDATE api_keys SET name = $1 WHERE id = $2 AND user_id = $3 RETURNING id, name, is_active, created_at',
+        [name, req.params.id, req.userId]
+      );
+    } else if (action === 'revoke') {
+      result = await db.query(
+        'UPDATE api_keys SET is_active = false WHERE id = $1 AND user_id = $2 RETURNING id, name, is_active, created_at',
+        [req.params.id, req.userId]
+      );
+    } else if (action === 'reset') {
+      const keyValue = 'tf_sk_' + crypto.randomBytes(32).toString('hex');
+      const keyHash = crypto.createHash('sha256').update(keyValue).digest('hex');
+      result = await db.query(
+        'UPDATE api_keys SET key_hash = $1 WHERE id = $2 AND user_id = $3 RETURNING id, name, is_active, created_at',
+        [keyHash, req.params.id, req.userId]
+      );
+      if (result.rowCount === 0) return res.status(404).json({ error: 'Key not found' });
+      return res.json({ message: 'API key reset. Save it now.', key: { ...result.rows[0], value: keyValue } });
+    } else {
+      return res.status(400).json({ error: 'Invalid action. Use: rename, revoke, or reset' });
+    }
+
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Key not found' });
+    res.json({ message: 'API key updated', key: result.rows[0] });
+
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update API key' });
+  }
+});
 module.exports = router;
