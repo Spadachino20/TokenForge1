@@ -84,8 +84,6 @@ async function loadBalance() {
     document.getElementById('balanceTfc').textContent = `${bal.toFixed(4)} TFC`;
     document.getElementById('balanceUsd').textContent = `$${bal.toFixed(2)} USD`;
 
-    // Bar — needs initial balance to calculate %
-    // For now show full bar if > 0
     const pct = bal > 0 ? Math.min(100, (bal / (bal + 1)) * 100) : 0;
     document.getElementById('balanceBar').style.width = `${pct}%`;
     document.getElementById('balancePct').textContent = bal > 0 ? `${bal.toFixed(2)} TFC remaining` : 'No balance';
@@ -206,8 +204,9 @@ async function revokeKey(keyId) {
   const token = localStorage.getItem('token');
   try {
     await fetch(`${API_URL}/auth/keys/${keyId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ action: 'revoke' })
     });
     loadKeys();
   } catch (err) {
