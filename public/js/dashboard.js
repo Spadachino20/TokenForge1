@@ -2,6 +2,7 @@
 
 const API_URL = '';
 let usageChart = null;
+let currentCurrency = 'usd';
 
 // ── MODAL SYSTEM ──────────────────────────────────────────────
 function showModal({ title, message, inputPlaceholder = null, confirmText = 'Confirm', confirmDanger = false, onConfirm }) {
@@ -91,11 +92,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.querySelectorAll('.db-filter').forEach(btn => {
+  // Chart period filters
+  document.querySelectorAll('.db-filter[data-period]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.db-filter').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.db-filter[data-period]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      loadChart(btn.dataset.period);
+      if (btn.dataset.period === 'date') {
+        showModal({
+          title: 'Pick a Date',
+          message: 'Enter date (YYYY-MM-DD)',
+          inputPlaceholder: new Date().toISOString().split('T')[0],
+          confirmText: 'Load',
+          onConfirm: (val) => { if (val) loadChart('date', val); }
+        });
+      } else {
+        loadChart(btn.dataset.period);
+      }
     });
   });
 
@@ -151,6 +163,15 @@ function loadAll() {
   loadChart('today');
 }
 
+// ── CURRENCY TOGGLE ───────────────────────────────────────────
+function setCurrency(c) {
+  currentCurrency = c;
+  document.getElementById('currencyUsd').classList.toggle('active', c === 'usd');
+  document.getElementById('currencyTfc').classList.toggle('active', c === 'tfc');
+  const activePeriod = document.querySelector('.db-filter[data-period].active');
+  loadChart(activePeriod ? activePeriod.dataset.period : 'today');
+}
+
 // ── BALANCE ───────────────────────────────────────────────────
 async function loadBalance() {
   const token = localStorage.getItem('token');
@@ -171,10 +192,11 @@ async function loadBalance() {
 }
 
 // ── CHART ─────────────────────────────────────────────────────
-async function loadChart(period) {
+async function loadChart(period, date = null) {
   const token = localStorage.getItem('token');
   try {
-    const res = await fetch(`${API_URL}/usage/summary?period=${period}`, {
+    const url = `${API_URL}/usage/summary?period=${period}${date ? '&date=' + date : ''}&currency=${currentCurrency}`;
+    const res = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();
@@ -195,10 +217,10 @@ async function loadChart(period) {
       type: 'line',
       data: {
         labels: data.labels,
-        datasets: data.datasets.map((ds, i) => ({
+        datasets: data.datasets.map(ds => ({
           label: ds.model,
           data: ds.data,
-          borderColor: ['#00d4ff','#22c55e','#f59e0b','#a855f7','#ef4444'][i % 5],
+          borderColor: ds.color,
           backgroundColor: 'transparent',
           tension: 0.4,
           pointRadius: 3,
@@ -206,10 +228,28 @@ async function loadChart(period) {
       },
       options: {
         responsive: true,
-        plugins: { legend: { labels: { color: '#888', font: { size: 11 } } } },
+        plugins: {
+          legend: { labels: { color: '#888', font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const val = ctx.parsed.y;
+                return currentCurrency === 'usd'
+                  ? ` ${ctx.dataset.label}: $${val.toFixed(6)}`
+                  : ` ${ctx.dataset.label}: ${val.toFixed(6)} TFC`;
+              }
+            }
+          }
+        },
         scales: {
           x: { ticks: { color: '#555' }, grid: { color: '#111' } },
-          y: { ticks: { color: '#555' }, grid: { color: '#111' } }
+          y: {
+            ticks: {
+              color: '#555',
+              callback: (val) => currentCurrency === 'usd' ? `$${val}` : `${val} TFC`
+            },
+            grid: { color: '#111' }
+          }
         }
       }
     });

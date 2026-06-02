@@ -11,7 +11,7 @@ const authRoutes = require('./routes/auth');
 const billingRoutes = require('./routes/billing');
 const apiRoutes = require('./routes/api');
 const waitlistRoutes = require('./routes/waitlist');
-const projectsRoutes = require('./routes/projects');
+const usageRoutes = require('./routes/usage');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
@@ -50,7 +50,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/billing', billingRoutes);
 app.use('/v1', apiRoutes);
-app.use('/projects', projectsRoutes);
+app.use('/usage', usageRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', waitlistRoutes);
 
