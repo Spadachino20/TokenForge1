@@ -1,6 +1,6 @@
 // Dashboard JavaScript for TokenForge
 
-const API_URL = '/api'; // <-- Set this to match your backend base path
+const API_URL = 'https://tokenforge1-production.up.railway.app/api';
 let usageChart = null;
 let currentCurrency = 'usd';
 
