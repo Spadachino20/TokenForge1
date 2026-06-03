@@ -17,7 +17,7 @@ const { runMigrations } = require('./config/migrate');
   const PORT = process.env.PORT || 8080;
 
 // Security middleware
-aapp.use(helmet({
+app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'", "https://fonts.googleapis.com"],
