@@ -10,11 +10,11 @@ router.post('/', authenticateToken, async (req, res) => {
   const { name, description, budget_tfc, budget_period, allowed_models } = req.body;
 
   try {
-    const result = await db.query(`
-      INSERT INTO projects (user_id, name, description, budget_tfc, budget_period, allowed_models)
-      VALUES ($1, $2, $3, $4, $5, $6)
+   const result = await db.query(`
+      INSERT INTO projects (user_id, name, monthly_budget_tfc)
+      VALUES ($1, $2, $3)
       RETURNING *
-    `, [req.userId, name, description, budget_tfc, budget_period, allowed_models]);
+    `, [req.userId, name, req.body.monthly_budget_tfc || 0]);
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
