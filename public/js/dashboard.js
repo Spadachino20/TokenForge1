@@ -524,16 +524,49 @@ async function deleteProject(id, name) {
 
 // ---- Create project modal handling ----
 const createProjectBtn = document.getElementById('createProjectBtn');
-const createProjectModal = document.getElementById('createProjectModal');
-const createProjectForm = document.getElementById('createProjectForm');
 
 if (createProjectBtn) {
-  createProjectBtn.addEventListener('click', () => clearCreateForm());
+  createProjectBtn.addEventListener('click', () => {
+    showModal({
+      title: 'New Project',
+      message: 'Enter a name for your project',
+      inputPlaceholder: 'My Project',
+      confirmText: 'Next',
+      onConfirm: (name) => {
+        if (!name) return;
+        showModal({
+          title: 'Project Budget',
+          message: 'Set a TFC budget limit for this project',
+          inputPlaceholder: '10',
+          confirmText: 'Create',
+          onConfirm: async (budgetStr) => {
+            const budget = parseFloat(budgetStr);
+            if (isNaN(budget) || budget <= 0) return;
+            const token = localStorage.getItem('token');
+            try {
+              const res = await fetch('/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ name, monthly_budget_tfc: budget })
+              });
+              if (!res.ok) throw new Error('Create failed');
+              loadProjects();
+            } catch (err) {
+              alert('Unable to create project');
+            }
+          }
+        });
+      }
+    });
+  });
 }
 
-function clearCreateForm() { if (createProjectForm) createProjectForm.reset(); }
+// dummy to avoid reference errors
+const createProjectModal = null;
+const createProjectForm = null;
+function clearCreateForm() {}
 
-createProjectForm && createProjectForm.addEventListener('submit', async e => {
+if (false && createProjectForm) createProjectForm.addEventListener('submit', async e => {
   e.preventDefault();
   const name = e.target.name.value.trim();
   const budget = parseInt(e.target.budget.value, 10);
