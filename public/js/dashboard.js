@@ -374,6 +374,138 @@ function deleteKey(keyId, keyName) {
 }
 
 // ── PROJECTS ──────────────────────────────────────────────────
+
+// *** CUSTOM PROJECTS FUNCTIONS ***
+// IDs referenced in dashboard.html (or added):
+//   - projectsList  : container for list of projects
+//   - createProjectBtn: button in nav to open create modal
+//   - createProjectModal: modal container to create project
+//   - createProjectForm: form inside modal with inputs name & budget
+// *** End ***
+
+async function loadProjects() {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await fetch(`${API_URL}/projects`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    const container = document.getElementById('projectsList');
+
+    if (!data.projects || data.projects.length === 0) {
+      container.innerHTML = '<div class="db-empty">No projects yet. Create one to track usage separately.</div>';
+      return;
+    }
+
+    container.innerHTML = data.projects.map(p => {
+      const used = parseFloat(p.used_tfc) || 0;
+      const budget = parseFloat(p.monthly_budget_tfc) || 0;
+      const pct = budget > 0 ? Math.min(100, (used / budget) * 100) : 0;
+      const barClass = pct >= 90 ? 'crit' : pct >= 70 ? 'warn' : 'ok';
+      return `
+        <div class="db-key-row" id="project-${p.id}">
+          <div style="flex:1">
+            <div class="db-key-name">${p.name}</div>
+            <div class="db-key-meta">${used.toFixed(4)} / ${budget.toFixed(2)} TFC used</div>
+            <div class="db-proj-bar">
+              <div class="db-proj-bar-fill ${barClass}" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <div class="db-key-actions">
+            <span class="db-badge ${p.is_active ? 'active' : 'inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span>
+            <button class="db-btn" onclick="editProjectBudget('${p.id}','${p.name}',${p.monthly_budget_tfc})">Edit Budget</button>
+            <button class="db-btn danger" onclick="deleteProject('${p.id}','${p.name}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error('Projects error:', err);
+  }
+}
+
+function editProjectBudget(id, name, current) {
+  showModal({
+    title: 'Edit Budget',
+    message: `Set monthly budget for <strong style="color:#fff">${name}</strong> (TFC)`,
+    inputPlaceholder: current,
+    confirmText: 'Save',
+    onConfirm: (val) => {
+      if (!val) return;
+      updateProjectBudget(id, parseFloat(val));
+    }
+  });
+}
+
+async function updateProjectBudget(id, budget) {
+  const token = localStorage.getItem('token');
+  try {
+    await fetch(`${API_URL}/projects/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ monthly_budget_tfc: budget })
+    });
+    loadProjects();
+  } catch (err) {
+    alert('Failed to update budget');
+  }
+}
+
+function deleteProject(id, name) {
+  showModal({
+    title: 'Delete Project',
+    message: `Are you sure you want to delete <strong style="color:#fff">${name}</strong>?`,
+    confirmText: 'Delete',
+    confirmDanger: true,
+    onConfirm: async () => {
+      const token = localStorage.getItem('token');
+      try {
+        await fetch(`${API_URL}/projects/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        loadProjects();
+      } catch (e) {
+        alert('Failed to delete project');
+      }
+    }
+  });
+}
+
+// ---- Create project modal handling ----
+const createProjectBtn = document.getElementById('createProjectBtn');
+const createProjectModal = document.getElementById('createProjectModal');
+const createProjectForm = document.getElementById('createProjectForm');
+
+if (createProjectBtn) {
+  createProjectBtn.addEventListener('click', () => clearCreateForm());
+}
+
+function clearCreateForm() { if (createProjectForm) createProjectForm.reset(); }
+
+createProjectForm && createProjectForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = e.target.name.value.trim();
+  const budget = parseInt(e.target.budget.value, 10);
+  if (!name || isNaN(budget) || budget <= 0) return;
+  const token = localStorage.getItem('token');
+  try {
+    const res = await fetch(`${API_URL}/projects`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ name, monthly_budget_tfc: budget })
+    });
+    if (!res.ok) throw new Error('create failed');
+    createProjectModal.style.display = 'none';
+    loadProjects();
+  } catch (err) {
+    alert('Unable to create project');
+  }
+});
+
+// Close modal helper
+const closeModal = () => { if (createProjectModal) createProjectModal.style.display = 'none'; };
+[(createProjectModal?.querySelector('.close') ?? document.createElement('div')).addEventListener]??(()=>{});
 async function loadProjects() {
   const token = localStorage.getItem('token');
   try {
