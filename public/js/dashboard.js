@@ -536,8 +536,8 @@ if (createProjectBtn) {
         if (!name) return;
         showModal({
           title: 'Project Budget',
-          message: 'Set a TFC budget limit for this project',
-          inputPlaceholder: '10',
+          message: 'Set a TFC budget limit (leave 0 for unlimited)',
+          inputPlaceholder: '0',
           confirmText: 'Create',
           onConfirm: async (budgetStr) => {
             const budget = parseFloat(budgetStr);
@@ -627,29 +627,34 @@ async function loadProjects() {
       return;
     }
 
-    container.innerHTML = data.projects.map(p => {
-      const used = parseFloat(p.used_tfc) || 0;
-      const budget = parseFloat(p.monthly_budget_tfc) || 0;
-      const usedPct = budget > 0 ? (used / budget) * 100 : 0;
-      const remainingPct = budget > 0 ? 100 - usedPct : 0;
-      const barClass = remainingPct > 30 ? 'ok' : remainingPct > 10 ? 'warn' : 'crit';
+container.innerHTML = data.projects.map(p => {
+  const used = parseFloat(p.used_tfc) || 0;
+  const budget = parseFloat(p.monthly_budget_tfc) || 0;
+  const unlimited = budget === 0;
+  const usedPct = unlimited ? 100 : Math.min(100, (used / budget) * 100);
+  const remainingPct = unlimited ? 100 : 100 - usedPct;
+  const barColor = unlimited ? '#00d4ff'
+    : remainingPct > 70 ? '#22c55e'
+    : remainingPct > 20 ? '#f59e0b'
+    : '#ef4444';
 
-      return `
-        <div class="db-key-row">
-          <div style="flex:1">
-            <div class="db-key-name">${p.name}</div>
-            <div class="db-key-meta">${used.toFixed(4)} / ${budget.toFixed(2)} TFC used</div>
-            <div class="db-proj-bar">
-              <div class="db-proj-bar-fill ${barClass}" style="width:${usedPct.toFixed(1)}%"></div>
-            </div>
-          </div>
-          <div class="db-key-actions">
-            <span class="db-badge ${p.is_active ? 'active' : 'inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span>
-            <button class="db-btn" onclick="editProject('${p.id}','${p.name}',${budget})">Edit</button>
-          </div>
+  return `
+    <div class="db-key-row" id="project-${p.id}">
+      <div style="flex:1">
+        <div class="db-key-name">${p.name}</div>
+        <div class="db-key-meta">${used.toFixed(4)} TFC used ${unlimited ? '· <span style="color:#00d4ff">Unlimited</span>' : '· of ' + budget.toFixed(2) + ' TFC'}</div>
+        <div class="db-proj-bar">
+          <div style="height:100%;width:${unlimited ? 100 : usedPct}%;background:${barColor};border-radius:100px;transition:width 0.5s"></div>
         </div>
-      `;
-    }).join('');
+      </div>
+      <div class="db-key-actions">
+        <span class="db-badge ${p.is_active ? 'active' : 'inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span>
+        <button class="db-btn" onclick="editProject('${p.id}','${p.name}',${budget})">Edit</button>
+        <button class="db-btn danger" onclick="deleteProject('${p.id}','${p.name}')">Delete</button>
+      </div>
+    </div>
+  `;
+}).join('');
   } catch (err) {
     console.error('Projects error:', err);
   }
