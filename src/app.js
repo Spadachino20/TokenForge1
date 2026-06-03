@@ -5,31 +5,31 @@ const path = require('path');
 require('dotenv').config();
 
 const { runMigrations } = require('./config/migrate');
-const errorHandler = require('./middleware/errorHandler');
-const { generalLimiter } = require('./middleware/rateLimit');
-const authRoutes = require('./routes/auth');
-const billingRoutes = require('./routes/billing');
-const apiRoutes = require('./routes/api');
-const waitlistRoutes = require('./routes/waitlist');
-const usageRoutes = require('./routes/usage');
-const adminRoutes = require('./routes/admin');
-
-const app = express();
-const PORT = process.env.PORT || 8080;
+  const errorHandler = require('./middleware/errorHandler');
+  const { generalLimiter } = require('./middleware/rateLimit');
+  const authRoutes = require('./routes/auth');
+  const billingRoutes = require('./routes/billing');
+  const apiRoutes = require('./routes/api');
+  const waitlistRoutes = require('./routes/waitlist');
+  const usageRoutes = require('./routes/usage');
+  const adminRoutes = require('./routes/admin');
+  const app = express();
+  const PORT = process.env.PORT || 8080;
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'"],
+aapp.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'", "https://fonts.googleapis.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
+        connectSrc: ["'self'", "https://api.stripe.com", "https://cdn.jsdelivr.net"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"]
+      }
     }
-  }
-}));
+  }));
+
 app.use(cors());
 app.use(generalLimiter);
 
