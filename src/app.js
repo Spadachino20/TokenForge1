@@ -51,6 +51,8 @@ app.use('/auth', authRoutes);
 app.use('/billing', billingRoutes);
 app.use('/v1', apiRoutes);
 app.use('/usage', usageRoutes);
+const projectsRoutes = require('./routes/projects');
+app.use('/projects', projectsRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', waitlistRoutes);
 
