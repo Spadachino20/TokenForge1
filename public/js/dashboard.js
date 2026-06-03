@@ -1,6 +1,6 @@
 // Dashboard JavaScript for TokenForge
 
-const API_URL = '';
+const API_URL = '/api'; // <-- Set this to match your backend base path
 let usageChart = null;
 let currentCurrency = 'usd';
 
@@ -281,7 +281,7 @@ async function loadKeys() {
         <div>
           <div class="db-key-name">${key.name}</div>
           <div class="db-key-meta">
-            Created ${new Date(key.created_at).toLocaleDateString()} · 
+            Created ${new Date(key.created_at).toLocaleDateString()} ·
             ${key.last_used_at ? 'Last used ' + new Date(key.last_used_at).toLocaleDateString() : 'Never used'}
           </div>
         </div>
@@ -400,20 +400,23 @@ async function loadProjects() {
     container.innerHTML = data.projects.map(p => {
       const used = parseFloat(p.used_tfc) || 0;
       const budget = parseFloat(p.monthly_budget_tfc) || 0;
-      const pct = budget > 0 ? Math.min(100, (used / budget) * 100) : 0;
-      const barClass = pct >= 90 ? 'crit' : pct >= 70 ? 'warn' : 'ok';
+      const usedPct = budget > 0 ? (used / budget) * 100 : 0;
+      // Calculate remaining percentage to determine bar color
+      const remainingPct = budget > 0 ? 100 - usedPct : 0;
+      const barClass = remainingPct > 30 ? 'ok' : remainingPct > 10 ? 'warn' : 'crit';
+
       return `
         <div class="db-key-row" id="project-${p.id}">
           <div style="flex:1">
             <div class="db-key-name">${p.name}</div>
             <div class="db-key-meta">${used.toFixed(4)} / ${budget.toFixed(2)} TFC used</div>
             <div class="db-proj-bar">
-              <div class="db-proj-bar-fill ${barClass}" style="width:${pct}%"></div>
+              <div class="db-proj-bar-fill ${barClass}" style="width:${usedPct.toFixed(1)}%"></div>
             </div>
           </div>
           <div class="db-key-actions">
             <span class="db-badge ${p.is_active ? 'active' : 'inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span>
-            <button class="db-btn" onclick="editProjectBudget('${p.id}','${p.name}',${p.monthly_budget_tfc})">Edit Budget</button>
+            <button class="db-btn" onclick="editProject('${p.id}','${p.name}',${budget})">Edit</button>
             <button class="db-btn danger" onclick="deleteProject('${p.id}','${p.name}')">Delete</button>
           </div>
         </div>
@@ -424,34 +427,81 @@ async function loadProjects() {
   }
 }
 
-function editProjectBudget(id, name, current) {
-  showModal({
-    title: 'Edit Budget',
-    message: `Set monthly budget for <strong style="color:#fff">${name}</strong> (TFC)`,
-    inputPlaceholder: current,
-    confirmText: 'Save',
-    onConfirm: (val) => {
-      if (!val) return;
-      updateProjectBudget(id, parseFloat(val));
-    }
+// Open modal to edit both name and budget
+async function editProject(id, currentName, currentBudget) {
+  // First ask for a new name (optional)
+  const namePrompt = await new Promise(resolve => {
+    showModal({
+      title: 'Edit Project Name',
+      message: `Current name: <strong style="color:#fff">${currentName}</strong>`,
+      inputPlaceholder: currentName,
+      confirmText: 'Save Name',
+      onConfirm: resolve
+    });
   });
-}
 
-async function updateProjectBudget(id, budget) {
+  const newName = namePrompt?.trim() || currentName;
+
+  // Then ask for a new budget
+  const budgetPrompt = await new Promise(resolve => {
+    showModal({
+      title: 'Edit Project Budget',
+      message: `Current budget: ${currentBudget.toFixed(2)} TFC`,
+      inputPlaceholder: currentBudget.toFixed(2),
+      confirmText: 'Save Budget',
+      onConfirm: resolve
+    });
+  });
+
+  const newBudget = parseFloat(budgetPrompt);
+  if (isNaN(newBudget) || newBudget <= 0) {
+    alert('Budget must be a positive number');
+    return;
+  }
+
+  // Validate that the new budget does not exceed available balance
   const token = localStorage.getItem('token');
   try {
-    await fetch(`${API_URL}/projects/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ monthly_budget_tfc: budget })
+    const balRes = await fetch(`${API_URL}/billing/balance`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
-    loadProjects();
+    const balData = await balRes.json();
+    const availableBalance = parseFloat(balData.balance_tfc) || 0;
+    if (newBudget > availableBalance) {
+      showModal({
+        title: 'Insufficient Balance',
+        message: 'You can only allocate up to your total balance',
+        confirmText: 'OK',
+        onConfirm: () => {}
+      });
+      return;
+    }
+  } catch (e) {
+    console.error('Balance check failed:', e);
+  }
+
+  // Finally, patch the project with name and budget
+  try {
+    const response = await fetch(`${API_URL}/projects/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name: newName,
+        monthly_budget_tfc: newBudget
+      })
+    });
+    if (!response.ok) throw new Error('Patch failed');
+    loadProjects(); // Refresh project list
   } catch (err) {
-    alert('Failed to update budget');
+    console.error('Project edit error:', err);
+    alert('Failed to update project');
   }
 }
 
-function deleteProject(id, name) {
+async function deleteProject(id, name) {
   showModal({
     title: 'Delete Project',
     message: `Are you sure you want to delete <strong style="color:#fff">${name}</strong>?`,
@@ -488,14 +538,38 @@ createProjectForm && createProjectForm.addEventListener('submit', async e => {
   const name = e.target.name.value.trim();
   const budget = parseInt(e.target.budget.value, 10);
   if (!name || isNaN(budget) || budget <= 0) return;
+
+  // Validate budget against available balance before creating
   const token = localStorage.getItem('token');
+  try {
+    const balRes = await fetch(`${API_URL}/billing/balance`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const balData = await balRes.json();
+    const availableBalance = parseFloat(balData.balance_tfc) || 0;
+    if (budget > availableBalance) {
+      showModal({
+        title: 'Insufficient Balance',
+        message: 'You can only allocate up to your total balance',
+        confirmText: 'OK',
+        onConfirm: () => {}
+      });
+      return;
+    }
+  } catch (e) {
+    console.error('Balance check failed:', e);
+  }
+
   try {
     const res = await fetch(`${API_URL}/projects`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ name, monthly_budget_tfc: budget })
     });
-    if (!res.ok) throw new Error('create failed');
+    if (!res.ok) throw new Error('Create failed');
     createProjectModal.style.display = 'none';
     loadProjects();
   } catch (err) {
@@ -523,20 +597,22 @@ async function loadProjects() {
     container.innerHTML = data.projects.map(p => {
       const used = parseFloat(p.used_tfc) || 0;
       const budget = parseFloat(p.monthly_budget_tfc) || 0;
-      const pct = budget > 0 ? Math.min(100, (used / budget) * 100) : 0;
-      const barClass = pct >= 90 ? 'crit' : pct >= 70 ? 'warn' : 'ok';
+      const usedPct = budget > 0 ? (used / budget) * 100 : 0;
+      const remainingPct = budget > 0 ? 100 - usedPct : 0;
+      const barClass = remainingPct > 30 ? 'ok' : remainingPct > 10 ? 'warn' : 'crit';
+
       return `
         <div class="db-key-row">
           <div style="flex:1">
             <div class="db-key-name">${p.name}</div>
             <div class="db-key-meta">${used.toFixed(4)} / ${budget.toFixed(2)} TFC used</div>
             <div class="db-proj-bar">
-              <div class="db-proj-bar-fill ${barClass}" style="width:${pct}%"></div>
+              <div class="db-proj-bar-fill ${barClass}" style="width:${usedPct.toFixed(1)}%"></div>
             </div>
           </div>
           <div class="db-key-actions">
             <span class="db-badge ${p.is_active ? 'active' : 'inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span>
-            <button class="db-btn" onclick="editProjectBudget('${p.id}','${p.name}',${budget})">Edit Budget</button>
+            <button class="db-btn" onclick="editProject('${p.id}','${p.name}',${budget})">Edit</button>
           </div>
         </div>
       `;

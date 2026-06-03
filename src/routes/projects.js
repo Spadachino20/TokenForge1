@@ -131,4 +131,49 @@ router.post('/:projectId/keys', authenticateToken, async (req, res) => {
   }
 });
 
+  // Update project budget/name
+  router.patch('/:projectId', authenticateToken, async (req, res) => {
+    const { projectId } = req.params;
+    const { monthly_budget_tfc, name } = req.body; // Match frontend parameter names
+
+    try {
+      // Update project (allow optional name/budget updates)
+      const result = await db.query(`
+        UPDATE projects
+        SET name = COALESCE($2, name), monthly_budget_tfc = COALESCE($3, monthly_budget_tfc)
+        WHERE id = $1 AND user_id = $4
+      `, [projectId, name, monthly_budget_tfc, req.userId]);
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'Project not found or unauthorized' });
+      }
+
+      res.status(200).json({ success: true });
+    } catch (err) {
+      console.error('Update project error:', err);
+      res.status(500).json({ error: 'Failed to update project' });
+    }
+  });
+
+  // Delete project
+  router.delete('/:projectId', authenticateToken, async (req, res) => {
+    const { projectId } = req.params;
+
+    try {
+      const result = await db.query(
+        'DELETE FROM projects WHERE id = $1 AND user_id = $2',
+        [projectId, req.userId]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'Project not found or unauthorized' });
+      }
+
+      res.status(200).json({ success: true });
+    } catch (err) {
+      console.error('Delete project error:', err);
+      res.status(500).json({ error: 'Failed to delete project' });
+    }
+  });
+
 module.exports = router;
