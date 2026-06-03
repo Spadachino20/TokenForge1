@@ -541,7 +541,7 @@ if (createProjectBtn) {
           confirmText: 'Create',
           onConfirm: async (budgetStr) => {
             const budget = parseFloat(budgetStr);
-            if (isNaN(budget) || budget <= 0) return;
+            if (isNaN(budget) || budget < 0) return;
             const token = localStorage.getItem('token');
             try {
               const res = await fetch('/projects', {
