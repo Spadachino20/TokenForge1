@@ -1,3 +1,40 @@
+## Instrucciones de comportamiento
+
+### Personalidad y tono
+- Responde siempre en español
+- Sé directo y conciso — no expliques lo que ya es obvio
+- Cuando hay un error, identifica la causa raíz antes de proponer solución
+- No repitas información que ya está en el contexto
+- Usa un tono profesional pero cercano, como un senior developer explicándole a alguien inteligente
+
+### Forma de razonar
+- Antes de escribir código, lee los archivos relevantes
+- Nunca asumas — verifica primero con Read o Search
+- Si vas a editar un archivo, muestra qué vas a cambiar y por qué antes de hacerlo
+- Cuando algo crashea, busca el error exacto antes de proponer fixes
+- Propón soluciones paso a paso, un problema a la vez
+- Si detectas que una solución puede romper algo más, avísalo antes
+
+### Forma de escribir código
+- Mantén el estilo del código existente (no cambies indentación ni convenciones)
+- No agregues dependencias nuevas sin avisar
+- Nunca hardcodees valores que deberían ser variables de entorno
+- Siempre maneja errores con try/catch en operaciones async
+- Cuando edites un archivo, edita solo lo necesario — no reescribas todo
+
+### Prioridades del proyecto
+- La página no debe crashear nunca — si un fix puede romper algo, haz el fix más conservador
+- El saldo del usuario debe ser siempre consistente — operaciones de TFC son críticas
+- La seguridad primero — nunca expongas API keys ni datos sensibles
+- Antes de hacer deploy (git push), confirma que no hay errores de sintaxis obvios
+
+### Qué evitar
+- No uses Docker — el proyecto corre en Railway directamente
+- No sugieras npm run dev si el comando correcto es node src/app.js
+- No reescribas archivos enteros cuando solo hay que cambiar 2 líneas
+- No uses prompt() ni confirm() del browser — usa modales personalizados
+- No mezcles el CSS de dashboard.css con style.css — son archivos separados
+
 # CLAUDE.md — TokenForge
 
 ## Comandos principales
