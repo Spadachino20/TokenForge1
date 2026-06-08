@@ -115,28 +115,32 @@ router.get('/keys', authenticateToken, async (req, res) => {
 
 // Create API key
 router.post('/keys', authenticateToken, async (req, res) => {
-  const { name = 'Default Key' } = req.body;
+  const { name = 'Default Key', project_id } = req.body; // project_id es opcional; omitir → master key
 
   try {
-    // Limit to 10 keys per user
-    const count = await db.query(
+    // Limit to 10 active keys per user
+    const { rows } = await db.query(
       'SELECT COUNT(*) FROM api_keys WHERE user_id = $1 AND is_active = true',
       [req.userId]
     );
-    if (parseInt(count.rows[0].count) >= 10) {
-      return res.status(400).json({ error: 'Maximum of 10 active API keys allowed' });
+    if (parseInt(rows[0].count) >= 10) {
+      return res.status(400).json({ error: 'Máximo de 10 keys activas permitido' });
     }
 
+    // Generate key
     const keyValue = 'tf_sk_' + crypto.randomBytes(32).toString('hex');
     const keyHash = crypto.createHash('sha256').update(keyValue).digest('hex');
 
+    // Save to database (project_id optional: null = master key)
     const result = await db.query(
-      'INSERT INTO api_keys (user_id, key_hash, name) VALUES ($1, $2, $3) RETURNING id, name, is_active, created_at',
-      [req.userId, keyHash, name]
+      `INSERT INTO api_keys (user_id, key_hash, name, project_id)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, is_active, created_at`,
+      [req.userId, keyHash, name, project_id || null]
     );
 
     res.status(201).json({
-      message: 'API key created. Save it now — it will not be shown again.',
+      message: 'Key creada. ¡Guarda la clave ahora — no se mostrará nuevamente!',
       key: { ...result.rows[0], value: keyValue }
     });
   } catch (err) {
