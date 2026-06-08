@@ -70,6 +70,84 @@ function showModal({ title, message, inputPlaceholder = null, confirmText = 'Con
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 }
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function showCreateKeyModal(projects) {
+  const existing = document.getElementById('tf-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'tf-modal';
+  modal.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+  `;
+
+  const options = projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+  modal.innerHTML = `
+    <div style="
+      background:#0d0d0d;
+      border:1px solid #1F2937;
+      border-radius:14px;
+      padding:2rem;
+      width:100%;max-width:420px;
+      margin:1rem;
+      box-shadow:0 0 40px rgba(0,212,255,0.08);
+    ">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#fff">Create New API Key</h3>
+      <p style="font-size:0.85rem;color:#888;margin-bottom:1rem">Choose a name and optionally assign it to a project. Leave project empty for a <strong style="color:#f59e0b">Master Key</strong> (works with all projects).</p>
+      <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem">Key Name</label>
+      <input id="tf-key-name" type="text" placeholder="Production" style="
+        width:100%;background:#000;border:1px solid #1F2937;border-radius:8px;
+        padding:0.65rem 0.9rem;color:#fff;font-size:0.9rem;font-family:inherit;
+        outline:none;margin-bottom:1rem;
+      "/>
+      <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem">Project (optional)</label>
+      <select id="tf-key-project" style="
+        width:100%;background:#000;border:1px solid #1F2937;border-radius:8px;
+        padding:0.65rem 0.9rem;color:#fff;font-size:0.9rem;font-family:inherit;
+        outline:none;margin-bottom:1.5rem;
+      ">
+        <option value="">Master Key — works with all projects</option>
+        ${options}
+      </select>
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+        <button id="tf-modal-cancel" style="
+          padding:0.5rem 1.1rem;border-radius:8px;border:1px solid #1F2937;
+          background:transparent;color:#888;font-size:0.85rem;cursor:pointer;font-family:inherit;
+        ">Cancel</button>
+        <button id="tf-modal-confirm" style="
+          padding:0.5rem 1.1rem;border-radius:8px;border:none;font-weight:700;
+          font-size:0.85rem;cursor:pointer;font-family:inherit;
+          background:#00d4ff;color:#000;
+        ">Create Key</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById('tf-key-name').focus();
+
+  function handleConfirm() {
+    const name = document.getElementById('tf-key-name').value.trim();
+    const projectId = document.getElementById('tf-key-project').value || null;
+    if (!name) return;
+    modal.remove();
+    createKey(name, projectId);
+  }
+
+  document.getElementById('tf-modal-confirm').addEventListener('click', handleConfirm);
+  document.getElementById('tf-modal-cancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.getElementById('tf-key-name').addEventListener('keydown', e => { if (e.key === 'Enter') handleConfirm(); });
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');

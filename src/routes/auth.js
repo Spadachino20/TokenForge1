@@ -104,7 +104,10 @@ router.get('/me', authenticateToken, async (req, res) => {
 router.get('/keys', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(
-      'SELECT id, name, is_active, created_at, last_used_at FROM api_keys WHERE user_id = $1 ORDER BY created_at DESC',
+      `SELECT k.id, k.name, k.is_active, k.created_at, k.last_used_at, k.project_id, p.name as project_name
+       FROM api_keys k
+       LEFT JOIN projects p ON k.project_id = p.id
+       WHERE k.user_id = $1 ORDER BY k.created_at DESC`,
       [req.userId]
     );
     res.json({ keys: result.rows });
@@ -135,7 +138,7 @@ router.post('/keys', authenticateToken, async (req, res) => {
     const result = await db.query(
       `INSERT INTO api_keys (user_id, key_hash, name, project_id)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, name, is_active, created_at`,
+       RETURNING id, name, is_active, created_at, project_id`,
       [req.userId, keyHash, name, project_id || null]
     );
 
