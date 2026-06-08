@@ -144,6 +144,11 @@ body {
   margin-bottom: 1.5rem;
 }
 .db-section-header h2 { font-size: 1.1rem; font-weight: 700; }
+.db-section-hint {
+  margin: -0.8rem 0 1rem;
+  color: #888;
+  font-size: 0.85rem;
+}
 
 /* CARDS */
 .db-card {

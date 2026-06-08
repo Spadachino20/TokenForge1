@@ -84,6 +84,10 @@
         <h2>API Keys</h2>
         <button class="db-add-btn" id="createKeyBtn">+ New Key</button>
       </div>
+      <p class="db-section-hint">
+        Al crear una key puedes asociarla a un proyecto. Si dejas <strong>Proyecto</strong> vacío, se crea una
+        <strong>Master Key</strong> que funciona en todos los proyectos.
+      </p>
       <div id="keysList">
         <div class="db-empty">No API keys yet. Create one to get started.</div>
       </div>
@@ -113,6 +117,6 @@
   </main>
 </div>
 
-<script src="/js/dashboard.js"></script>
+<script src="/js/dashboard.js?v=20260608-projectkeys"></script>
 </body>
 </html>
