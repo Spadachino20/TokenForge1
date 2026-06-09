@@ -357,10 +357,10 @@ async function loadKeys() {
     container.innerHTML = activeKeys.map(key => `
       <div class="db-key-row" id="key-row-${key.id}">
         <div>
-          <div class="db-key-name">${key.name}</div>
-          <div class="db-key-meta">
+         <div class="db-key-meta">
             Created ${new Date(key.created_at).toLocaleDateString()} ·
-            ${key.last_used_at ? 'Last used ' + new Date(key.last_used_at).toLocaleDateString() : 'Never used'}
+            ${key.last_used_at ? 'Last used ' + new Date(key.last_used_at).toLocaleDateString() : 'Never used'} ·
+            ${key.project_id ? `<span style="color:#00d4ff">📁 ${key.project_name || 'Project'}</span>` : '<span style="color:#888">🔑 Master Key</span>'}
           </div>
         </div>
         <div class="db-key-actions">
@@ -378,10 +378,37 @@ async function loadKeys() {
 async function createKey(name) {
   const token = localStorage.getItem('token');
   try {
+    // Fetch projects to let user assign key to a project
+    const projRes = await fetch('/projects', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const projData = await projRes.json();
+    const projects = projData.projects || [];
+
+    let project_id = null;
+
+    if (projects.length > 0) {
+      const options = ['None (Master Key)', ...projects.map(p => p.name)];
+      const choice = await new Promise(resolve => {
+        showModal({
+          title: 'Assign to Project',
+          message: `Assign this key to a project, or leave as Master Key.<br><br>${options.map((o, i) => `<span style="color:${i===0?'#00d4ff':'#888'}">${i === 0 ? '🔑 ' : '📁 '}${o}</span>`).join('<br>')}`,
+          inputPlaceholder: 'Type project name or leave blank for Master Key',
+          confirmText: 'Create Key',
+          onConfirm: resolve
+        });
+      });
+
+      if (choice && choice.trim() !== '') {
+        const match = projects.find(p => p.name.toLowerCase() === choice.toLowerCase().trim());
+        if (match) project_id = match.id;
+      }
+    }
+
     const res = await fetch(`${API_URL}/auth/keys`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name, project_id })
     });
     const data = await res.json();
     if (data.key) {
