@@ -378,52 +378,58 @@ async function loadKeys() {
 async function createKey(name) {
   const token = localStorage.getItem('token');
   try {
-    // Fetch projects to let user assign key to a project
     const projRes = await fetch('/projects', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const projData = await projRes.json();
     const projects = projData.projects || [];
 
-    let project_id = null;
-
-    if (projects.length > 0) {
-      const options = ['None (Master Key)', ...projects.map(p => p.name)];
-      const choice = await new Promise(resolve => {
+    const doCreate = async (project_id) => {
+      const res = await fetch('/auth/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ name, project_id })
+      });
+      const data = await res.json();
+      if (data.key) {
         showModal({
-          title: 'Assign to Project',
-          message: `Assign this key to a project, or leave as Master Key.<br><br>${options.map((o, i) => `<span style="color:${i===0?'#00d4ff':'#888'}">${i === 0 ? '🔑 ' : '📁 '}${o}</span>`).join('<br>')}`,
-          inputPlaceholder: 'Type project name or leave blank for Master Key',
-          confirmText: 'Create Key',
-          onConfirm: resolve
+          title: '⚠️ Save Your API Key',
+          message: `Copy it now — won't be shown again:<br><br><code style="background:#000;padding:0.4rem 0.6rem;border-radius:6px;font-size:0.8rem;color:#00d4ff;word-break:break-all">${data.key.value}</code><br><br>${project_id ? '📁 Assigned to project' : '🔑 Master Key — works on all projects'}`,
+          confirmText: 'Done',
+          onConfirm: () => loadKeys()
         });
-      });
-
-      if (choice && choice.trim() !== '') {
-        const match = projects.find(p => p.name.toLowerCase() === choice.toLowerCase().trim());
-        if (match) project_id = match.id;
       }
+    };
+
+    if (projects.length === 0) {
+      doCreate(null);
+      return;
     }
 
-    const res = await fetch(`${API_URL}/auth/keys`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ name, project_id })
+    const projectOptions = projects.map((p, i) => 
+      `<span style="color:#888">${i+1}. 📁 ${p.name}</span>`
+    ).join('<br>');
+
+    showModal({
+      title: 'Assign to Project (optional)',
+      message: `Type the project number to assign, or leave blank for Master Key:<br><br>${projectOptions}`,
+      inputPlaceholder: 'Leave blank for Master Key',
+      confirmText: 'Create Key',
+      onConfirm: (val) => {
+        let project_id = null;
+        if (val && val.trim() !== '') {
+          const idx = parseInt(val.trim()) - 1;
+          if (!isNaN(idx) && projects[idx]) {
+            project_id = projects[idx].id;
+          }
+        }
+        doCreate(project_id);
+      }
     });
-    const data = await res.json();
-    if (data.key) {
-      showModal({
-        title: '⚠️ Save Your API Key',
-        message: `Your new API key — copy it now, it won't be shown again:<br><br><code style="background:#000;padding:0.4rem 0.6rem;border-radius:6px;font-size:0.8rem;color:#00d4ff;word-break:break-all">${data.key.value}</code>`,
-        confirmText: 'Done',
-        onConfirm: () => loadKeys()
-      });
-    }
   } catch (err) {
     alert('Failed to create key');
   }
 }
-
 function editKey(keyId, currentName) {
   showModal({
     title: 'Rename API Key',
