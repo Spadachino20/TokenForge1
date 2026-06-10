@@ -22,8 +22,7 @@ const AVAILABLE_MODELS = {
   'claude-3-opus-20240229': 'anthropic',
   'claude-3-haiku-20240307': 'anthropic',
   'claude-3-5-haiku-20241022': 'anthropic',
-  'gemini-1.5-pro': 'gemini',
-  'gemini-1.5-flash': 'gemini',
+  'gemini-2.0-flash-lite': 'gemini',
   'gemini-2.0-flash': 'gemini',
 };
 
