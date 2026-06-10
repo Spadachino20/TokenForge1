@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — TokenForge</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    .docs-content {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      line-height: 1.6;
+      color: #333;
+    }
+    .docs-content h1 { color: #1a1a1a; margin-top: 0; }
+    .docs-content h2 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-top: 2rem; }
+    .docs-content code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
+    .docs-content pre { background: #282c34; color: #abb2bf; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    .docs-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    .docs-content th, .docs-content td { border: 1px solid #ddd; padding: 0.8rem; text-align: left; }
+    .docs-content th { background: #f8f9fa; }
+  </style>
+</head>
+<body>
+
+<nav class="db-nav">
+  <a href="/" class="db-brand">⚡ TokenForge</a>
+  <div class="db-nav-right">
+    <a href="/dashboard.html">Back to Dashboard</a>
+  </div>
+</nav>
+
+<main class="docs-content">
+  <h1>TokenForge API Documentation</h1>
+  <p>TokenForge unifies access to the world's leading LLMs—<strong>OpenAI, Anthropic, and Google</strong>—behind a single, standardized API. Forget managing multiple providers, complex billing, or disjointed integration code. With one <code>tf_sk_</code> API key and a simple <code>base_url</code> update, you are ready to integrate.</p>
+
+  <h2>Getting Started</h2>
+  <h3>The Only Change You Need</h3>
+  <p>If you are already using the OpenAI SDK, you don't need to rewrite your application. Simply point your client to our gateway, and you’re done.</p>
+  <pre><code># Configure your client to use TokenForge
+base_url = "https://tokenforge1-production.up.railway.app/v1"
+api_key = "tf_sk_YOUR_TOKENFORGE_API_KEY"</code></pre>
+
+  <h2>Integration Examples</h2>
+  <h3>1. Python</h3>
+  <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="tf_sk_YOUR_TOKENFORGE_API_KEY",
+    base_url="https://tokenforge1-production.up.railway.app/v1"
+)
+
+response = client.chat.completions.create(
+    model="claude-3-5-sonnet-20241022",
+    messages=[{"role": "user", "content": "Explain quantum computing simply."}]
+)
+
+print(response.choices[0].message.content)</code></pre>
+
+  <h3>2. Node.js</h3>
+  <pre><code>const { OpenAI } = require("openai");
+
+const client = new OpenAI({
+  apiKey: "tf_sk_YOUR_TOKENFORGE_API_KEY",
+  baseURL: "https://tokenforge1-production.up.railway.app/v1",
+});
+
+async function main() {
+  const completion = await client.chat.completions.create({
+    model: "gemini-2.0-flash",
+    messages: [{ role: "user", content: "Hello!" }],
+  });
+  console.log(completion.choices[0].message.content);
+}
+
+main();</code></pre>
+
+  <h3>3. cURL (Command Line)</h3>
+  <pre><code>curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer tf_sk_YOUR_TOKENFORGE_API_KEY" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "How are you today?"}]
+  }'</code></pre>
+
+  <h2>Available Models</h2>
+  <table>
+    <tr><th>Provider</th><th>Supported Models</th></tr>
+    <tr><td>OpenAI</td><td>gpt-5.5, gpt-5, gpt-4o, gpt-4o-mini, gpt-4-turbo, o1, o1-mini</td></tr>
+    <tr><td>Anthropic</td><td>claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5, claude-3-5-sonnet-20241022, claude-3-opus-20240229, claude-3-haiku-20240307</td></tr>
+    <tr><td>Google</td><td>gemini-2.0-flash, gemini-2.0-flash-lite</td></tr>
+  </table>
+
+  <h2>Key Features</h2>
+  <ul>
+    <li><strong>TFC Credits:</strong> 1 TFC = 1 USD. Monitor usage in your dashboard.</li>
+    <li><strong>Streaming:</strong> Supported by default.</li>
+    <li><strong>Security:</strong> Never expose your API key in frontend code.</li>
+  </ul>
+</main>
+
+</body>
+</html>
