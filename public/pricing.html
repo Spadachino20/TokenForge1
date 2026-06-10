@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — TokenForge</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body{background:#000;color:#fff;font-family:'Inter',sans-serif;margin:0}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid #1a1a1a}
+    .nav-brand{color:#00d4ff;font-weight:800;font-size:1.2rem;text-decoration:none}
+    .nav-links{display:flex;gap:1.5rem;align-items:center}
+    .nav-links a{color:#888;text-decoration:none;font-size:0.9rem;transition:color 0.2s}
+    .nav-links a:hover{color:#fff}
+    .btn-cta{background:#00d4ff;color:#000;padding:0.5rem 1.2rem;border-radius:8px;font-weight:700;font-size:0.85rem}
+    .hero{text-align:center;padding:5rem 2rem 3rem}
+    .hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
+    .hero p{color:#888;font-size:1.05rem;max-width:520px;margin:0 auto 2rem}
+    .gradient-text{background:linear-gradient(135deg,#00d4ff,#0088ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .badge{display:inline-block;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:#00d4ff;padding:0.3rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.5rem}
+    .how-it-works{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin:2rem auto;max-width:700px}
+    .how-item{text-align:center;flex:1;min-width:160px}
+    .how-num{font-size:2rem;font-weight:800;color:#00d4ff;margin-bottom:0.3rem}
+    .how-label{font-size:0.85rem;color:#888}
+    .section{max-width:960px;margin:0 auto;padding:0 2rem 4rem}
+    .section-title{font-size:1.3rem;font-weight:700;margin-bottom:0.5rem}
+    .section-sub{color:#666;font-size:0.9rem;margin-bottom:1.5rem}
+    .table-wrap{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:1rem}
+    table{width:100%;border-collapse:collapse;font-size:0.88rem}
+    thead{background:#111}
+    th{padding:0.9rem 1.2rem;text-align:left;color:#666;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px}
+    td{padding:0.85rem 1.2rem;border-top:1px solid #111;vertical-align:middle}
+    tr:hover td{background:rgba(255,255,255,0.02)}
+    .model-name{font-weight:600;color:#fff}
+    .provider-tag{display:inline-block;padding:0.15rem 0.55rem;border-radius:100px;font-size:0.7rem;font-weight:700;margin-left:0.4rem}
+    .tag-openai{background:rgba(16,163,127,0.15);color:#10a37f}
+    .tag-anthropic{background:rgba(205,133,63,0.15);color:#cd853f}
+    .tag-gemini{background:rgba(66,133,244,0.15);color:#4285f4}
+    .price{font-family:monospace;color:#00d4ff;font-size:0.85rem}
+    .ctx{color:#555;font-size:0.8rem}
+    .divider{border:none;border-top:1px solid #1a1a1a;margin:0.5rem 0}
+    .note{color:#555;font-size:0.78rem;margin-top:0.8rem;text-align:center}
+    .faq{max-width:700px;margin:0 auto;padding:0 2rem 5rem}
+    .faq h2{font-size:1.3rem;font-weight:700;margin-bottom:1.5rem}
+    .faq-item{border-bottom:1px solid #1a1a1a;padding:1.2rem 0}
+    .faq-item h3{font-size:0.95rem;font-weight:600;margin-bottom:0.4rem}
+    .faq-item p{color:#888;font-size:0.88rem;line-height:1.6;margin:0}
+    .cta-section{text-align:center;padding:3rem 2rem 5rem;border-top:1px solid #1a1a1a}
+    .cta-section h2{font-size:1.8rem;font-weight:800;margin-bottom:0.8rem}
+    .cta-section p{color:#888;margin-bottom:2rem}
+    .btn-primary{background:#00d4ff;color:#000;padding:0.8rem 2rem;border-radius:10px;font-weight:700;font-size:1rem;text-decoration:none;display:inline-block;transition:opacity 0.2s}
+    .btn-primary:hover{opacity:0.85}
+    .footer{text-align:center;padding:2rem;border-top:1px solid #1a1a1a;color:#555;font-size:0.85rem}
+    .footer a{color:#555;text-decoration:none}
+    .footer a:hover{color:#888}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">⚡ TokenForge</a>
+  <div class="nav-links">
+    <a href="/pricing.html">Pricing</a>
+    <a href="/docs.html">Docs</a>
+    <a href="/login.html">Sign In</a>
+    <a href="/signup.html" class="btn-cta">Get Started</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge">Simple, transparent pricing</div>
+  <h1>Pay only for what<br><span class="gradient-text">you actually use</span></h1>
+  <p>No subscriptions, no hidden fees. Buy TFC credits and spend them across any model. 1 TFC = $1 USD.</p>
+  <div class="how-it-works">
+    <div class="how-item">
+      <div class="how-num">1</div>
+      <div class="how-label">Buy TFC credits<br>(min $10)</div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">2</div>
+      <div class="how-label">Use any model<br>with one API key</div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">3</div>
+      <div class="how-label">Credits deducted<br>per request</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Model Pricing</div>
+  <div class="section-sub">Prices include TokenForge's 20% platform fee. All prices per 1,000 tokens.</div>
+
+  <!-- OpenAI -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Input (per 1K tokens)</th>
+          <th>Output (per 1K tokens)</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="model-name">GPT-5.5</span><span class="provider-tag tag-openai">OpenAI</span></td>
+          <td><span class="price">0.006000 TFC</span></td>
+          <td><span class="price">0.036000 TFC</span></td>
+          <td><span class="ctx">1M</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">GPT-5</span><span class="provider-tag tag-openai">OpenAI</span></td>
+          <td><span class="price">0.000750 TFC</span></td>
+          <td><span class="price">0.006000 TFC</span></td>
+          <td><span class="ctx">400K</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">GPT-4o</span><span class="provider-tag tag-openai">OpenAI</span></td>
+          <td><span class="price">0.003000 TFC</span></td>
+          <td><span class="price">0.012000 TFC</span></td>
+          <td><span class="ctx">128K</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">GPT-4o Mini</span><span class="provider-tag tag-openai">OpenAI</span></td>
+          <td><span class="price">0.000180 TFC</span></td>
+          <td><span class="price">0.000720 TFC</span></td>
+          <td><span class="ctx">128K</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">o1</span><span class="provider-tag tag-openai">OpenAI</span></td>
+          <td><span class="price">0.018000 TFC</span></td>
+          <td><span class="price">0.072000 TFC</span></td>
+          <td><span class="ctx">128K</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">o1 Mini</span><span class="provider-tag tag-openai">OpenAI</span></td>
+          <td><span class="price">0.003600 TFC</span></td>
+          <td><span class="price">0.014400 TFC</span></td>
+          <td><span class="ctx">128K</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Anthropic -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Input (per 1K tokens)</th>
+          <th>Output (per 1K tokens)</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="model-name">Claude Opus 4.8</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
+          <td><span class="price">0.006000 TFC</span></td>
+          <td><span class="price">0.030000 TFC</span></td>
+          <td><span class="ctx">1M</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Claude Sonnet 4.6</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
+          <td><span class="price">0.003600 TFC</span></td>
+          <td><span class="price">0.018000 TFC</span></td>
+          <td><span class="ctx">1M</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Claude Haiku 4.5</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
+          <td><span class="price">0.001200 TFC</span></td>
+          <td><span class="price">0.006000 TFC</span></td>
+          <td><span class="ctx">200K</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Claude 3.5 Sonnet</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
+          <td><span class="price">0.003600 TFC</span></td>
+          <td><span class="price">0.018000 TFC</span></td>
+          <td><span class="ctx">200K</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Claude 3 Haiku</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
+          <td><span class="price">0.000300 TFC</span></td>
+          <td><span class="price">0.001500 TFC</span></td>
+          <td><span class="ctx">200K</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Google -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Input (per 1K tokens)</th>
+          <th>Output (per 1K tokens)</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="model-name">Gemini 2.0 Flash</span><span class="provider-tag tag-gemini">Google</span></td>
+          <td><span class="price">0.000120 TFC</span></td>
+          <td><span class="price">0.000480 TFC</span></td>
+          <td><span class="ctx">1M</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Gemini 2.0 Flash Lite</span><span class="provider-tag tag-gemini">Google</span></td>
+          <td><span class="price">0.000090 TFC</span></td>
+          <td><span class="price">0.000360 TFC</span></td>
+          <td><span class="ctx">1M</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">Prices shown include the 20% TokenForge platform fee. 1 TFC = $1 USD. Prices may vary slightly as provider rates change.</p>
+</div>
+
+<div class="faq">
+  <h2>Frequently asked questions</h2>
+
+  <div class="faq-item">
+    <h3>What is a TFC credit?</h3>
+    <p>TFC (TokenForge Credit) is our internal currency. 1 TFC = $1 USD. You buy credits upfront and they're deducted automatically as you make API calls. No monthly fees, no subscriptions.</p>
+  </div>
+  <div class="faq-item">
+    <h3>What's the minimum purchase?</h3>
+    <p>The minimum purchase is $10 (10 TFC). Credits never expire.</p>
+  </div>
+  <div class="faq-item">
+    <h3>How do I switch between models?</h3>
+    <p>Just change the <code style="background:#111;padding:0.1rem 0.4rem;border-radius:4px;color:#00d4ff">model</code> parameter in your request. No SDK changes, no new API keys needed.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is TokenForge more expensive than going direct?</h3>
+    <p>TokenForge adds a 20% platform fee over provider costs. In exchange you get one API key, one dashboard, one bill, project tracking, and balance alerts — instead of managing 3+ accounts.</p>
+  </div>
+  <div class="faq-item">
+    <h3>What happens when my credits run out?</h3>
+    <p>Requests are automatically blocked — you'll never be charged more than your balance. You'll receive email alerts at 20% and 10% remaining.</p>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2>Start building today</h2>
+  <p>One API key. Every model. Pay only what you use.</p>
+  <a href="/signup.html" class="btn-primary">Create free account →</a>
+</div>
+
+<footer class="footer">
+  <p>© 2026 TokenForge · <a href="/terms.html">Terms of Service</a> · <a href="/pricing.html">Pricing</a></p>
+</footer>
+
+</body>
+</html>
