@@ -129,8 +129,8 @@ ON CONFLICT (model) DO UPDATE SET
   input_cost_per_1k = EXCLUDED.input_cost_per_1k,
   output_cost_per_1k = EXCLUDED.output_cost_per_1k,
   display_name = EXCLUDED.display_name;
+  `
 ];
-
 async function runMigrations() {
   console.log('Running migrations...');
   
