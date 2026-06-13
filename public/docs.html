@@ -3,133 +3,958 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Documentation — TokenForge</title>
+  <title>Documentation - TokenForge</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
   <style>
-    body { background-color: #000000; color: var(--text); margin: 0; font-family: 'Inter', sans-serif; }
-
-    /* NAVBAR (matching index.html) */
-    .db-nav {
-      position: fixed; top: 0; width: 100%; height: 60px;
-      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--bg-border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; z-index: 1000;
+    :root {
+      --docs-sidebar-width: 260px;
+      --docs-header-height: 60px;
     }
-    .docs-header {
-      display: flex; align-items: center; gap: 8px;
-      text-decoration: none; font-size: 1.3rem; font-weight: 800;
+    
+    .docs-layout {
+      display: grid;
+      grid-template-columns: var(--docs-sidebar-width) 1fr;
+      min-height: 100vh;
+      padding-top: var(--docs-header-height);
     }
-    .docs-header .icon { color: var(--primary); font-size: 1.3rem; }
-    .docs-header .token-forge { color: #ffffff; }
-    .docs-header .sep { color: #888888; font-weight: 400; }
-    .db-nav-right { display: flex; gap: 1.5rem; }
-    .db-nav-right a { color: #888888; text-decoration: none; font-size: 0.9rem; }
-    .db-nav-right a:hover { color: #ffffff; }
-
-    .docs-content {
-      max-width: 900px;
-      margin: 80px auto 4rem;
-      padding: 3rem;
+    
+    .docs-sidebar {
+      position: fixed;
+      top: var(--docs-header-height);
+      left: 0;
+      width: var(--docs-sidebar-width);
+      height: calc(100vh - var(--docs-header-height));
       background: var(--bg-card);
-      border-radius: 12px;
-      border: 1px solid var(--bg-border);
+      border-right: 1px solid var(--bg-border);
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+    
+    .sidebar-section {
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      padding: 0 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .sidebar-nav {
+      list-style: none;
+    }
+    
+    .sidebar-nav li a {
+      display: block;
+      padding: 0.5rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+    
+    .sidebar-nav li a:hover,
+    .sidebar-nav li a.active {
+      color: var(--primary);
+      background: rgba(0, 212, 255, 0.05);
+      border-left-color: var(--primary);
+    }
+    
+    .docs-main {
+      margin-left: var(--docs-sidebar-width);
+      padding: 2rem 3rem;
+      max-width: 900px;
+    }
+    
+    .docs-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--docs-header-height);
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--bg-border);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      z-index: 100;
+    }
+    
+    .docs-header-brand {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 1.1rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .docs-header-brand span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    
+    .docs-header-right {
+      margin-left: auto;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .docs-header-right a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .docs-header-right a:hover {
+      color: var(--text);
+    }
+    
+    .docs-content h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
+    
+    .docs-content h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--bg-border);
+    }
+    
+    .docs-content h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+    }
+    
+    .docs-content p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
       line-height: 1.7;
+    }
+    
+    .docs-content ul,
+    .docs-content ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
       color: var(--text-muted);
     }
-    .docs-content h1 { color: #ffffff; margin-top: 0; font-size: 2.5rem; }
-    .docs-content h2 { border-bottom: 1px solid var(--bg-border); padding-bottom: 0.8rem; margin-top: 3rem; color: #ffffff; }
-    .docs-content h3 { color: var(--primary); margin-top: 2rem; }
-    .docs-content code { background: #1a1a1a; padding: 0.2rem 0.4rem; border-radius: 4px; color: var(--text); }
-    .docs-content pre { background: #0a0a0a; color: #ffffff; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--bg-border); }
-    .docs-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; color: var(--text-muted); }
-    .docs-content th, .docs-content td { border: 1px solid var(--bg-border); padding: 1rem; text-align: left; }
-    .docs-content th { background: var(--bg-card); color: #ffffff; }
+    
+    .docs-content li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    
+    .docs-content a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .docs-content a:hover {
+      text-decoration: underline;
+    }
+    
+    .docs-content code {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    }
+    
+    .docs-content pre {
+      background: #0a0a0a;
+      border: 1px solid var(--bg-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    .docs-content pre code {
+      background: none;
+      color: #e6e6e6;
+      padding: 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    
+    .docs-content blockquote {
+      border-left: 3px solid var(--primary);
+      background: rgba(0, 212, 255, 0.05);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .docs-content blockquote p {
+      margin: 0;
+      color: var(--text);
+    }
+    
+    .docs-content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .endpoint-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .method-badge {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .method-post { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .method-get { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .method-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    
+    .endpoint-path {
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    
+    .endpoint-desc {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    
+    .param-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .param-table th {
+      text-align: left;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--bg-border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+    
+    .param-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--bg-border);
+      color: var(--text-muted);
+    }
+    
+    .param-table td:first-child {
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      color: var(--primary);
+    }
+    
+    .param-table td code {
+      background: rgba(0, 212, 255, 0.1);
+      padding: 0.15rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.8em;
+    }
+    
+    .param-required {
+      color: var(--error);
+      font-size: 0.8rem;
+    }
+    
+    .param-optional {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-muted);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text);
+    }
+    
+    .code-block-wrapper {
+      position: relative;
+    }
+    
+    .quickstart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .quickstart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    
+    .quickstart-card:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+    }
+    
+    .quickstart-card h4 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .quickstart-card p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .badge-new { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .badge-beta { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    
+    .toc {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .toc h4 {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    
+    .toc ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .toc a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .toc a:hover {
+      color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+      .docs-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .docs-sidebar {
+        display: none;
+      }
+      
+      .docs-main {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+      
+      .docs-content h1 {
+        font-size: 1.8rem;
+      }
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+      }
+    }
   </style>
 </head>
 <body>
+  <header class="docs-header">
+    <a href="/" class="docs-header-brand">⚡ TokenForge <span>/ Docs</span></a>
+    <div class="docs-header-right">
+      <a href="/dashboard.html">Dashboard</a>
+      <a href="/login.html">Sign In</a>
+    </div>
+  </header>
 
-<nav class="db-nav">
-  <a href="/" class="docs-header">
-    <span class="icon">⚡</span>
-    <span class="token-forge">TokenForge</span>
-    <span class="sep">/ Docs</span>
-  </a>
-  <div class="db-nav-right">
-    <a href="/dashboard.html">Dashboard</a>
-    <a href="/login.html">Sign In</a>
-  </div>
-</nav>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Getting Started</div>
+        <ul class="sidebar-nav">
+          <li><a href="#quickstart" class="active">Quick Start</a></li>
+          <li><a href="#authentication">Authentication</a></li>
+          <li><a href="#base-url">Base URL</a></li>
+        </ul>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">API Reference</div>
+        <ul class="sidebar-nav">
+          <li><a href="#chat-completions">Chat Completions</a></li>
+          <li><a href="#models">List Models</a></li>
+          <li><a href="#error-handling">Error Handling</a></li>
+        </ul>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">Guides</div>
+        <ul class="sidebar-nav">
+          <li><a href="#sdks">SDKs & Libraries</a></li>
+          <li><a href="#credits">Credits & Billing</a></li>
+          <li><a href="#projects">Projects & API Keys</a></li>
+          <li><a href="#streaming">Streaming Responses</a></li>
+        </ul>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">Resources</div>
+        <ul class="sidebar-nav">
+          <li><a href="#status">Status Page</a></li>
+          <li><a href="#changelog">Changelog</a></li>
+          <li><a href="#support">Support</a></li>
+        </ul>
+      </div>
+    </aside>
 
-<main class="docs-content">
-  <h1>TokenForge API Documentation</h1>
-  <p>TokenForge unifies access to the world's leading LLMs—<strong>OpenAI, Anthropic, and Google</strong>—behind a single, standardized API. Forget managing multiple providers, complex billing, or disjointed integration code. With one <code>tf_sk_</code> API key and a simple <code>base_url</code> update, you are ready to integrate.</p>
+    <main class="docs-main">
+      <div class="docs-content">
+        <h1>Documentation</h1>
+        <p>Complete reference for the TokenForge API. One key, every model, zero friction.</p>
+        
+        <div class="toc">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#quickstart">Quick Start</a></li>
+            <li><a href="#authentication">Authentication</a></li>
+            <li><a href="#chat-completions">Chat Completions</a></li>
+            <li><a href="#models">List Models</a></li>
+            <li><a href="#error-handling">Error Handling</a></li>
+            <li><a href="#sdks">SDKs</a></li>
+          </ul>
+        </div>
 
-  <h2>Getting Started</h2>
-  <h3>The Only Change You Need</h3>
-  <p>If you are already using the OpenAI SDK, you don't need to rewrite your application. Simply point your client to our gateway, and you’re done.</p>
-  <pre><code># Configure your client to use TokenForge
-base_url = "https://tokenforge1-production.up.railway.app/v1"
-api_key = "tf_sk_YOUR_TOKENFORGE_API_KEY"</code></pre>
+        <h2 id="quickstart">Quick Start</h2>
+        <p>Get your first API response in under 2 minutes. No complex setup required.</p>
+        
+        <div class="quickstart-grid">
+          <div class="quickstart-card">
+            <h4>1. Create Account</h4>
+            <p><a href="/signup.html">Sign up</a> and get free starter credits instantly.</p>
+          </div>
+          <div class="quickstart-card">
+            <h4>2. Generate API Key</h4>
+            <p>Go to <a href="/dashboard.html">Dashboard</a> → API Keys → Create New Key.</p>
+          </div>
+          <div class="quickstart-card">
+            <h4>3. Change Base URL</h4>
+            <p>Replace <code>https://api.openai.com/v1</code> with our endpoint.</p>
+          </div>
+        </div>
 
-  <h2>Integration Examples</h2>
-  <h3>1. Python</h3>
-  <pre><code>from openai import OpenAI
+        <h3>Example Request</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-bash">curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
+  -H "Authorization: Bearer tf_sk_your_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello, world!"}]
+  }'</code></pre>
+        </div>
+
+        <h2 id="authentication">Authentication</h2>
+        <p>All API requests require a Bearer token in the <code>Authorization</code> header.</p>
+        
+        <blockquote>
+          <p><strong>Important:</strong> Never expose your API key in client-side code. Use environment variables or a backend proxy.</p>
+        </blockquote>
+
+        <h3>Header Format</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-bash">Authorization: Bearer tf_sk_your_key_here</code></pre>
+        </div>
+
+        <h3>API Key Types</h3>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Prefix</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Master Key</td>
+              <td><code>tf_sk_...</code></td>
+              <td>Full access to all endpoints. Use for backend services.</td>
+            </tr>
+            <tr>
+              <td>Project Key</td>
+              <td><code>tf_pk_...</code></td>
+              <td>Limited to specific project. Ideal for client SDKs.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="base-url">Base URL</h2>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-bash">https://tokenforge1-production.up.railway.app/v1</code></pre>
+        </div>
+
+        <h2 id="chat-completions">Chat Completions</h2>
+        <p>OpenAI-compatible chat completions endpoint. Drop-in replacement.</p>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="method-badge method-post">POST</span>
+            <span class="endpoint-path">/v1/chat/completions</span>
+          </div>
+          <p class="endpoint-desc">Send a chat completion request. Supports all OpenAI parameters plus TokenForge-specific options.</p>
+          
+          <h4>Request Body</h4>
+          <table class="param-table">
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>model</td>
+                <td>string</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>Model ID. See <a href="#models">available models</a>.</td>
+              </tr>
+              <tr>
+                <td>messages</td>
+                <td>array</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>Array of message objects with role and content.</td>
+              </tr>
+              <tr>
+                <td>temperature</td>
+                <td>number</td>
+                <td><span class="param-optional">No</span></td>
+                <td>0-2. Default: 1. Controls randomness.</td>
+              </tr>
+              <tr>
+                <td>max_tokens</td>
+                <td>integer</td>
+                <td><span class="param-optional">No</span></td>
+                <td>Maximum tokens to generate.</td>
+              </tr>
+              <tr>
+                <td>stream</td>
+                <td>boolean</td>
+                <td><span class="param-optional">No</span></td>
+                <td>Stream response as SSE. Default: false.</td>
+              </tr>
+              <tr>
+                <td>project_id</td>
+                <td>string</td>
+                <td><span class="param-optional">No</span></td>
+                <td>Track usage under specific project.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Example Response</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-json">{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1718900000,
+  "model": "gpt-4o",
+  "choices": [{
+    "index": 0,
+    "message": {
+      "role": "assistant",
+      "content": "Hello! How can I help you today?"
+    },
+    "finish_reason": "stop"
+  }],
+  "usage": {
+    "prompt_tokens": 9,
+    "completion_tokens": 12,
+    "total_tokens": 21
+  },
+  "tokenforge": {
+    "credits_used": 0.042,
+    "credits_remaining": 999.958
+  }
+}</code></pre>
+        </div>
+
+        <h2 id="models">List Models</h2>
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="method-badge method-get">GET</span>
+            <span class="endpoint-path">/v1/models</span>
+          </div>
+          <p class="endpoint-desc">List all available models with pricing and capabilities.</p>
+        </div>
+
+        <h3>Supported Models</h3>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Provider</th>
+              <th>Input / 1M tokens</th>
+              <th>Output / 1M tokens</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>gpt-4o</code></td>
+              <td>OpenAI</td>
+              <td>5.00 TFC</td>
+              <td>15.00 TFC</td>
+            </tr>
+            <tr>
+              <td><code>gpt-4o-mini</code></td>
+              <td>OpenAI</td>
+              <td>0.15 TFC</td>
+              <td>0.60 TFC</td>
+            </tr>
+            <tr>
+              <td><code>claude-sonnet-4</code></td>
+              <td>Anthropic</td>
+              <td>3.00 TFC</td>
+              <td>15.00 TFC</td>
+            </tr>
+            <tr>
+              <td><code>claude-haiku-4</code></td>
+              <td>Anthropic</td>
+              <td>0.25 TFC</td>
+              <td>1.25 TFC</td>
+            </tr>
+            <tr>
+              <td><code>gemini-1.5-pro</code></td>
+              <td>Google</td>
+              <td>3.50 TFC</td>
+              <td>10.50 TFC</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="error-handling">Error Handling</h2>
+        <p>TokenForge uses standard HTTP status codes and returns JSON error responses.</p>
+
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Code</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>400</td>
+              <td><code>invalid_request</code></td>
+              <td>Malformed request or missing required parameters.</td>
+            </tr>
+            <tr>
+              <td>401</td>
+              <td><code>unauthorized</code></td>
+              <td>Invalid or missing API key.</td>
+            </tr>
+            <tr>
+              <td>402</td>
+              <td><code>insufficient_credits</code></td>
+              <td>Not enough credits for this request. <a href="/dashboard.html">Top up</a>.</td>
+            </tr>
+            <tr>
+              <td>429</td>
+              <td><code>rate_limit</code></td>
+              <td>Too many requests. Retry after the specified time.</td>
+            </tr>
+            <tr>
+              <td>500</td>
+              <td><code>provider_error</code></td>
+              <td>Upstream provider error. Retry recommended.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Error Response Format</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-json">{
+  "error": {
+    "code": "insufficient_credits",
+    "message": "You need 5.00 TFC for this request. Current balance: 2.30 TFC.",
+    "type": "request_error"
+  }
+}</code></pre>
+        </div>
+
+        <h2 id="sdks">SDKs & Libraries</h2>
+        <p>Use any OpenAI-compatible SDK. Just change the base URL.</p>
+
+        <h3>Python</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-python">from openai import OpenAI
 
 client = OpenAI(
-    api_key="tf_sk_YOUR_TOKENFORGE_API_KEY",
-    base_url="https://tokenforge1-production.up.railway.app/v1"
+    base_url="https://tokenforge1-production.up.railway.app/v1",
+    api_key="tf_sk_your_key_here"
 )
 
 response = client.chat.completions.create(
     model="gpt-4o",
-    messages=[{"role": "user", "content": "Explain quantum computing simply."}]
+    messages=[{"role": "user", "content": "Hello!"}]
 )
 
 print(response.choices[0].message.content)</code></pre>
+        </div>
 
-  <h3>2. Node.js</h3>
-  <pre><code>const { OpenAI } = require("openai");
+        <h3>JavaScript / Node.js</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-javascript">import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: "tf_sk_YOUR_TOKENFORGE_API_KEY",
-  baseURL: "https://tokenforge1-production.up.railway.app/v1",
+  baseURL: 'https://tokenforge1-production.up.railway.app/v1',
+  apiKey: 'tf_sk_your_key_here'
 });
 
-async function main() {
-  const completion = await client.chat.completions.create({
-    model: "gemini-2.5-flash",
-    messages: [{ role: "user", content: "Hello!" }],
-  });
-  console.log(completion.choices[0].message.content);
-}
+const response = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: 'Hello!' }]
+});
 
-main();</code></pre>
+console.log(response.choices[0].message.content);</code></pre>
+        </div>
 
-  <h3>3. cURL (Command Line)</h3>
-  <pre><code>curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
+        <h3>cURL</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-bash">curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
+  -H "Authorization: Bearer tf_sk_your_key_here" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer tf_sk_YOUR_TOKENFORGE_API_KEY" \
   -d '{
     "model": "gpt-4o",
-    "messages": [{"role": "user", "content": "How are you today?"}]
+    "messages": [{"role": "user", "content": "Hello!"}]
   }'</code></pre>
+        </div>
 
-  <h2>Available Models</h2>
-  <table>
-    <tr><th>Provider</th><th>Supported Models</th></tr>
-    <tr><td>OpenAI</td><td>gpt-5.5, gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo</td></tr>
-    <tr><td>Anthropic</td><td>claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5, claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307</td></tr>
-    <tr><td>Google</td><td>gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-flash-lite, gemini-1.5-pro, gemini-1.5-flash</td></tr>
-  </table>
+        <h2 id="credits">Credits & Billing</h2>
+        <p>TokenForge uses a credit-based system (TFC). 1 TFC = $0.01 USD.</p>
+        
+        <h3>Credit Tiers</h3>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Amount</th>
+              <th>Price</th>
+              <th>Bonus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Starter</td>
+              <td>100 TFC</td>
+              <td>$1.00</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Pro</td>
+              <td>500 TFC</td>
+              <td>$5.00</td>
+              <td>+5% bonus</td>
+            </tr>
+            <tr>
+              <td>Team</td>
+              <td>1,000 TFC</td>
+              <td>$10.00</td>
+              <td>+10% bonus</td>
+            </tr>
+            <tr>
+              <td>Enterprise</td>
+              <td>5,000+ TFC</td>
+              <td>Custom</td>
+              <td>Contact us</td>
+            </tr>
+          </tbody>
+        </table>
 
-  <h2>Key Features</h2>
-  <ul>
-    <li><strong>TFC Credits:</strong> 1 TFC = 1 USD. Monitor usage in your dashboard.</li>
-    <li><strong>Streaming:</strong> Supported by default.</li>
-    <li><strong>Security:</strong> Never expose your API key in frontend code.</li>
-  </ul>
-</main>
+        <h2 id="projects">Projects & API Keys</h2>
+        <p>Organize usage by creating projects. Each project gets its own API key and usage tracking.</p>
+        
+        <h3>Creating a Project</h3>
+        <ol>
+          <li>Go to <a href="/dashboard.html">Dashboard</a></li>
+          <li>Click "New Project"</li>
+          <li>Set name and monthly budget</li>
+          <li>Copy the generated API key</li>
+        </ol>
 
+        <h2 id="streaming">Streaming Responses</h2>
+        <p>Set <code>stream: true</code> for Server-Sent Events (SSE) responses.</p>
+        
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-javascript">const stream = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: 'Tell me a story' }],
+  stream: true
+});
+
+for await (const chunk of stream) {
+  process.stdout.write(chunk.choices[0]?.delta?.content || '');
+}</code></pre>
+        </div>
+
+        <h2 id="status">Status Page</h2>
+        <p>Monitor API health and provider status at <a href="#">status.tokenforge.ai</a> (coming soon).</p>
+
+        <h2 id="changelog">Changelog</h2>
+        <p><span class="badge badge-new">New</span> <strong>v1.0.0</strong> — Initial release with OpenAI, Anthropic, and Google support.</p>
+
+        <h2 id="support">Support</h2>
+        <p>Need help? Reach out:</p>
+        <ul>
+          <li>Email: <a href="mailto:support@tokenforge.ai">support@tokenforge.ai</a></li>
+          <li>Discord: <a href="#">Join our server</a></li>
+          <li>GitHub Issues: <a href="#">Report a bug</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    hljs.highlightAll();
+    
+    function copyCode(btn) {
+      const code = btn.nextElementSibling.querySelector('code');
+      navigator.clipboard.writeText(code.textContent).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.background = 'rgba(34, 197, 94, 0.2)';
+        btn.style.color = '#22c55e';
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+    
+    // Update active sidebar link on scroll
+    const sections = document.querySelectorAll('h2[id]');
+    const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+    
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (scrollY >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+      
+      sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
