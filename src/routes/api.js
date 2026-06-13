@@ -23,6 +23,7 @@ const AVAILABLE_MODELS = {
   'claude-sonnet-4-6':  'anthropic',
   'claude-haiku-4-5':   'anthropic',
   'claude-3-opus-20240229':   'anthropic',
+  'claude-3-sonnet-20240229': 'anthropic',
   'claude-3-haiku-20240307':  'anthropic',
 
   // Google
@@ -30,7 +31,7 @@ const AVAILABLE_MODELS = {
   'gemini-2.5-flash':      'gemini',
   'gemini-2.5-flash-lite': 'gemini',
   'gemini-1.5-pro':        'gemini',
-  'gemini-1.5-flash':      'gemini'
+  'gemini-1.5-flash':      'gemini',
 };
 // List models
 router.get('/models', async (req, res) => {
