@@ -19,17 +19,46 @@
     }
     .docs-content h1 { color: #000; margin-top: 0; font-size: 2.5rem; }
     .docs-content h2 { border-bottom: 2px solid #eee; padding-bottom: 0.8rem; margin-top: 3rem; color: #1a1a1a; }
-    .docs-content code { background: #f0f0f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-size: 0.95em; }
-    .docs-content pre { background: #1e1e1e; color: #dcdcdc; padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-size: 0.9em; }
+    .docs-content h3 { color: #0088ff; margin-top: 2rem; }
+    .docs-content code { background: #f0f0f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-size: 0.95em; color: #0088ff; }
+    .docs-content pre { background: #1e1e1e; color: #dcdcdc; padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-size: 0.9em; border-left: 3px solid #0088ff; }
     .docs-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
     .docs-content th, .docs-content td { border: 1px solid #eee; padding: 1rem; text-align: left; }
     .docs-content th { background: #fdfdfd; font-weight: 600; }
+    .docs-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-weight: 800;
+      padding: 1rem 2rem;
+    }
+    .docs-header .icon { color: #00d4ff; font-size: 1.5rem; }
+    .docs-header .token { color: #fff; }
+    .docs-header .forge { color: #00d4ff; }
+    .docs-header .sep { color: #555; font-weight: 400; }
+    .docs-header .docs { color: #555; font-weight: 400; }
+    .method-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #00d4ff 0%, #0088ff 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
   </style>
 </head>
 <body>
 
 <nav class="db-nav">
-  <a href="/" class="db-brand">⚡ TokenForge</a>
+  <a href="/" class="docs-header">
+    <span class="icon">⚡</span>
+    <span class="token">Token</span><span class="forge">Forge</span>
+    <span class="sep">/</span>
+    <span class="docs">Docs</span>
+  </a>
   <div class="db-nav-right">
     <a href="/dashboard.html">Back to Dashboard</a>
   </div>
