@@ -27,9 +27,8 @@ const AVAILABLE_MODELS = {
   // Google
   'gemini-2.5-pro': 'gemini',
   'gemini-2.5-flash': 'gemini',
-  'gemini-2.5-flash-lite': 'gemini',
-  'gemini-1.5-pro': 'gemini',
-  'gemini-1.5-flash': 'gemini'
+  'gemini-2.0-flash': 'gemini',
+  'gemini-2.0-flash-lite': 'gemini'
 };
 // List models
 router.get('/models', async (req, res) => {
