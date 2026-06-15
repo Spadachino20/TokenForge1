@@ -34,7 +34,7 @@
           <li><a href="#base-url">Base URL</a></li>
         </ul>
       </div>
-      
+
       <div class="sidebar-section">
         <div class="sidebar-title">API Reference</div>
         <ul class="sidebar-nav">
@@ -43,7 +43,7 @@
           <li><a href="#error-handling">Error Handling</a></li>
         </ul>
       </div>
-      
+
       <div class="sidebar-section">
         <div class="sidebar-title">Guides</div>
         <ul class="sidebar-nav">
@@ -53,12 +53,10 @@
           <li><a href="#streaming">Streaming Responses</a></li>
         </ul>
       </div>
-      
+
       <div class="sidebar-section">
         <div class="sidebar-title">Resources</div>
         <ul class="sidebar-nav">
-          <li><a href="#status">Status Page</a></li>
-          <li><a href="#changelog">Changelog</a></li>
           <li><a href="#support">Support</a></li>
         </ul>
       </div>
@@ -68,7 +66,7 @@
       <div class="docs-content">
         <h1>Documentation</h1>
         <p>Complete reference for the TokenForge API. One key, every model, zero friction.</p>
-        
+
         <div class="toc toc-inline">
           <h4>On this page</h4>
           <ul>
@@ -87,11 +85,11 @@
 
         <h2 id="quickstart">Quick Start</h2>
         <p>Get your first API response in under 2 minutes. No complex setup required.</p>
-        
+
         <div class="quickstart-grid">
           <div class="quickstart-card">
             <h4>1. Create Account</h4>
-            <p><a href="/signup.html">Sign up</a> and get free starter credits instantly.</p>
+            <p><a href="/signup.html">Sign up</a> and start using the API immediately.</p>
           </div>
           <div class="quickstart-card">
             <h4>2. Generate API Key</h4>
@@ -117,7 +115,7 @@
 
         <h2 id="authentication">Authentication</h2>
         <p>All API requests require a Bearer token in the <code>Authorization</code> header.</p>
-        
+
         <blockquote>
           <p><strong>Important:</strong> Never expose your API key in client-side code. Use environment variables or a backend proxy.</p>
         </blockquote>
@@ -166,7 +164,7 @@
             <span class="endpoint-path">/v1/chat/completions</span>
           </div>
           <p class="endpoint-desc">Send a chat completion request. Supports all OpenAI parameters plus TokenForge-specific options.</p>
-          
+
           <h4>Request Body</h4>
           <table class="param-table">
             <thead>
@@ -261,40 +259,20 @@
             <tr>
               <th>Model</th>
               <th>Provider</th>
-              <th>Input / 1M tokens</th>
-              <th>Output / 1M tokens</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><code>gpt-4o</code></td>
+              <td><code>gpt-5</code>, <code>gpt-5.5</code>, <code>gpt-4o</code>, <code>gpt-4o-mini</code>, <code>gpt-4-turbo</code>, <code>o1</code>, <code>o1-mini</code></td>
               <td>OpenAI</td>
-              <td>5.00 TFC</td>
-              <td>15.00 TFC</td>
             </tr>
             <tr>
-              <td><code>gpt-4o-mini</code></td>
-              <td>OpenAI</td>
-              <td>0.15 TFC</td>
-              <td>0.60 TFC</td>
-            </tr>
-            <tr>
-              <td><code>claude-sonnet-4</code></td>
+              <td><code>claude-opus-4-8</code>, <code>claude-3-5-sonnet-20241022</code>, <code>claude-sonnet-4-6</code>, <code>claude-3-opus-20240229</code>, <code>claude-3-haiku-20240307</code>, <code>claude-haiku-4-5</code></td>
               <td>Anthropic</td>
-              <td>3.00 TFC</td>
-              <td>15.00 TFC</td>
             </tr>
             <tr>
-              <td><code>claude-haiku-4</code></td>
-              <td>Anthropic</td>
-              <td>0.25 TFC</td>
-              <td>1.25 TFC</td>
-            </tr>
-            <tr>
-              <td><code>gemini-1.5-pro</code></td>
+              <td><code>gemini-2.0-flash</code>, <code>gemini-2.0-flash-lite</code>, <code>gemini-1.5-pro</code>, <code>gemini-1.5-flash</code></td>
               <td>Google</td>
-              <td>3.50 TFC</td>
-              <td>10.50 TFC</td>
             </tr>
           </tbody>
         </table>
@@ -327,11 +305,6 @@
               <td>Not enough credits for this request. <a href="/dashboard.html">Top up</a>.</td>
             </tr>
             <tr>
-              <td>429</td>
-              <td><code>rate_limit</code></td>
-              <td>Too many requests. Retry after the specified time.</td>
-            </tr>
-            <tr>
               <td>500</td>
               <td><code>provider_error</code></td>
               <td>Upstream provider error. Retry recommended.</td>
@@ -339,204 +312,38 @@
           </tbody>
         </table>
 
-        <h3>Error Response Format</h3>
-        <div class="code-block-wrapper">
-          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-          <pre><code class="language-json">{
-  "error": {
-    "code": "insufficient_credits",
-    "message": "You need 5.00 TFC for this request. Current balance: 2.30 TFC.",
-    "type": "request_error"
-  }
-}</code></pre>
-        </div>
-
         <h2 id="sdks">SDKs & Libraries</h2>
         <p>Use any OpenAI-compatible SDK. Just change the base URL.</p>
 
-        <h3>Python</h3>
-        <div class="code-block-wrapper">
-          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-          <pre><code class="language-python">from openai import OpenAI
-
-client = OpenAI(
-    base_url="https://tokenforge1-production.up.railway.app/v1",
-    api_key="tf_sk_your_key_here"
-)
-
-response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hello!"}]
-)
-
-print(response.choices[0].message.content)</code></pre>
-        </div>
-
-        <h3>JavaScript / Node.js</h3>
-        <div class="code-block-wrapper">
-          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-          <pre><code class="language-javascript">import OpenAI from 'openai';
-
-const client = new OpenAI({
-  baseURL: 'https://tokenforge1-production.up.railway.app/v1',
-  apiKey: 'tf_sk_your_key_here'
-});
-
-const response = await client.chat.completions.create({
-  model: 'gpt-4o',
-  messages: [{ role: 'user', content: 'Hello!' }]
-});
-
-console.log(response.choices[0].message.content);</code></pre>
-        </div>
-
-        <h3>cURL</h3>
-        <div class="code-block-wrapper">
-          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-          <pre><code class="language-bash">curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
-  -H "Authorization: Bearer tf_sk_your_key_here" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "messages": [{"role": "user", "content": "Hello!"}]
-  }'</code></pre>
-        </div>
-
         <h2 id="credits">Credits & Billing</h2>
-        <p>TokenForge uses a credit-based system (TFC). 1 TFC = $0.01 USD.</p>
-        
-        <h3>Credit Tiers</h3>
-        <table class="param-table">
-          <thead>
-            <tr>
-              <th>Tier</th>
-              <th>Amount</th>
-              <th>Price</th>
-              <th>Bonus</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Starter</td>
-              <td>100 TFC</td>
-              <td>$1.00</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Pro</td>
-              <td>500 TFC</td>
-              <td>$5.00</td>
-              <td>+5% bonus</td>
-            </tr>
-            <tr>
-              <td>Team</td>
-              <td>1,000 TFC</td>
-              <td>$10.00</td>
-              <td>+10% bonus</td>
-            </tr>
-            <tr>
-              <td>Enterprise</td>
-              <td>5,000+ TFC</td>
-              <td>Custom</td>
-              <td>Contact us</td>
-            </tr>
-          </tbody>
-        </table>
+        <p>1 TFC = $1.00 USD. Buy as many credits as you need. Minimum purchase: $10 USD (10 TFC). No subscriptions, no commitments.</p>
 
         <h2 id="projects">Projects & API Keys</h2>
         <p>Organize usage by creating projects. Each project gets its own API key and usage tracking.</p>
-        
-        <h3>Creating a Project</h3>
-        <ol>
-          <li>Go to <a href="/dashboard.html">Dashboard</a></li>
-          <li>Click "New Project"</li>
-          <li>Set name and monthly budget</li>
-          <li>Copy the generated API key</li>
-        </ol>
 
         <h2 id="streaming">Streaming Responses</h2>
         <p>Set <code>stream: true</code> for Server-Sent Events (SSE) responses.</p>
-        
-        <div class="code-block-wrapper">
-          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-          <pre><code class="language-javascript">const stream = await client.chat.completions.create({
-  model: 'gpt-4o',
-  messages: [{ role: 'user', content: 'Tell me a story' }],
-  stream: true
-});
-
-for await (const chunk of stream) {
-  process.stdout.write(chunk.choices[0]?.delta?.content || '');
-}</code></pre>
-        </div>
-
-        <h2 id="status">Status Page</h2>
-        <p>Monitor API health and provider status at <a href="#">status.tokenforge.ai</a> (coming soon).</p>
-
-        <h2 id="changelog">Changelog</h2>
-        <p><span class="badge badge-new">New</span> <strong>v1.0.0</strong> — Initial release with OpenAI, Anthropic, and Google support.</p>
 
         <h2 id="support">Support</h2>
-        <p>Need help? Reach out:</p>
-        <ul>
-          <li>Email: <a href="mailto:support@tokenforge.ai">support@tokenforge.ai</a></li>
-          <li>Discord: <a href="#">Join our server</a></li>
-          <li>GitHub Issues: <a href="#">Report a bug</a></li>
-        </ul>
+        <p>TokenForge is currently in early access. For support, use the feedback form in your Dashboard or reach out directly through your account.</p>
       </div>
     </main>
   </div>
 
   <script>
     hljs.highlightAll();
-    
+
     function copyCode(btn) {
       const code = btn.nextElementSibling.querySelector('code');
       navigator.clipboard.writeText(code.textContent).then(() => {
         const original = btn.textContent;
         btn.textContent = 'Copied!';
-        btn.style.background = 'rgba(34, 197, 94, 0.2)';
-        btn.style.color = '#22c55e';
         setTimeout(() => {
           btn.textContent = original;
-          btn.style.background = '';
-          btn.style.color = '';
         }, 2000);
       });
     }
-    
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-    
-    // Update active sidebar link on scroll
-    const sections = document.querySelectorAll('h2[id]');
-    const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
-    
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        if (scrollY >= sectionTop - 100) {
-          current = section.getAttribute('id');
-        }
-      });
-      
-      sidebarLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) {
-          link.classList.add('active');
-        }
-      });
-    });
-    
+
     function toggleSidebar() {
       document.querySelector('.docs-sidebar').classList.toggle('active');
     }
