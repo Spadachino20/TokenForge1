@@ -72,6 +72,11 @@
 base_url = "https://tokenforge1-production.up.railway.app/v1"
 api_key = "tf_sk_YOUR_TOKENFORGE_API_KEY"</code></pre>
 
+  <p><strong>Sign up and start using the API immediately.</strong></p>
+
+  <h2>Credits & Billing</h2>
+  <p>1 TFC = $1.00 USD. Buy as many credits as you need. Minimum purchase: $10 USD (10 TFC). No subscriptions, no commitments.</p>
+
   <h2>Integration Examples</h2>
   <h3>1. Python</h3>
   <pre><code>from openai import OpenAI
@@ -98,7 +103,7 @@ const client = new OpenAI({
 
 async function main() {
   const completion = await client.chat.completions.create({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     messages: [{ role: "user", content: "Hello!" }],
   });
   console.log(completion.choices[0].message.content);
@@ -118,9 +123,9 @@ main();</code></pre>
   <h2>Available Models</h2>
   <table>
     <tr><th>Provider</th><th>Supported Models</th></tr>
-    <tr><td>OpenAI</td><td>gpt-5.5, gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo</td></tr>
-    <tr><td>Anthropic</td><td>claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5, claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307</td></tr>
-    <tr><td>Google</td><td>gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-flash-lite, gemini-1.5-pro, gemini-1.5-flash</td></tr>
+    <tr><td>OpenAI</td><td>gpt-5, gpt-5.5, gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo, o1, o1-mini</td></tr>
+    <tr><td>Anthropic</td><td>claude-opus-4-8, claude-3-5-sonnet-20241022, claude-sonnet-4-6, claude-3-opus-20240229, claude-3-haiku-20240307, claude-haiku-4-5</td></tr>
+    <tr><td>Google</td><td>gemini-2.0-flash, gemini-2.0-flash-lite, gemini-1.5-pro, gemini-1.5-flash</td></tr>
   </table>
 
   <h2>Key Features</h2>
@@ -129,6 +134,9 @@ main();</code></pre>
     <li><strong>Streaming:</strong> Supported by default.</li>
     <li><strong>Security:</strong> Never expose your API key in frontend code.</li>
   </ul>
+
+  <h2>Support</h2>
+  <p>TokenForge is currently in early access. For support, use the feedback form in your Dashboard or reach out directly through your account.</p>
 </main>
 
 </body>
