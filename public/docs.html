@@ -4,443 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation - TokenForge</title>
-  <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="/css/docs.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-  <style>
-    :root {
-      --docs-sidebar-width: 260px;
-      --docs-header-height: 60px;
-    }
-    
-    .docs-layout {
-      display: grid;
-      grid-template-columns: var(--docs-sidebar-width) 1fr;
-      min-height: 100vh;
-      padding-top: var(--docs-header-height);
-    }
-    
-    .docs-sidebar {
-      position: fixed;
-      top: var(--docs-header-height);
-      left: 0;
-      width: var(--docs-sidebar-width);
-      height: calc(100vh - var(--docs-header-height));
-      background: var(--bg-card);
-      border-right: 1px solid var(--bg-border);
-      overflow-y: auto;
-      padding: 1.5rem 0;
-    }
-    
-    .sidebar-section {
-      margin-bottom: 1.5rem;
-    }
-    
-    .sidebar-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      padding: 0 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-    
-    .sidebar-nav {
-      list-style: none;
-    }
-    
-    .sidebar-nav li a {
-      display: block;
-      padding: 0.5rem 1.5rem;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: all 0.15s;
-      border-left: 2px solid transparent;
-    }
-    
-    .sidebar-nav li a:hover,
-    .sidebar-nav li a.active {
-      color: var(--primary);
-      background: rgba(0, 212, 255, 0.05);
-      border-left-color: var(--primary);
-    }
-    
-    .docs-main {
-      margin-left: var(--docs-sidebar-width);
-      padding: 2rem 3rem;
-      max-width: 900px;
-    }
-    
-    .docs-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: var(--docs-header-height);
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--bg-border);
-      display: flex;
-      align-items: center;
-      padding: 0 2rem;
-      z-index: 100;
-    }
-    
-    .docs-header-brand {
-      font-weight: 800;
-      color: var(--primary);
-      font-size: 1.1rem;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .docs-header-brand span {
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-    
-    .docs-header-right {
-      margin-left: auto;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-    
-    .docs-header-right a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    
-    .docs-header-right a:hover {
-      color: var(--text);
-    }
-    
-    .docs-content h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      letter-spacing: -1px;
-    }
-    
-    .docs-content h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-top: 2.5rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--bg-border);
-    }
-    
-    .docs-content h3 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 0.75rem;
-      color: var(--primary);
-    }
-    
-    .docs-content p {
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-      line-height: 1.7;
-    }
-    
-    .docs-content ul,
-    .docs-content ol {
-      margin-bottom: 1rem;
-      padding-left: 1.5rem;
-      color: var(--text-muted);
-    }
-    
-    .docs-content li {
-      margin-bottom: 0.5rem;
-      line-height: 1.6;
-    }
-    
-    .docs-content a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-    
-    .docs-content a:hover {
-      text-decoration: underline;
-    }
-    
-    .docs-content code {
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.85em;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-    }
-    
-    .docs-content pre {
-      background: #0a0a0a;
-      border: 1px solid var(--bg-border);
-      border-radius: 12px;
-      padding: 1.25rem;
-      overflow-x: auto;
-      margin: 1.5rem 0;
-    }
-    
-    .docs-content pre code {
-      background: none;
-      color: #e6e6e6;
-      padding: 0;
-      font-size: 0.85rem;
-      line-height: 1.6;
-    }
-    
-    .docs-content blockquote {
-      border-left: 3px solid var(--primary);
-      background: rgba(0, 212, 255, 0.05);
-      padding: 1rem 1.25rem;
-      margin: 1.5rem 0;
-      border-radius: 0 8px 8px 0;
-    }
-    
-    .docs-content blockquote p {
-      margin: 0;
-      color: var(--text);
-    }
-    
-    .docs-content blockquote p:last-child {
-      margin-bottom: 0;
-    }
-    
-    .endpoint-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    
-    .endpoint-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    
-    .method-badge {
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    
-    .method-post { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-    .method-get { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-    .method-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-    
-    .endpoint-path {
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-      font-size: 0.95rem;
-      color: var(--text);
-    }
-    
-    .endpoint-desc {
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-    }
-    
-    .param-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-      font-size: 0.9rem;
-    }
-    
-    .param-table th {
-      text-align: left;
-      padding: 0.75rem;
-      border-bottom: 1px solid var(--bg-border);
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-    }
-    
-    .param-table td {
-      padding: 0.75rem;
-      border-bottom: 1px solid var(--bg-border);
-      color: var(--text-muted);
-    }
-    
-    .param-table td:first-child {
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-      color: var(--primary);
-    }
-    
-    .param-table td code {
-      background: rgba(0, 212, 255, 0.1);
-      padding: 0.15rem 0.3rem;
-      border-radius: 3px;
-      font-size: 0.8em;
-    }
-    
-    .param-required {
-      color: var(--error);
-      font-size: 0.8rem;
-    }
-    
-    .param-optional {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-    
-    .copy-btn {
-      position: absolute;
-      top: 0.75rem;
-      right: 0.75rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: var(--text-muted);
-      padding: 0.4rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    
-    .copy-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: var(--text);
-    }
-    
-    .code-block-wrapper {
-      position: relative;
-    }
-    
-    .quickstart-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    
-    .quickstart-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: border-color 0.2s;
-    }
-    
-    .quickstart-card:hover {
-      border-color: rgba(0, 212, 255, 0.3);
-    }
-    
-    .quickstart-card h4 {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .quickstart-card p {
-      font-size: 0.9rem;
-      margin: 0;
-    }
-    
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    
-    .badge-new { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-    .badge-beta { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-    
-    .toc {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin: 2rem 0;
-    }
-    
-    .toc h4 {
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-      color: var(--text);
-    }
-    
-    .toc ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    
-    .toc li {
-      margin-bottom: 0.5rem;
-    }
-    
-    .toc a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    
-    .toc a:hover {
-      color: var(--primary);
-    }
-    
-    @media (max-width: 768px) {
-      .docs-layout {
-        grid-template-columns: 1fr;
-      }
-      
-      .docs-sidebar {
-        display: none;
-      }
-      
-      .docs-main {
-        margin-left: 0;
-        padding: 1.5rem;
-      }
-      
-      .docs-content h1 {
-        font-size: 1.8rem;
-      }
-    }
-    
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    
-    @media (max-width: 768px) {
-      .mobile-menu-btn {
-        display: block;
-      }
-    }
-  </style>
 </head>
 <body>
   <header class="docs-header">
     <a href="/" class="docs-header-brand">⚡ TokenForge <span>/ Docs</span></a>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
     <div class="docs-header-right">
       <a href="/dashboard.html">Dashboard</a>
       <a href="/login.html">Sign In</a>
@@ -492,15 +69,19 @@
         <h1>Documentation</h1>
         <p>Complete reference for the TokenForge API. One key, every model, zero friction.</p>
         
-        <div class="toc">
+        <div class="toc toc-inline">
           <h4>On this page</h4>
           <ul>
             <li><a href="#quickstart">Quick Start</a></li>
             <li><a href="#authentication">Authentication</a></li>
+            <li><a href="#base-url">Base URL</a></li>
             <li><a href="#chat-completions">Chat Completions</a></li>
             <li><a href="#models">List Models</a></li>
             <li><a href="#error-handling">Error Handling</a></li>
             <li><a href="#sdks">SDKs</a></li>
+            <li><a href="#credits">Credits & Billing</a></li>
+            <li><a href="#projects">Projects & API Keys</a></li>
+            <li><a href="#streaming">Streaming</a></li>
           </ul>
         </div>
 
@@ -955,6 +536,10 @@ for await (const chunk of stream) {
         }
       });
     });
+    
+    function toggleSidebar() {
+      document.querySelector('.docs-sidebar').classList.toggle('active');
+    }
   </script>
 </body>
 </html>
