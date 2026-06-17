@@ -4,7 +4,7 @@ const { authenticateApiKey } = require('../middleware/auth');
 const { apiKeyLimiter } = require('../middleware/rateLimit');
 const { reserveBalance, settleBalance, releaseReservation } = require('../services/balanceService');
 const { resolveModel, getLowBalanceProviders, settleProviderBalance } = require('../services/providerBalanceService');
-const { sendLowBalanceAlert20, sendLowBalanceAlert10, sendEmail } = require('../services/email');
+const { sendLowBalanceAlert20, sendLowBalanceAlert10, sendEmail, sendAdminAlert } = require('../services/email');
 const openai = require('../services/providers/openai');
 const anthropic = require('../services/providers/anthropic');
 const gemini = require('../services/providers/gemini');
@@ -81,6 +81,7 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
   const resolved = await resolveModel(model, roughCostEstimateUsd);
 
   if (!resolved) {
+    await sendAdminAlert('TokenForge: All providers low', 'All providers are currently unavailable due to low balance.');
     return res.status(503).json({
       error: {
         code: 'providers_unavailable',
@@ -163,9 +164,9 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
     // Settle balance with actual cost
     await settleBalance(req.userId, estimatedCost, result.cost);
 
-    // Descontar del balance estimado del provider (best-effort, no bloquea si falla)
-    const actualCostUsd = result.cost / 1.2; // TFC a USD aproximado
-    deductFromProviderBalance(activeProvider, actualCostUsd).catch(() => {}); // fire and forget
+    // Ajuste de drift (Problema 1)
+    const actualCostUsd = result.cost / 1.2;
+    await settleProviderBalance(activeProvider, roughCostEstimateUsd, actualCostUsd).catch(() => {});
 
     // Log usage
     await db.query(
