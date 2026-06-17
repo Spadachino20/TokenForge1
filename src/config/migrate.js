@@ -102,7 +102,7 @@ const migrations = [
   `
   CREATE TABLE IF NOT EXISTS provider_balances (
     provider VARCHAR(50) PRIMARY KEY,
-    estimated_balance_usd DECIMAL(10, 4) NOT NULL DEFAULT 0.0000,
+    estimated_balance_usd DECIMAL(10, 4) NOT NULL DEFAULT -1.0000,
     low_balance_threshold_usd DECIMAL(10, 4) NOT NULL DEFAULT 5.0000,
     last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_recharge_at TIMESTAMP,
@@ -111,9 +111,9 @@ const migrations = [
 
   INSERT INTO provider_balances (provider, estimated_balance_usd, low_balance_threshold_usd)
   VALUES
-    ('openai', 0.0000, 5.0000),
-    ('anthropic', 0.0000, 5.0000),
-    ('gemini', 0.0000, 5.0000)
+    ('openai', -1.0000, 5.0000),
+    ('anthropic', -1.0000, 5.0000),
+    ('gemini', -1.0000, 5.0000)
   ON CONFLICT (provider) DO NOTHING;
   `,
   `

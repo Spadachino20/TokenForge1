@@ -45,9 +45,11 @@ async function getAllProviderBalances() {
     );
     const balances = {};
     for (const row of result.rows) {
+      const balance = parseFloat(row.estimated_balance_usd);
       balances[row.provider] = {
-        balance: parseFloat(row.estimated_balance_usd),
-        threshold: parseFloat(row.low_balance_threshold_usd)
+        balance: balance,
+        threshold: parseFloat(row.low_balance_threshold_usd),
+        is_configured: balance !== -1
       };
     }
     return balances;
@@ -63,7 +65,7 @@ async function getAllProviderBalances() {
 async function resolveModel(requestedModel, estimatedCostUsd) {
   const balances = await getAllProviderBalances();
 
-  // Si no pudimos leer balances (DB error), fail-open: usar el modelo solicitado
+  // Si no pudimos leer balances (DB error), fail-open
   if (!balances) {
     const provider = MODEL_PROVIDER[requestedModel];
     return { model: requestedModel, provider, wasRerouted: false };
@@ -72,33 +74,66 @@ async function resolveModel(requestedModel, estimatedCostUsd) {
   const requestedProvider = MODEL_PROVIDER[requestedModel];
   if (!requestedProvider) return null;
 
-  const providerBalance = balances[requestedProvider];
-  const MIN_BUFFER = 2.00; // $2 de buffer mínimo sobre el costo del request
+  const MIN_BUFFER = 2.00;
+  const costWithBuffer = estimatedCostUsd + MIN_BUFFER;
 
-  // El provider tiene suficiente balance
-  if (providerBalance && providerBalance.balance >= (estimatedCostUsd + MIN_BUFFER)) {
+  // Intentar deducir saldo atómicamente
+  // BUG 1 Fix: Atomic deduction using UPDATE...RETURNING
+  // BUG 2 Fix: Skip check if balance is -1
+  const balanceInfo = balances[requestedProvider];
+  if (balanceInfo && !balanceInfo.is_configured) {
     return { model: requestedModel, provider: requestedProvider, wasRerouted: false };
   }
 
-  // El provider está bajo — buscar alternativas
-  const equivalents = MODEL_EQUIVALENTS[requestedModel];
-  if (!equivalents) {
-    return null;
+  try {
+    const res = await pool.query(
+      `UPDATE provider_balances
+       SET estimated_balance_usd = estimated_balance_usd - $1
+       WHERE provider = $2 AND estimated_balance_usd >= $3
+       RETURNING estimated_balance_usd`,
+      [estimatedCostUsd, requestedProvider, costWithBuffer]
+    );
+
+    if (res.rowCount > 0) {
+      return { model: requestedModel, provider: requestedProvider, wasRerouted: false };
+    }
+  } catch (err) {
+    console.error(`[ProviderBalance] Atomic deduction failed for ${requestedProvider}:`, err.message);
+    // Fail-open
+    return { model: requestedModel, provider: requestedProvider, wasRerouted: false };
   }
 
-  for (const altModel of equivalents.alternatives) {
-    const altProvider = MODEL_PROVIDER[altModel];
-    if (!altProvider) continue;
+  // Si falló, intentar alternativas (BUG 1)
+  const equivalents = MODEL_EQUIVALENTS[requestedModel];
+  if (equivalents) {
+    for (const altModel of equivalents.alternatives) {
+      const altProvider = MODEL_PROVIDER[altModel];
+      if (!altProvider) continue;
 
-    const altBalance = balances[altProvider];
-    if (altBalance && altBalance.balance >= (estimatedCostUsd + MIN_BUFFER)) {
-      console.log(`[ProviderBalance] Rerouting ${requestedModel} (${requestedProvider}) → ${altModel} (${altProvider}). Reason: ${requestedProvider} balance=${providerBalance?.balance?.toFixed(2) || 'unknown'}`);
-      return { model: altModel, provider: altProvider, wasRerouted: true };
+      const altBalanceInfo = balances[altProvider];
+      if (altBalanceInfo && !altBalanceInfo.is_configured) {
+          return { model: altModel, provider: altProvider, wasRerouted: true };
+      }
+
+      try {
+        const res = await pool.query(
+          `UPDATE provider_balances
+           SET estimated_balance_usd = estimated_balance_usd - $1
+           WHERE provider = $2 AND estimated_balance_usd >= $3
+           RETURNING estimated_balance_usd`,
+          [estimatedCostUsd, altProvider, costWithBuffer]
+        );
+
+        if (res.rowCount > 0) {
+          console.log(`[ProviderBalance] Rerouted to ${altModel}`);
+          return { model: altModel, provider: altProvider, wasRerouted: true };
+        }
+      } catch (err) {
+        console.error(`[ProviderBalance] Alt deduction failed:`, err.message);
+      }
     }
   }
 
-  // Ningún provider tiene suficiente balance
-  console.error(`[ProviderBalance] All providers low for tier ${equivalents.tier}. Balances: ${JSON.stringify(Object.fromEntries(Object.entries(balances).map(([k,v]) => [k, v.balance])))}`);
   return null;
 }
 
@@ -150,10 +185,30 @@ async function getLowBalanceProviders() {
   }
 }
 
+/**
+ * Ajusta el balance estimado con la diferencia entre el costo real y el estimado inicial.
+ * Si el costo real fue menor, devuelve saldo al provider.
+ */
+async function settleProviderBalance(provider, roughEstimateUsd, actualCostUsd) {
+  try {
+    const diff = actualCostUsd - roughEstimateUsd;
+    await pool.query(
+      `UPDATE provider_balances
+       SET estimated_balance_usd = estimated_balance_usd - $1,
+           last_updated_at = NOW()
+       WHERE provider = $2`,
+      [diff, provider]
+    );
+  } catch (err) {
+    console.error(`[ProviderBalance] Failed to settle balance for ${provider}:`, err.message);
+  }
+}
+
 module.exports = {
   resolveModel,
   deductFromProviderBalance,
   setProviderBalance,
   getLowBalanceProviders,
-  getAllProviderBalances
+  getAllProviderBalances,
+  settleProviderBalance
 };

@@ -96,6 +96,11 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
   // Si se redirigió, log para transparencia
   if (resolved.wasRerouted) {
     console.log(`[Routing] User requested ${model}, serving with ${activeModel}`);
+    res.setHeader('X-TokenForge-Model-Used', activeModel);
+    res.setHeader('X-TokenForge-Model-Requested', model);
+    res.setHeader('X-TokenForge-Rerouted', 'true');
+  } else {
+    res.setHeader('X-TokenForge-Model-Used', activeModel);
   }
 
   // Block if balance insufficient
