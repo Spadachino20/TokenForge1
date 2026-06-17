@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Middleware para verificar admin
 function requireAdmin(req, res, next) {
-  const adminEmails = process.env.ADMIN_EMAILS?.split(',') || [];
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',') || ['stbenavente21@gmail.com'];
 
   db.query('SELECT email FROM users WHERE id = $1', [req.userId])
     .then(result => {
