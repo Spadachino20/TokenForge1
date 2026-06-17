@@ -100,6 +100,23 @@ const migrations = [
   );
   `,
   `
+  CREATE TABLE IF NOT EXISTS provider_balances (
+    provider VARCHAR(50) PRIMARY KEY,
+    estimated_balance_usd DECIMAL(10, 4) NOT NULL DEFAULT 0.0000,
+    low_balance_threshold_usd DECIMAL(10, 4) NOT NULL DEFAULT 5.0000,
+    last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_recharge_at TIMESTAMP,
+    notes TEXT
+  );
+
+  INSERT INTO provider_balances (provider, estimated_balance_usd, low_balance_threshold_usd)
+  VALUES
+    ('openai', 0.0000, 5.0000),
+    ('anthropic', 0.0000, 5.0000),
+    ('gemini', 0.0000, 5.0000)
+  ON CONFLICT (provider) DO NOTHING;
+  `,
+  `
   CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
   CREATE INDEX IF NOT EXISTS idx_api_keys_key_hash ON api_keys(key_hash);
   CREATE INDEX IF NOT EXISTS idx_usage_logs_user_id ON usage_logs(user_id);

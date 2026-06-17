@@ -3,6 +3,7 @@ const db = require('../config/db');
 const { authenticateApiKey } = require('../middleware/auth');
 const { apiKeyLimiter } = require('../middleware/rateLimit');
 const { reserveBalance, settleBalance, releaseReservation } = require('../services/balanceService');
+const { resolveModel, deductFromProviderBalance, getLowBalanceProviders } = require('../services/providerBalanceService');
 const { sendLowBalanceAlert20, sendLowBalanceAlert10 } = require('../services/email');
 const openai = require('../services/providers/openai');
 const anthropic = require('../services/providers/anthropic');
@@ -57,7 +58,7 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
 
   const provider = AVAILABLE_MODELS[model];
   if (!provider) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: {
         code: 'model_not_available',
         message: `Model ${model} is not available. Use GET /v1/models to list available models.`
@@ -70,6 +71,32 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
   const estimatedInputTokens = Math.ceil(inputText.length / 3 * 1.2);
   const estimatedOutputTokens = max_tokens || 1000;
   const estimatedCost = Math.max(0.001, (estimatedInputTokens + estimatedOutputTokens) * 0.000002);
+
+  // Estimado en USD para routing (ratio aproximado TFC/USD = 1.2 por el markup)
+  const estimatedCostUsd = estimatedCost / 1.2;
+
+  // Smart routing: resolver qué modelo/provider usar según balance disponible
+  // estimatedCostUsd: aproximación burda para la decisión de routing (no es el costo final)
+  const roughCostEstimateUsd = (estimatedCostUsd || 0.01);
+  const resolved = await resolveModel(model, roughCostEstimateUsd);
+
+  if (!resolved) {
+    return res.status(503).json({
+      error: {
+        code: 'providers_unavailable',
+        message: 'All providers are temporarily low on balance. Please try again in a moment.',
+        retry_after: 60
+      }
+    });
+  }
+
+  const activeProvider = resolved.provider;
+  const activeModel = resolved.model;
+
+  // Si se redirigió, log para transparencia
+  if (resolved.wasRerouted) {
+    console.log(`[Routing] User requested ${model}, serving with ${activeModel}`);
+  }
 
   // Block if balance insufficient
   const reservation = await reserveBalance(req.userId, estimatedCost);
@@ -98,30 +125,30 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
         res.write(data);
       };
 
-      switch (provider) {
+      switch (activeProvider) {
         case 'openai':
-          result = await openai.chatCompletion(req.body, onChunk);
+          result = await openai.chatCompletion({ ...req.body, model: activeModel }, onChunk);
           break;
         case 'anthropic':
-          result = await anthropic.chatCompletion(req.body, onChunk);
+          result = await anthropic.chatCompletion({ ...req.body, model: activeModel }, onChunk);
           break;
         case 'gemini':
-          result = await gemini.chatCompletion(req.body, onChunk);
+          result = await gemini.chatCompletion({ ...req.body, model: activeModel }, onChunk);
           break;
       }
 
       res.write('data: [DONE]\n\n');
       res.end();
     } else {
-      switch (provider) {
+      switch (activeProvider) {
         case 'openai':
-          result = await openai.chatCompletion(req.body, () => {});
+          result = await openai.chatCompletion({ ...req.body, model: activeModel }, () => {});
           break;
         case 'anthropic':
-          result = await anthropic.chatCompletion(req.body, () => {});
+          result = await anthropic.chatCompletion({ ...req.body, model: activeModel }, () => {});
           break;
         case 'gemini':
-          result = await gemini.chatCompletion(req.body, () => {});
+          result = await gemini.chatCompletion({ ...req.body, model: activeModel }, () => {});
           break;
       }
 
@@ -131,10 +158,14 @@ router.post('/chat/completions', authenticateApiKey, apiKeyLimiter, async (req, 
     // Settle balance with actual cost
     await settleBalance(req.userId, estimatedCost, result.cost);
 
+    // Descontar del balance estimado del provider (best-effort, no bloquea si falla)
+    const actualCostUsd = result.cost / 1.2; // TFC a USD aproximado
+    deductFromProviderBalance(activeProvider, actualCostUsd).catch(() => {}); // fire and forget
+
     // Log usage
     await db.query(
       'INSERT INTO usage_logs (user_id, api_key_id, model, provider, tokens_in, tokens_out, cost_tfc) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-      [req.userId, req.apiKeyId, model, provider, result.tokensIn, result.tokensOut, result.cost]
+      [req.userId, req.apiKeyId, activeModel, activeProvider, result.tokensIn, result.tokensOut, result.cost]
     );
 
     // Check balance alerts (20% and 10%)
