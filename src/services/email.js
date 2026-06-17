@@ -118,10 +118,20 @@ async function sendEmail(to, subject, body) {
   }
 }
 
+async function sendAdminAlert(subject, body) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',')[0] : 'spadachino@example.com';
+    await sendEmail(adminEmail, subject, body);
+  } catch (err) {
+    console.error('Failed to send admin alert:', err);
+  }
+}
+
 module.exports = {
   sendLowBalanceAlert20,
   sendLowBalanceAlert10,
   sendProjectBudgetAlert,
   sendPurchaseConfirmation,
-  sendEmail
+  sendEmail,
+  sendAdminAlert
 };
