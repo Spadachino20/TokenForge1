@@ -35,9 +35,6 @@ const MODEL_PROVIDER = {
   'gemini-2.0-flash': 'gemini', 'gemini-2.0-flash-lite': 'gemini',
 };
 
-/**
- * Obtiene todos los balances de providers desde la DB
- */
 async function getAllProviderBalances() {
   try {
     const result = await pool.query(
@@ -55,17 +52,13 @@ async function getAllProviderBalances() {
     return balances;
   } catch (err) {
     console.error('[ProviderBalance] Failed to fetch balances:', err.message);
-    return null; // fail-open
+    return null;
   }
 }
 
-/**
- * Determina qué modelo usar para un request, según balances actuales.
- */
 async function resolveModel(requestedModel, estimatedCostUsd) {
   const balances = await getAllProviderBalances();
 
-  // Si no pudimos leer balances (DB error), fail-open
   if (!balances) {
     const provider = MODEL_PROVIDER[requestedModel];
     return { model: requestedModel, provider, wasRerouted: false };
@@ -77,9 +70,6 @@ async function resolveModel(requestedModel, estimatedCostUsd) {
   const MIN_BUFFER = 2.00;
   const costWithBuffer = estimatedCostUsd + MIN_BUFFER;
 
-  // Intentar deducir saldo atómicamente
-  // BUG 1 Fix: Atomic deduction using UPDATE...RETURNING
-  // BUG 2 Fix: Skip check if balance is -1
   const balanceInfo = balances[requestedProvider];
   if (balanceInfo && !balanceInfo.is_configured) {
     return { model: requestedModel, provider: requestedProvider, wasRerouted: false };
@@ -99,11 +89,9 @@ async function resolveModel(requestedModel, estimatedCostUsd) {
     }
   } catch (err) {
     console.error(`[ProviderBalance] Atomic deduction failed for ${requestedProvider}:`, err.message);
-    // Fail-open
     return { model: requestedModel, provider: requestedProvider, wasRerouted: false };
   }
 
-  // Si falló, intentar alternativas (BUG 1)
   const equivalents = MODEL_EQUIVALENTS[requestedModel];
   if (equivalents) {
     for (const altModel of equivalents.alternatives) {
@@ -137,58 +125,6 @@ async function resolveModel(requestedModel, estimatedCostUsd) {
   return null;
 }
 
-/**
- * Descuenta el costo real de un request del balance estimado del provider.
- */
-async function deductFromProviderBalance(provider, costUsd) {
-  try {
-    await pool.query(
-      `UPDATE provider_balances
-       SET estimated_balance_usd = GREATEST(0, estimated_balance_usd - $1),
-           last_updated_at = NOW()
-       WHERE provider = $2`,
-      [costUsd, provider]
-    );
-  } catch (err) {
-    console.error(`[ProviderBalance] Failed to deduct ${costUsd} from ${provider}:`, err.message);
-  }
-}
-
-/**
- * Actualiza el balance de un provider manualmente (cuando tú recargas).
- */
-async function setProviderBalance(provider, newBalanceUsd, notes = null) {
-  await pool.query(
-    `UPDATE provider_balances
-     SET estimated_balance_usd = $1,
-         last_recharge_at = NOW(),
-         last_updated_at = NOW(),
-         notes = COALESCE($2, notes)
-     WHERE provider = $3`,
-    [newBalanceUsd, notes, provider]
-  );
-}
-
-/**
- * Retorna los providers con balance bajo (por debajo de su threshold).
- */
-async function getLowBalanceProviders() {
-  try {
-    const result = await pool.query(
-      `SELECT provider, estimated_balance_usd, low_balance_threshold_usd
-       FROM provider_balances
-       WHERE estimated_balance_usd < low_balance_threshold_usd`
-    );
-    return result.rows;
-  } catch (err) {
-    return [];
-  }
-}
-
-/**
- * Ajusta el balance estimado con la diferencia entre el costo real y el estimado inicial.
- * Si el costo real fue menor, devuelve saldo al provider.
- */
 async function settleProviderBalance(provider, roughEstimateUsd, actualCostUsd) {
   try {
     const diff = actualCostUsd - roughEstimateUsd;
@@ -204,9 +140,33 @@ async function settleProviderBalance(provider, roughEstimateUsd, actualCostUsd) 
   }
 }
 
+async function setProviderBalance(provider, newBalanceUsd, notes = null) {
+  await pool.query(
+    `UPDATE provider_balances
+     SET estimated_balance_usd = $1,
+         last_recharge_at = NOW(),
+         last_updated_at = NOW(),
+         notes = COALESCE($2, notes)
+     WHERE provider = $3`,
+    [newBalanceUsd, notes, provider]
+  );
+}
+
+async function getLowBalanceProviders() {
+  try {
+    const result = await pool.query(
+      `SELECT provider, estimated_balance_usd, low_balance_threshold_usd
+       FROM provider_balances
+       WHERE estimated_balance_usd < low_balance_threshold_usd`
+    );
+    return result.rows;
+  } catch (err) {
+    return [];
+  }
+}
+
 module.exports = {
   resolveModel,
-  deductFromProviderBalance,
   setProviderBalance,
   getLowBalanceProviders,
   getAllProviderBalances,

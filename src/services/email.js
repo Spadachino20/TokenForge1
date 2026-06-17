@@ -104,9 +104,24 @@ async function sendPurchaseConfirmation(email, amount, newBalance) {
   }
 }
 
+// Generic email sender
+async function sendEmail(to, subject, body) {
+  try {
+    await resend.emails.send({
+      from: 'TokenForge <alerts@tokenforge.ai>',
+      to: to,
+      subject: subject,
+      text: body
+    });
+  } catch (err) {
+    console.error('Failed to send email:', err);
+  }
+}
+
 module.exports = {
   sendLowBalanceAlert20,
   sendLowBalanceAlert10,
   sendProjectBudgetAlert,
-  sendPurchaseConfirmation
+  sendPurchaseConfirmation,
+  sendEmail
 };
