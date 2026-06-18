@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navLinks.innerHTML = `
             <span style="color:#888;font-size:0.85rem">${userData.email}</span>
             <a href="/dashboard.html" class="btn btn-nav" style="margin-right:0.5rem">Dashboard</a>
-<a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Log Out</a>
+            <a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Log Out</a>
         `;
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
@@ -52,6 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card').forEach((card, index) => {
+        card.style.transitionDelay = `${index * 0.1}s`;
+        observer.observe(card);
+    });
+
     // Cursor glow
     document.addEventListener('mousemove', e => {
         document.body.style.setProperty('--x', `${e.clientX}px`);
@@ -72,3 +84,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         }, 3000);
     }
+});
