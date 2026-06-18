@@ -10,6 +10,7 @@
   <meta name="description" content="Access all OpenAI, Claude, and Gemini models through a single OpenAI-compatible endpoint.<br> Pay only for what you use.">
 </head>
 <body>
+  <div class="mesh-bg"></div>
   <nav class="navbar">
     <div class="nav-inner">
       <div class="nav-brand">⚡ TokenForge</div>
@@ -25,14 +26,21 @@
     <div class="hero-glow"></div>
     <div class="hero-content">
       <div class="hero-badge">🚀 Early Access — Join the Waitlist</div>
-      <h1>One API Key.<br><span class="gradient-text">Every AI Model.</span></h1>
+      <h1>One API Key.<br><span class="gradient-text" id="modelSwap">Every AI Model.</span></h1>
       <p class="hero-sub">
         Access all OpenAI, Claude, and Gemini models through a single OpenAI-compatible endpoint.<br>
         Pay only for what you use. No subscriptions, no surprises.
       </p>
       <div class="hero-cta">
         <a href="#waitlist" class="btn btn-primary btn-lg">Start Building →</a>
-        <a href="#features" class="btn btn-ghost btn-lg">See How It Works</a>
+        <a href="#how-it-works" class="btn btn-ghost btn-lg">See How It Works</a>
+      </div>
+      <div class="code-block" style="margin-top: 3rem; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative;">
+        <button onclick="navigator.clipboard.writeText('client = OpenAI(api_key=\'tf_sk_...\', base_url=\'https://tokenforge1-production.up.railway.app/v1\')')" style="position: absolute; top: 10px; right: 10px; background: #222; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Copy</button>
+        <div class="code-line"><span class="code-key">client</span> = <span class="code-key">OpenAI</span>(</div>
+        <div class="code-line" style="padding-left: 20px;"><span class="code-key">api_key</span>=<span class="code-str">"tf_sk_..."</span>,</div>
+        <div class="code-line" style="padding-left: 20px;"><span class="code-key">base_url</span>=<span class="code-str">"https://tokenforge1-production.up.railway.app/v1"</span></div>
+        <div class="code-line">)</div>
       </div>
       <div class="hero-models">
         <span class="model-badge openai">OpenAI</span>
@@ -42,19 +50,51 @@
     </div>
   </section>
 
-  <section class="demo-section">
-    <div class="demo-container">
-      <div class="demo-label">Drop-in replacement — change one line</div>
-      <div class="code-block">
-        <div class="code-line"><span class="code-comment"># Before — 3 different SDKs, 3 different keys</span></div>
-        <div class="code-line"><span class="code-key">base_url</span> = <span class="code-str">"https://api.openai.com/v1"</span></div>
-        <div class="code-divider"></div>
-        <div class="code-line"><span class="code-comment"># After — one key, all models</span></div>
-        <div class="code-line"><span class="code-key">base_url</span> = <span class="code-str highlight">"https://tokenforge1-production.up.railway.app/v1"</span></div>
-        <div class="code-line"><span class="code-key">api_key</span>  = <span class="code-str">"tf_sk_..."</span></div>
+  <section class="how-it-works reveal" id="how-it-works">
+    <div class="section-header">
+      <h2>How it <span class="gradient-text">works</span></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">🔑</div>
+        <h3>1. Get your tf_sk_ key</h3>
+        <p>Generate your credentials in the dashboard.</p>
       </div>
-      <div style="margin-top: 2rem; text-align: center;">
-        <a href="/docs.html" class="btn btn-ghost" style="padding: 10px 20px;">View Full API Documentation →</a>
+      <div class="step-card">
+        <div class="step-icon">🔀</div>
+        <h3>2. Change base URL</h3>
+        <p>Point your SDK to our API endpoint.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🚀</div>
+        <h3>3. Ship</h3>
+        <p>Start making requests immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="models-section reveal" id="models">
+    <div class="section-header">
+      <h2>Supported <span class="gradient-text">Models</span></h2>
+    </div>
+    <div class="models-grid">
+      <div class="model-card openai-border">
+        <h3>OpenAI</h3>
+        <span class="model-tag">GPT-4o-mini <small>(Fast)</small></span>
+        <span class="model-tag">GPT-4o <small>(Balanced)</small></span>
+        <span class="model-tag">GPT-5.5 <small>(Powerful)</small></span>
+      </div>
+      <div class="model-card anthropic-border">
+        <h3>Anthropic</h3>
+        <span class="model-tag">Claude Haiku <small>(Fast)</small></span>
+        <span class="model-tag">Claude Sonnet <small>(Balanced)</small></span>
+        <span class="model-tag">Claude Opus <small>(Powerful)</small></span>
+      </div>
+      <div class="model-card google-border">
+        <h3>Google</h3>
+        <span class="model-tag">Gemini 2.0 Flash Lite <small>(Fast)</small></span>
+        <span class="model-tag">Gemini 2.5 Flash <small>(Balanced)</small></span>
+        <span class="model-tag">Gemini 2.5 Pro <small>(Powerful)</small></span>
       </div>
     </div>
   </section>
@@ -65,32 +105,32 @@
       <p>No more juggling multiple providers. One platform, full control.</p>
     </div>
     <div class="feature-grid">
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <div class="feature-icon">🔑</div>
         <h3>One Key, All Models</h3>
         <p>One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google models. Switch models with a single parameter.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <div class="feature-icon">💰</div>
         <h3>Transparent Billing</h3>
         <p>Pre-pay with TFC credits. Every response shows exactly what you spent. No hidden fees, no monthly surprises.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <div class="feature-icon">📊</div>
         <h3>Per-Project Tracking</h3>
         <p>Create sub-keys per project or client. Track usage independently without sharing your master key.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <div class="feature-icon">⚡</div>
         <h3>OpenAI-Compatible</h3>
         <p>Already using OpenAI's SDK? Change one line — the base URL. Everything else stays exactly the same.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <div class="feature-icon">🛡️</div>
         <h3>Usage Limits</h3>
         <p>Set TFC limits per project. If a request exceeds your balance, it's automatically blocked — you'll never be charged more than you have.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <div class="feature-icon">📡</div>
         <h3>Real-Time Monitoring</h3>
         <p>Live dashboard showing spend, model usage, and request volume. Know exactly what's happening at all times.</p>
@@ -98,7 +138,7 @@
     </div>
   </section>
 
-  <section class="waitlist-section" id="waitlist">
+  <section class="waitlist-section reveal" id="waitlist">
     <div class="waitlist-inner">
       <h2>Join the waitlist</h2>
       <p>We're rolling out access gradually. Drop your email and we'll let you know when you're in.</p>

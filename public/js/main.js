@@ -19,45 +19,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Waitlist form
+    // Navbar scroll effect
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Waitlist form (Simulated)
     const waitlistForm = document.getElementById('waitlistForm');
     const waitlistMsg = document.getElementById('waitlistMsg');
     if (waitlistForm) {
         waitlistForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('waitlistEmail').value;
             const submitBtn = waitlistForm.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Joining...';
-            try {
-                const response = await fetch('/waitlist', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-                if (response.ok) {
-                    waitlistForm.style.display = 'none';
-                    waitlistMsg.innerHTML = `
-                        <div style="text-align: center; padding: 2rem 0;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
-                            <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">You're on the waitlist!</h3>
-                            <p style="color: #94a3b8;">We'll email you at <strong>${email}</strong> when access is available.</p>
-                        </div>
-                    `;
-                    waitlistMsg.className = 'waitlist-note';
-                } else {
-                    const data = await response.json();
-                    waitlistMsg.textContent = data.error || 'Something went wrong. Please try again.';
-                    waitlistMsg.className = 'waitlist-note error';
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Notify Me';
-                }
-            } catch (err) {
-                waitlistMsg.textContent = 'Network error. Please try again.';
-                waitlistMsg.className = 'waitlist-note error';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Notify Me';
-            }
+            submitBtn.textContent = 'Loading...';
+
+            // Simulate API
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            waitlistForm.style.display = 'none';
+            waitlistMsg.innerHTML = `<p style="color:var(--success)">You're on the list. We'll notify you when access opens.</p>`;
         });
     }
-});
+
+    // Cursor glow
+    document.addEventListener('mousemove', e => {
+        document.body.style.setProperty('--x', `${e.clientX}px`);
+        document.body.style.setProperty('--y', `${e.clientY}px`);
+    });
+
+    // Word swap effect
+    const wordSpan = document.getElementById('modelSwap');
+    const words = ["Every AI Model", "Every AI Voice", "Every AI Image"];
+    let i = 0;
+    if (wordSpan) {
+        setInterval(() => {
+            wordSpan.style.opacity = 0;
+            setTimeout(() => {
+                i = (i + 1) % words.length;
+                wordSpan.textContent = words[i];
+                wordSpan.style.opacity = 1;
+            }, 500);
+        }, 3000);
+    }
