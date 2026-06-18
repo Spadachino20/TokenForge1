@@ -1,20 +1,72 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Reveal Observer
+    // Mostrar cuenta si hay sesión activa
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const navLinks = document.getElementById('navLinks');
+
+    if (token && user && navLinks) {
+        const userData = JSON.parse(user);
+        navLinks.innerHTML = `
+            <a href="/pricing.html">Pricing</a>
+            <span style="color:#888;font-size:0.85rem">${userData.email}</span>
+            <a href="/dashboard.html" class="btn btn-nav" style="margin-right:0.5rem">Dashboard</a>
+            <a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Log Out</a>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.reload();
+        });
+    }
+
+    // Waitlist form
+    const waitlistForm = document.getElementById('waitlistForm');
+    const waitlistMsg = document.getElementById('waitlistMsg');
+    if (waitlistForm) {
+        waitlistForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('waitlistEmail').value;
+            const submitBtn = waitlistForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Joining...';
+            try {
+                const response = await fetch('/waitlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                if (response.ok) {
+                    waitlistForm.style.display = 'none';
+                    waitlistMsg.innerHTML = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                            <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">You're on the waitlist!</h3>
+                            <p style="color: #94a3b8;">We'll email you at <strong>${email}</strong> when access is available.</p>
+                        </div>
+                    `;
+                } else {
+                    const data = await response.json();
+                    waitlistMsg.textContent = data.error || 'Something went wrong. Please try again.';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Notify Me';
+                }
+            } catch (err) {
+                waitlistMsg.textContent = 'Network error. Please try again.';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Notify Me';
+            }
+        });
+    }
+
+    // Scroll animation para feature cards
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('visible');
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('visible'), i * 100);
+            }
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.fade-in').forEach((el, index) => {
-        el.style.transitionDelay = `${index * 0.1}s`;
-        observer.observe(el);
-    });
-
-    // Session logic (Minimal)
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    if (token && user) {
-        // Update nav for authenticated users if needed
-    }
+    document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
 });

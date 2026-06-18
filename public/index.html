@@ -5,78 +5,150 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TokenForge — One API Key, Every AI Model</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Access all OpenAI, Claude, and Gemini models through a single OpenAI-compatible endpoint. Pay only for what you use.">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-inner">
       <div class="nav-brand">⚡ TokenForge</div>
-      <div class="nav-links">
+      <div class="nav-links" id="navLinks">
         <a href="/pricing.html">Pricing</a>
         <a href="/login.html">Sign In</a>
-        <a href="#waitlist" class="btn-nav">Join Waitlist</a>
+        <a href="#waitlist" class="btn btn-nav">Join Waitlist</a>
       </div>
     </div>
   </nav>
 
-  <section class="hero fade-in">
+  <section class="hero">
+    <div class="hero-glow"></div>
     <div class="hero-content">
-      <div class="hero-badge">🚀 Early Access</div>
+      <div class="hero-badge">🚀 Early Access — Join the Waitlist</div>
       <h1>One API Key.<br><span class="gradient-text">Every AI Model.</span></h1>
-      <p>Access all OpenAI, Claude, and Gemini models through a single endpoint.<br>Pay only for what you use.</p>
+      <p class="hero-sub">
+        Access all OpenAI, Claude, and Gemini models through a single OpenAI-compatible endpoint.<br>
+        Pay only for what you use. No subscriptions, no surprises.
+      </p>
+      <div class="hero-cta">
+        <a href="#waitlist" class="btn btn-primary btn-lg">Start Building →</a>
+        <a href="#features" class="btn btn-ghost btn-lg">See How It Works</a>
+      </div>
+      <div class="hero-models">
+        <span class="model-badge openai">OpenAI</span>
+        <span class="model-badge anthropic">Anthropic</span>
+        <span class="model-badge google">Google</span>
+      </div>
     </div>
   </section>
 
-  <section class="try-it fade-in" id="try-it">
-    <div class="section-header"><h2>Try it in <span class="gradient-text">30 seconds</span></h2></div>
-    <div class="terminal-block" id="codeBlock">curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
-  -H "Authorization: Bearer tf_sk_..." \
-  -H "Content-Type: application/json" \
-  -d '{"model":"gpt-4o","messages":[{"role":"user","content":"Hello"}]}'<button class="copy-btn" onclick="copyCode()">Copy</button></div>
-    <div class="terminal-block" style="margin-top:1rem">from openai import OpenAI
-client = OpenAI(api_key='tf_sk_...', base_url='https://tokenforge1-production.up.railway.app/v1')</div>
-  </section>
-
-  <section class="how-it-works fade-in" id="how-it-works">
-    <div class="section-header"><h2>How it <span class="gradient-text">works</span></h2></div>
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
     <div class="steps-grid">
-      <div class="step-card"><h3>1. Get API Key</h3><p>Generate your key in the dashboard.</p></div>
-      <div class="step-card"><h3>2. Set Base URL</h3><p>Point your SDK to our endpoint.</p></div>
-      <div class="step-card"><h3>3. Ship</h3><p>Start making requests immediately.</p></div>
+      <div class="step-card">
+        <div class="step-icon">1</div>
+        <h3>Buy Credits</h3>
+        <p>Purchase TFC credits via Stripe. No subscriptions.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">2</div>
+        <h3>Get Your Key</h3>
+        <p>One API key: tf_sk_... Works with all models.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">3</div>
+        <h3>Change One Line</h3>
+        <p>Swap your base_url. Everything else stays the same.</p>
+      </div>
     </div>
   </section>
 
-  <section class="models-section fade-in" id="models">
-    <div class="section-header"><h2>Supported <span class="gradient-text">Models</span></h2></div>
+  <!-- SUPPORTED MODELS -->
+  <section class="supported-models">
+    <h2>Supported Models</h2>
     <div class="models-grid">
-      <div class="model-card"><h3>OpenAI</h3><p>GPT-4o, GPT-4o-mini</p></div>
-      <div class="model-card"><h3>Anthropic</h3><p>Claude Sonnet, Opus, Haiku</p></div>
-      <div class="model-card"><h3>Google</h3><p>Gemini 2.0 Flash, 2.5 Flash</p></div>
+      <div class="model-card"><span class="model-dot openai"></span> GPT-5.5 / GPT-5</div>
+      <div class="model-card"><span class="model-dot openai"></span> GPT-4o / GPT-4o-mini</div>
+      <div class="model-card"><span class="model-dot anthropic"></span> Claude Opus 4.8</div>
+      <div class="model-card"><span class="model-dot anthropic"></span> Claude Sonnet 4.6</div>
+      <div class="model-card"><span class="model-dot google"></span> Gemini 2.0 Flash</div>
+      <div class="model-card"><span class="model-dot google"></span> Gemini 2.0 Flash Lite</div>
     </div>
   </section>
 
-  <section class="features fade-in" id="features">
-    <div class="section-header"><h2>Everything you need to <span class="gradient-text">ship faster</span></h2></div>
+  <!-- CODE DEMO -->
+  <section class="demo-section">
+    <div class="demo-container">
+      <div class="demo-label">Drop-in replacement — change one line</div>
+      <div class="code-block">
+        <div class="code-line"><span class="code-comment"># Before — 3 different SDKs, 3 different keys</span></div>
+        <div class="code-line"><span class="code-key">base_url</span> = <span class="code-str">"https://api.openai.com/v1"</span></div>
+        <div class="code-divider"></div>
+        <div class="code-line"><span class="code-comment"># After — one key, all models</span></div>
+        <div class="code-line"><span class="code-key">base_url</span> = <span class="code-str highlight">"https://tokenforge1-production.up.railway.app/v1"</span></div>
+        <div class="code-line"><span class="code-key">api_key</span>  = <span class="code-str">"tf_sk_..."</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2>Everything you need to <span class="gradient-text">ship faster</span></h2>
+      <p>No more juggling multiple providers. One platform, full control.</p>
+    </div>
     <div class="feature-grid">
-      <div class="feature-card"><h3>One Key, All Models</h3><p>Switch models with a single parameter.</p></div>
-      <div class="feature-card"><h3>Transparent Billing</h3><p>Pay only for what you use.</p></div>
-      <div class="feature-card"><h3>Per-Project Tracking</h3><p>Track usage per project.</p></div>
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <h3>One Key, All Models</h3>
+        <p>One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google models. Switch models with a single parameter.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Transparent Billing</h3>
+        <p>Pre-pay with TFC credits. Every response shows exactly what you spent. No hidden fees, no monthly surprises.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Per-Project Tracking</h3>
+        <p>Create sub-keys per project or client. Track usage independently without sharing your master key.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>OpenAI-Compatible</h3>
+        <p>Already using OpenAI's SDK? Change one line — the base URL. Everything else stays exactly the same.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Usage Limits</h3>
+        <p>Set TFC limits per project. If a request exceeds your balance, it's automatically blocked — you'll never be charged more than you have.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📡</div>
+        <h3>Real-Time Monitoring</h3>
+        <p>Live dashboard showing spend, model usage, and request volume. Know exactly what's happening at all times.</p>
+      </div>
     </div>
   </section>
 
-  <section class="waitlist-section fade-in" id="waitlist">
-    <div class="section-header"><h2>🚀 Join the waitlist</h2></div>
-    <form id="waitlistForm" style="max-width:400px; margin:0 auto">
-        <input type="email" placeholder="your@email.com" required>
-        <button type="submit" class="btn-nav" style="width:100%; border:none; cursor:pointer; padding:0.8rem">Notify Me</button>
-    </form>
+  <!-- WAITLIST -->
+  <section class="waitlist-section" id="waitlist">
+    <div class="waitlist-inner">
+      <h2>Join the waitlist</h2>
+      <p>We're rolling out access gradually. Drop your email and we'll let you know when you're in.</p>
+      <form class="waitlist-form" id="waitlistForm">
+        <input type="email" id="waitlistEmail" placeholder="your@email.com" required>
+        <button type="submit" class="btn btn-primary">Notify Me</button>
+      </form>
+      <p class="waitlist-note" id="waitlistMsg"></p>
+    </div>
   </section>
+
+  <footer class="footer">
+    <p>© 2026 TokenForge · <a href="/terms.html">Terms of Service</a></p>
+  </footer>
 
   <script src="/js/main.js"></script>
-  <script>
-    function copyCode() {
-        const text = "client = OpenAI(api_key='tf_sk_...', base_url='https://tokenforge1-production.up.railway.app/v1')";
-        navigator.clipboard.writeText(text);
-    }
-  </script>
 </body>
 </html>
