@@ -5,60 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TokenForge — One API Key, Every AI Model</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="global-glow"></div>
   <nav class="navbar">
     <div class="nav-inner">
       <div class="nav-brand">⚡ TokenForge</div>
-      <div class="nav-links" id="navLinks">
+      <div class="nav-links">
         <a href="/pricing.html">Pricing</a>
         <a href="/login.html">Sign In</a>
-        <a href="#waitlist" class="btn btn-nav">Join Waitlist</a>
+        <a href="#waitlist" class="btn-nav">Join Waitlist</a>
       </div>
     </div>
   </nav>
 
-  <section class="hero">
+  <section class="hero fade-in">
     <div class="hero-content">
       <div class="hero-badge">🚀 Early Access</div>
       <h1>One API Key.<br><span class="gradient-text">Every AI Model.</span></h1>
-      <p class="hero-sub">Access all OpenAI, Claude, and Gemini models through a single OpenAI-compatible endpoint. Pay only for what you use.</p>
+      <p>Access all OpenAI, Claude, and Gemini models through a single endpoint.<br>Pay only for what you use.</p>
     </div>
   </section>
 
-  <section class="try-it reveal" id="try-it">
+  <section class="try-it fade-in" id="try-it">
     <div class="section-header"><h2>Try it in <span class="gradient-text">30 seconds</span></h2></div>
     <div class="terminal-block" id="codeBlock">curl https://tokenforge1-production.up.railway.app/v1/chat/completions \
   -H "Authorization: Bearer tf_sk_..." \
   -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "messages": [{"role": "user", "content": "Hello!"}]
-  }'<button class="copy-btn" onclick="copyCode()">Copy</button></div>
+  -d '{"model":"gpt-4o","messages":[{"role":"user","content":"Hello"}]}'<button class="copy-btn" onclick="copyCode()">Copy</button></div>
+    <div class="terminal-block" style="margin-top:1rem">from openai import OpenAI
+client = OpenAI(api_key='tf_sk_...', base_url='https://tokenforge1-production.up.railway.app/v1')</div>
   </section>
 
-  <section class="how-it-works reveal" id="how-it-works">
+  <section class="how-it-works fade-in" id="how-it-works">
     <div class="section-header"><h2>How it <span class="gradient-text">works</span></h2></div>
     <div class="steps-grid">
-      <div class="step-card"><h3>1. Get your key</h3><p>Generate credentials in dashboard.</p></div>
-      <div class="step-card"><h3>2. Set base URL</h3><p>Point your SDK to our endpoint.</p></div>
+      <div class="step-card"><h3>1. Get API Key</h3><p>Generate your key in the dashboard.</p></div>
+      <div class="step-card"><h3>2. Set Base URL</h3><p>Point your SDK to our endpoint.</p></div>
       <div class="step-card"><h3>3. Ship</h3><p>Start making requests immediately.</p></div>
     </div>
   </section>
 
-  <section class="models-section reveal" id="models">
+  <section class="models-section fade-in" id="models">
     <div class="section-header"><h2>Supported <span class="gradient-text">Models</span></h2></div>
     <div class="models-grid">
-      <div class="model-card"><h3>OpenAI</h3><p>GPT-4o, o1, GPT-4-turbo</p></div>
-      <div class="model-card"><h3>Anthropic</h3><p>Claude 3.5 Sonnet, Opus, Haiku</p></div>
-      <div class="model-card"><h3>Google</h3><p>Gemini 1.5 Pro, 2.0 Flash</p></div>
+      <div class="model-card"><h3>OpenAI</h3><p>GPT-4o, GPT-4o-mini</p></div>
+      <div class="model-card"><h3>Anthropic</h3><p>Claude Sonnet, Opus, Haiku</p></div>
+      <div class="model-card"><h3>Google</h3><p>Gemini 2.0 Flash, 2.5 Flash</p></div>
     </div>
   </section>
 
-  <section class="features" id="features">
+  <section class="features fade-in" id="features">
     <div class="section-header"><h2>Everything you need to <span class="gradient-text">ship faster</span></h2></div>
     <div class="feature-grid">
       <div class="feature-card"><h3>One Key, All Models</h3><p>Switch models with a single parameter.</p></div>
@@ -67,11 +63,19 @@
     </div>
   </section>
 
+  <section class="waitlist-section fade-in" id="waitlist">
+    <div class="section-header"><h2>🚀 Join the waitlist</h2></div>
+    <form id="waitlistForm" style="max-width:400px; margin:0 auto">
+        <input type="email" placeholder="your@email.com" required>
+        <button type="submit" class="btn-nav" style="width:100%; border:none; cursor:pointer; padding:0.8rem">Notify Me</button>
+    </form>
+  </section>
+
   <script src="/js/main.js"></script>
   <script>
     function copyCode() {
-        const code = document.getElementById('codeBlock').innerText.replace('Copy', '');
-        navigator.clipboard.writeText(code);
+        const text = "client = OpenAI(api_key='tf_sk_...', base_url='https://tokenforge1-production.up.railway.app/v1')";
+        navigator.clipboard.writeText(text);
     }
   </script>
 </body>
