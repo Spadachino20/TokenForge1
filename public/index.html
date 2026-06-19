@@ -13,16 +13,17 @@
   <nav class="navbar">
     <div class="nav-inner">
       <div class="nav-brand">⚡ TokenForge</div>
-      <div class="nav-links" id="navLinks">
+      <div class="nav-links">
         <a href="/pricing.html">Pricing</a>
+        <a href="/docs.html" class="btn btn-ghost btn-sm">Docs</a>
         <a href="/login.html">Sign In</a>
         <a href="#waitlist" class="btn btn-nav">Join Waitlist</a>
       </div>
     </div>
   </nav>
 
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-glow"></div>
     <div class="hero-content">
       <div class="hero-badge">🚀 Early Access — Join the Waitlist</div>
       <h1>One API Key.<br><span class="gradient-text">Every AI Model.</span></h1>
@@ -32,49 +33,74 @@
       </p>
       <div class="hero-cta">
         <a href="#waitlist" class="btn btn-primary btn-lg">Start Building →</a>
-        <a href="#features" class="btn btn-ghost btn-lg">See How It Works</a>
+        <a href="/docs.html" class="btn btn-ghost btn-lg">View Docs</a>
       </div>
       <div class="hero-models">
-        <span class="model-badge openai">OpenAI</span>
-        <span class="model-badge anthropic">Anthropic</span>
-        <span class="model-badge google">Google</span>
+        <span class="model-badge openai">● OpenAI</span>
+        <span class="model-badge anthropic">● Anthropic</span>
+        <span class="model-badge google">● Google</span>
       </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-  <section class="how-it-works">
+  <!-- HOW IT WORKS — HORIZONTAL FLOW -->
+  <section class="how-it-works" id="features">
     <h2>How It Works</h2>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-icon">1</div>
+    <div class="flow-wrap">
+      <div class="flow-step">
+        <div class="flow-icon">💳</div>
         <h3>Buy Credits</h3>
-        <p>Purchase TFC credits via Stripe. No subscriptions.</p>
+        <p>Purchase TFC credits via Stripe. No subscriptions, no lock-in.</p>
       </div>
-      <div class="step-card">
-        <div class="step-icon">2</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🔑</div>
         <h3>Get Your Key</h3>
-        <p>One API key: tf_sk_... Works with all models.</p>
+        <p>One <code>tf_sk_...</code> key works with every model.</p>
       </div>
-      <div class="step-card">
-        <div class="step-icon">3</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">✏️</div>
         <h3>Change One Line</h3>
-        <p>Swap your base_url. Everything else stays the same.</p>
+        <p>Swap your <code>base_url</code>. Everything else stays the same.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🚀</div>
+        <h3>Ship Faster</h3>
+        <p>Access all providers. Track usage. Scale instantly.</p>
       </div>
     </div>
   </section>
 
-  <!-- SUPPORTED MODELS -->
+  <!-- SUPPORTED MODELS — TABLE -->
   <section class="supported-models">
     <h2>Supported Models</h2>
-    <div class="models-grid">
-      <div class="model-card"><span class="model-dot openai"></span> GPT-5.5 / GPT-5</div>
-      <div class="model-card"><span class="model-dot openai"></span> GPT-4o / GPT-4o-mini</div>
-      <div class="model-card"><span class="model-dot anthropic"></span> Claude Opus 4.8</div>
-      <div class="model-card"><span class="model-dot anthropic"></span> Claude Sonnet 4.6</div>
-      <div class="model-card"><span class="model-dot google"></span> Gemini 2.0 Flash</div>
-      <div class="model-card"><span class="model-dot google"></span> Gemini 2.0 Flash Lite</div>
+    <p>Every model, one endpoint. Switch with a single parameter.</p>
+    <div class="models-table-wrap">
+      <table class="models-table">
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Model</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="provider-dot openai"></span><span class="provider-pill openai">OpenAI</span></td><td>GPT-4o</td><td>General purpose, vision</td></tr>
+          <tr><td><span class="provider-dot openai"></span><span class="provider-pill openai">OpenAI</span></td><td>GPT-4o-mini</td><td>Fast, cost-efficient</td></tr>
+          <tr><td><span class="provider-dot openai"></span><span class="provider-pill openai">OpenAI</span></td><td>GPT-4-turbo</td><td>Long context</td></tr>
+          <tr><td><span class="provider-dot openai"></span><span class="provider-pill openai">OpenAI</span></td><td>o1 / o1-mini</td><td>Advanced reasoning</td></tr>
+          <tr><td><span class="provider-dot anthropic"></span><span class="provider-pill anthropic">Anthropic</span></td><td>Claude 3.5 Sonnet</td><td>Coding, analysis</td></tr>
+          <tr><td><span class="provider-dot anthropic"></span><span class="provider-pill anthropic">Anthropic</span></td><td>Claude 3 Opus</td><td>Complex tasks</td></tr>
+          <tr><td><span class="provider-dot anthropic"></span><span class="provider-pill anthropic">Anthropic</span></td><td>Claude 3.5 Haiku</td><td>Speed + quality</td></tr>
+          <tr><td><span class="provider-dot google"></span><span class="provider-pill google">Google</span></td><td>Gemini 1.5 Pro</td><td>Multimodal, long context</td></tr>
+          <tr><td><span class="provider-dot google"></span><span class="provider-pill google">Google</span></td><td>Gemini 1.5 Flash</td><td>Fast responses</td></tr>
+          <tr><td><span class="provider-dot google"></span><span class="provider-pill google">Google</span></td><td>Gemini 2.0 Flash</td><td>Latest, efficient</td></tr>
+        </tbody>
+      </table>
     </div>
+    <a href="/docs.html" class="btn btn-ghost btn-lg" style="margin-top:2rem;display:inline-block">📄 View Full Docs →</a>
   </section>
 
   <!-- CODE DEMO -->
@@ -93,7 +119,7 @@
   </section>
 
   <!-- FEATURES -->
-  <section class="features" id="features">
+  <section class="features">
     <div class="section-header">
       <h2>Everything you need to <span class="gradient-text">ship faster</span></h2>
       <p>No more juggling multiple providers. One platform, full control.</p>
@@ -102,7 +128,7 @@
       <div class="feature-card">
         <div class="feature-icon">🔑</div>
         <h3>One Key, All Models</h3>
-        <p>One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google models. Switch models with a single parameter.</p>
+        <p>One <code>tf_sk_...</code> key gives you access to OpenAI, Anthropic, and Google. Switch models with a single parameter.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">💰</div>
@@ -122,12 +148,38 @@
       <div class="feature-card">
         <div class="feature-icon">🛡️</div>
         <h3>Usage Limits</h3>
-        <p>Set TFC limits per project. If a request exceeds your balance, it's automatically blocked — you'll never be charged more than you have.</p>
+        <p>Set TFC limits per project. Requests are blocked automatically if balance runs out — never charged more than you have.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📡</div>
         <h3>Real-Time Monitoring</h3>
         <p>Live dashboard showing spend, model usage, and request volume. Know exactly what's happening at all times.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING PREVIEW -->
+  <section class="pricing-preview">
+    <div class="pricing-preview-inner">
+      <div class="pricing-preview-text">
+        <div class="hero-badge" style="margin-bottom:1rem">💳 Simple Pricing</div>
+        <h2>Pay only for what<br><span class="gradient-text">you actually use</span></h2>
+        <p>No subscriptions. No seat fees. Buy TFC credits and spend them across any model. Minimum $10, maximum flexibility.</p>
+        <ul class="pricing-bullets">
+          <li>✅ 1 TFC = $1 USD</li>
+          <li>✅ No monthly fees</li>
+          <li>✅ Credits never expire</li>
+          <li>✅ Minimum purchase: $10</li>
+        </ul>
+        <a href="/pricing.html" class="btn btn-primary btn-lg" style="margin-top:1.5rem">See Full Pricing →</a>
+      </div>
+      <div class="pricing-preview-card">
+        <div class="ppc-header">Example Cost</div>
+        <div class="ppc-row"><span>GPT-4o · 1M tokens</span><span class="ppc-val">~$6.00</span></div>
+        <div class="ppc-row"><span>Claude 3.5 Sonnet · 1M tokens</span><span class="ppc-val">~$4.50</span></div>
+        <div class="ppc-row"><span>Gemini 1.5 Flash · 1M tokens</span><span class="ppc-val">~$0.11</span></div>
+        <div class="ppc-divider"></div>
+        <div class="ppc-note">Prices include 20% platform markup</div>
       </div>
     </div>
   </section>
@@ -146,7 +198,7 @@
   </section>
 
   <footer class="footer">
-    <p>© 2026 TokenForge · <a href="/terms.html">Terms of Service</a></p>
+    <p>© 2026 TokenForge · <a href="/terms.html">Terms of Service</a> · <a href="/docs.html">Docs</a></p>
   </footer>
 
   <script src="/js/main.js"></script>
