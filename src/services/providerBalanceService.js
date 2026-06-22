@@ -2,13 +2,11 @@ const { pool } = require('../config/db');
 
 // --- TIERS Y ALTERNATIVAS 2026 ---
 const MODEL_EQUIVALENTS = {
-  // Tier CHEAP (fast, low cost)
   'gpt-4o-mini':           { tier: 'cheap',  alternatives: ['claude-haiku-4-5', 'gemini-3.1-flash-lite'] },
   'claude-haiku-4-5':       { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-3.1-flash-lite'] },
   'gemini-3.1-flash-lite': { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'claude-haiku-4-5'] },
   'gemini-3-flash':         { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-3.1-flash-lite'] },
 
-  // Tier MID (balanced)
   'gpt-4o':                 { tier: 'mid',    alternatives: ['claude-sonnet-4-6', 'gemini-3.5-flash'] },
   'claude-sonnet-4-6':      { tier: 'mid',    alternatives: ['gpt-4o', 'gemini-3.5-flash'] },
   'claude-3.5-sonnet':      { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
@@ -16,14 +14,12 @@ const MODEL_EQUIVALENTS = {
   'gemini-3.1-pro':         { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
   'o3-mini':                { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
 
-  // Tier HIGH (most capable)
   'gpt-5.5':                { tier: 'high',   alternatives: ['claude-opus-4-8', 'o1'] },
   'gpt-5':                  { tier: 'high',   alternatives: ['claude-opus-4-8', 'o1'] },
   'o1':                     { tier: 'high',   alternatives: ['gpt-5', 'claude-opus-4-8'] },
   'claude-opus-4-8':        { tier: 'high',   alternatives: ['gpt-5', 'o1'] }
 };
 
-// --- MAPEO MODELO → PROVIDER 2026 ---
 const MODEL_PROVIDER = {
   'gpt-5.5': 'openai', 'gpt-5': 'openai', 'gpt-4o': 'openai', 'gpt-4o-mini': 'openai', 'o1': 'openai', 'o3-mini': 'openai',
   'claude-opus-4-8': 'anthropic', 'claude-sonnet-4-6': 'anthropic', 'claude-haiku-4-5': 'anthropic', 'claude-3.5-sonnet': 'anthropic',
