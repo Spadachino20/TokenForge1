@@ -12,7 +12,7 @@ async function getModelPricing(model) {
   if (result.rows.length === 0) {
     const fallback = await db.query(
       'SELECT input_cost_per_1k, output_cost_per_1k, markup_multiplier FROM model_pricing WHERE model = $1',
-      ['gemini-2.0-flash-lite']
+      ['gemini-3.1-flash-lite']
     );
     return fallback.rows[0];
   }
@@ -42,7 +42,7 @@ function convertMessages(messages) {
 }
 
 async function chatCompletion(requestBody, onChunk) {
-  const {model = 'gemini-2.0-flash-lite', messages, stream = true, ...rest } = requestBody;
+  const {model = 'gemini-3.1-flash-lite', messages, stream = true, ...rest } = requestBody;
 
   try {
     const geminiModel = genAI.getGenerativeModel({ model });
