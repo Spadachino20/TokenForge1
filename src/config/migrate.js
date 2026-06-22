@@ -126,21 +126,18 @@ const migrations = [
   `,
   `
 INSERT INTO model_pricing (model, provider, display_name, input_cost_per_1k, output_cost_per_1k, context_window, max_output_tokens, markup_multiplier) VALUES
-('gpt-5.5',                  'openai',    'GPT-5.5',              0.005,    0.030,   1000000, 128000, 1.20),
-('gpt-5',                    'openai',    'GPT-5',                0.000625, 0.005,   400000,  16384,  1.20),
-('gpt-4o',                   'openai',    'GPT-4o',               0.0025,   0.010,   128000,  16384,  1.20),
-('gpt-4o-mini',              'openai',    'GPT-4o Mini',          0.000150, 0.000600,128000,  16384,  1.20),
-('gpt-4-turbo',              'openai',    'GPT-4 Turbo',          0.010,    0.030,   128000,  4096,   1.20),
-('o1',                       'openai',    'o1',                   0.015,    0.060,   128000,  4096,   1.20),
-('o1-mini',                  'openai',    'o1 Mini',              0.003,    0.012,   128000,  4096,   1.20),
-('claude-opus-4-8',          'anthropic', 'Claude Opus 4.8',      0.005,    0.025,   1000000, 8192,   1.20),
-('claude-sonnet-4-6',        'anthropic', 'Claude Sonnet 4.6',    0.003,    0.015,   1000000, 8192,   1.20),
-('claude-haiku-4-5',         'anthropic', 'Claude Haiku 4.5',     0.001,    0.005,   200000,  8192,   1.20),
-('claude-3-5-sonnet-20241022','anthropic','Claude 3.5 Sonnet',    0.003,    0.015,   200000,  8192,   1.20),
-('claude-3-opus-20240229',   'anthropic', 'Claude 3 Opus',        0.015,    0.075,   200000,  4096,   1.20),
-('claude-3-haiku-20240307',  'anthropic', 'Claude 3 Haiku',       0.00025,  0.00125, 200000,  4096,   1.20),
-('gemini-2.0-flash',         'gemini',    'Gemini 2.0 Flash',     0.000100, 0.000400,1000000, 8192,   1.20),
-('gemini-2.0-flash-lite',    'gemini',    'Gemini 2.0 Flash Lite',0.000075, 0.000300,1000000, 8192,   1.20)
+('gpt-4o',                     'openai',    'GPT-4o',               0.0025,   0.010,   128000,  16384,  1.20),
+('gpt-4o-mini',                'openai',    'GPT-4o Mini',          0.000150, 0.000600,128000,  16384,  1.20),
+('o1',                         'openai',    'o1',                   0.015,    0.060,   128000,  4096,   1.20),
+('o3-mini',                    'openai',    'o3-mini',              0.0011,   0.0044,  128000,  4096,   1.20),
+('claude-opus-4-8',            'anthropic', 'Claude Opus 4.8',      0.005,    0.025,   1000000, 128000, 1.20),
+('claude-sonnet-4-6',          'anthropic', 'Claude Sonnet 4.6',    0.003,    0.015,   1000000, 8192,   1.20),
+('claude-haiku-4-5-20251001',  'anthropic', 'Claude Haiku 4.5',     0.001,    0.005,   200000,  8192,   1.20),
+('claude-3-5-sonnet-20241022', 'anthropic', 'Claude 3.5 Sonnet',    0.003,    0.015,   200000,  8192,   1.20),
+('gemini-3.5-flash',           'gemini',    'Gemini 3.5 Flash',     0.0015,   0.009,   1000000, 65536,  1.20),
+('gemini-3.1-pro-preview',     'gemini',    'Gemini 3.1 Pro',       0.002,    0.012,   1000000, 65536,  1.20),
+('gemini-3.1-flash-lite',      'gemini',    'Gemini 3.1 Flash Lite',0.00025,  0.0015,  1000000, 65536,  1.20),
+('gemini-3-flash',             'gemini',    'Gemini 3 Flash',       0.0005,   0.003,   1000000, 65536,  1.20)
 ON CONFLICT (model) DO UPDATE SET
   markup_multiplier = EXCLUDED.markup_multiplier,
   input_cost_per_1k = EXCLUDED.input_cost_per_1k,

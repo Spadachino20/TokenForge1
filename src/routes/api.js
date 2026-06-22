@@ -12,24 +12,20 @@ const gemini = require('../services/providers/gemini');
 const router = express.Router();
 
 const AVAILABLE_MODELS = {
-  // OpenAI
-  'gpt-5.5': 'openai',
   'gpt-4o': 'openai',
   'gpt-4o-mini': 'openai',
-  'gpt-4-turbo': 'openai',
-  'gpt-3.5-turbo': 'openai',
-  // Anthropic
+  'o1': 'openai',
+  'o3-mini': 'openai',
+
   'claude-opus-4-8': 'anthropic',
   'claude-sonnet-4-6': 'anthropic',
-  'claude-haiku-4-5': 'anthropic',
-  'claude-3-opus-20240229': 'anthropic',
-  'claude-3-sonnet-20240229': 'anthropic',
-  'claude-3-haiku-20240307': 'anthropic',
-  // Google
-  'gemini-2.5-pro': 'gemini',
-  'gemini-2.5-flash': 'gemini',
-  'gemini-2.0-flash': 'gemini',
-  'gemini-2.0-flash-lite': 'gemini'
+  'claude-haiku-4-5-20251001': 'anthropic',
+  'claude-3-5-sonnet-20241022': 'anthropic',
+
+  'gemini-3.5-flash': 'gemini',
+  'gemini-3.1-pro-preview': 'gemini',
+  'gemini-3.1-flash-lite': 'gemini',
+  'gemini-3-flash': 'gemini',
 };
 // List models
 router.get('/models', async (req, res) => {
