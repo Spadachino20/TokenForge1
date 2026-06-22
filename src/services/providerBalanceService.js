@@ -1,38 +1,33 @@
 const { pool } = require('../config/db');
 
-// Mapa de modelos equivalentes por tier
+// --- TIERS Y ALTERNATIVAS 2026 ---
 const MODEL_EQUIVALENTS = {
   // Tier CHEAP (fast, low cost)
-  'gpt-4o-mini':        { tier: 'cheap',  alternatives: ['claude-haiku-4-5', 'gemini-2.0-flash-lite'] },
-  'gpt-3.5-turbo':      { tier: 'cheap',  alternatives: ['claude-haiku-4-5', 'gemini-2.0-flash-lite'] },
-  'claude-haiku-4-5':   { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-2.0-flash-lite'] },
-  'claude-3-haiku-20240307': { tier: 'cheap', alternatives: ['gpt-4o-mini', 'gemini-2.0-flash-lite'] },
-  'gemini-2.0-flash-lite': { tier: 'cheap', alternatives: ['gpt-4o-mini', 'claude-haiku-4-5'] },
+  'gpt-4o-mini':           { tier: 'cheap',  alternatives: ['claude-haiku-4-5', 'gemini-3.1-flash-lite'] },
+  'claude-haiku-4-5':       { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-3.1-flash-lite'] },
+  'gemini-3.1-flash-lite': { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'claude-haiku-4-5'] },
+  'gemini-3-flash':         { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-3.1-flash-lite'] },
 
   // Tier MID (balanced)
-  'gpt-4o':             { tier: 'mid',    alternatives: ['claude-sonnet-4-6', 'gemini-2.5-flash'] },
-  'gpt-4-turbo':        { tier: 'mid',    alternatives: ['claude-sonnet-4-6', 'gemini-2.5-flash'] },
-  'claude-sonnet-4-6':  { tier: 'mid',    alternatives: ['gpt-4o', 'gemini-2.5-flash'] },
-  'claude-3-sonnet-20240229': { tier: 'mid', alternatives: ['gpt-4o', 'gemini-2.5-flash'] },
-  'gemini-2.5-flash':   { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
-  'gemini-2.0-flash':   { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
+  'gpt-4o':                 { tier: 'mid',    alternatives: ['claude-sonnet-4-6', 'gemini-3.5-flash'] },
+  'claude-sonnet-4-6':      { tier: 'mid',    alternatives: ['gpt-4o', 'gemini-3.5-flash'] },
+  'claude-3.5-sonnet':      { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
+  'gemini-3.5-flash':       { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
+  'gemini-3.1-pro':         { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
+  'o3-mini':                { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
 
   // Tier HIGH (most capable)
-  'gpt-5.5':            { tier: 'high',   alternatives: ['claude-opus-4-8', 'gemini-2.5-pro'] },
-  'claude-opus-4-8':    { tier: 'high',   alternatives: ['gpt-5.5', 'gemini-2.5-pro'] },
-  'claude-3-opus-20240229': { tier: 'high', alternatives: ['gpt-5.5', 'gemini-2.5-pro'] },
-  'gemini-2.5-pro':     { tier: 'high',   alternatives: ['gpt-5.5', 'claude-opus-4-8'] },
+  'gpt-5.5':                { tier: 'high',   alternatives: ['claude-opus-4-8', 'o1'] },
+  'gpt-5':                  { tier: 'high',   alternatives: ['claude-opus-4-8', 'o1'] },
+  'o1':                     { tier: 'high',   alternatives: ['gpt-5', 'claude-opus-4-8'] },
+  'claude-opus-4-8':        { tier: 'high',   alternatives: ['gpt-5', 'o1'] }
 };
 
-// Mapa modelo → provider
+// --- MAPEO MODELO → PROVIDER 2026 ---
 const MODEL_PROVIDER = {
-  'gpt-5.5': 'openai', 'gpt-4o': 'openai', 'gpt-4o-mini': 'openai',
-  'gpt-4-turbo': 'openai', 'gpt-3.5-turbo': 'openai',
-  'claude-opus-4-8': 'anthropic', 'claude-sonnet-4-6': 'anthropic',
-  'claude-haiku-4-5': 'anthropic', 'claude-3-opus-20240229': 'anthropic',
-  'claude-3-sonnet-20240229': 'anthropic', 'claude-3-haiku-20240307': 'anthropic',
-  'gemini-2.5-pro': 'gemini', 'gemini-2.5-flash': 'gemini',
-  'gemini-2.0-flash': 'gemini', 'gemini-2.0-flash-lite': 'gemini',
+  'gpt-5.5': 'openai', 'gpt-5': 'openai', 'gpt-4o': 'openai', 'gpt-4o-mini': 'openai', 'o1': 'openai', 'o3-mini': 'openai',
+  'claude-opus-4-8': 'anthropic', 'claude-sonnet-4-6': 'anthropic', 'claude-haiku-4-5': 'anthropic', 'claude-3.5-sonnet': 'anthropic',
+  'gemini-3.5-flash': 'gemini', 'gemini-3.1-pro': 'gemini', 'gemini-3.1-flash-lite': 'gemini', 'gemini-3-flash': 'gemini'
 };
 
 async function getAllProviderBalances() {
@@ -127,6 +122,9 @@ async function resolveModel(requestedModel, estimatedCostUsd) {
 
 async function settleProviderBalance(provider, roughEstimateUsd, actualCostUsd) {
   try {
+    // CORRECCIÓN: Si el costo real es menor al estimado, devolvemos dinero al balance.
+    // Ej: estimado 0.10, real 0.08 -> diff = -0.02. 
+    // SQL: estimado - (-0.02) = estimado + 0.02. ¡Ahora sí cuadra!
     const diff = actualCostUsd - roughEstimateUsd;
     await pool.query(
       `UPDATE provider_balances
@@ -141,15 +139,19 @@ async function settleProviderBalance(provider, roughEstimateUsd, actualCostUsd) 
 }
 
 async function setProviderBalance(provider, newBalanceUsd, notes = null) {
-  await pool.query(
-    `UPDATE provider_balances
-     SET estimated_balance_usd = $1,
-         last_recharge_at = NOW(),
-         last_updated_at = NOW(),
-         notes = COALESCE($2, notes)
-     WHERE provider = $3`,
-    [newBalanceUsd, notes, provider]
-  );
+  try {
+    await pool.query(
+      `UPDATE provider_balances
+       SET estimated_balance_usd = $1,
+           last_recharge_at = NOW(),
+           last_updated_at = NOW(),
+           notes = COALESCE($2, notes)
+       WHERE provider = $3`,
+      [newBalanceUsd, notes, provider]
+    );
+  } catch (err) {
+    console.error(`[ProviderBalance] Failed to set balance for ${provider}:`, err.message);
+  }
 }
 
 async function getLowBalanceProviders() {
@@ -161,6 +163,7 @@ async function getLowBalanceProviders() {
     );
     return result.rows;
   } catch (err) {
+    console.error(`[ProviderBalance] Failed to fetch low balance providers:`, err.message);
     return [];
   }
 }
