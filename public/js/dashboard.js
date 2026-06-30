@@ -1,4 +1,5 @@
 const API_URL = '';
+const CRYPTO_CHECKOUT_URL = 'https://primary-production-f8470.up.railway.app/webhook/crear-factura';
 let usageChart = null;
 let currentCurrency = 'usd';
 
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
           showModal({ title: 'Invalid Amount', message: 'Amount must be between $10 and $500.', confirmText: 'OK', onConfirm: () => {} });
           return;
         }
-        buyCredits(num);
+        pagarConCrypto(num);
       }
     });
   });
@@ -404,10 +405,3 @@ async function loadBilling() {
   } catch (err) { console.error('Billing error:', err); }
 }
 
-async function buyCredits(amount) {
-  try {
-    const res = await fetchWithAuth('/billing/checkout', { method: 'POST', body: JSON.stringify({ amount }) });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  } catch (err) { alert('Failed to create checkout session'); }
-}

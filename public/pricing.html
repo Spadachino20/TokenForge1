@@ -60,9 +60,7 @@
 
 <nav class="nav">
   <a href="/" class="nav-brand">⚡ TokenForge</a>
-  <div class="nav-links">
-    <a href="/pricing.html">Pricing</a>
-    <a href="/docs.html">Docs</a>
+  <div class="nav-links" id="navLinks">
     <a href="/login.html">Sign In</a>
     <a href="/signup.html" class="btn-cta">Get Started</a>
   </div>
@@ -71,7 +69,12 @@
 <div class="hero">
   <div class="badge">Simple, transparent pricing</div>
   <h1>Pay only for what<br><span class="gradient-text">you actually use</span></h1>
-  <p>No subscriptions, no hidden fees. Buy TFC credits and spend them across any model. 1 TFC = $1 USD.</p>
+  <p>No subscriptions, no hidden fees. Buy TFC credits with crypto and spend them across any model. 1 TFC = $1 USD.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:2rem 0;">
+    <button class="btn-primary" onclick="pagarConCrypto(10)">Buy 10 TFC — $10</button>
+    <button class="btn-primary" onclick="pagarConCrypto(37)">Buy 37 TFC — $37</button>
+    <button class="btn-primary" onclick="pagarConCrypto(100)">Buy 100 TFC — $100</button>
+  </div>
   <div class="how-it-works">
     <div class="how-item">
       <div class="how-num">1</div>
@@ -248,5 +251,6 @@
   <p>© 2026 TokenForge · <a href="/terms.html">Terms of Service</a> · <a href="/pricing.html">Pricing</a></p>
 </footer>
 
+<script src="/js/main.js"></script>
 </body>
 </html>

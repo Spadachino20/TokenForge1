@@ -1,23 +1,101 @@
+const API_URL = '';
+const CRYPTO_CHECKOUT_URL = 'https://primary-production-f8470.up.railway.app/webhook/crear-factura';
+
+async function pagarConCrypto(monto) {
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) {
+        window.location.href = '/login.html';
+        return;
+    }
+
+    let user;
+    try {
+        user = JSON.parse(storedUser);
+    } catch (err) {
+        console.error('Invalid user object in storage', err);
+        window.location.href = '/login.html';
+        return;
+    }
+
+    if (!user?.id || !user?.email) {
+        alert('Usuario no válido. Por favor inicia sesión de nuevo.');
+        window.location.href = '/login.html';
+        return;
+    }
+
+    try {
+        const res = await fetch(CRYPTO_CHECKOUT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ monto, userId: user.id, email: user.email })
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        const redirectUrl = await res.text();
+        if (!redirectUrl) {
+            throw new Error('No redirect URL returned from payment service');
+        }
+
+        window.location.href = redirectUrl;
+    } catch (err) {
+        console.error('Crypto payment init failed:', err);
+        alert('No se pudo iniciar el pago con crypto. Intenta nuevamente más tarde.');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Mostrar cuenta si hay sesión activa
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const navLinks = document.getElementById('navLinks');
 
-    if (token && user && navLinks) {
-        const userData = JSON.parse(user);
+    if (!navLinks) {
+        return;
+    }
+
+    const defaultNav = `
+        <a href="/pricing.html">Pricing</a>
+        <a href="/docs.html">Docs</a>
+        <a href="/login.html">Sign In</a>
+        <a href="/signup.html">Sign Up</a>
+    `;
+
+    if (!token || !user) {
+        navLinks.innerHTML = defaultNav;
+        return;
+    }
+
+    let userData;
+    try {
+        userData = JSON.parse(user);
+    } catch (err) {
+        console.error('Invalid user object in storage', err);
+        navLinks.innerHTML = defaultNav;
+        return;
+    }
+
+    if (userData?.email) {
         navLinks.innerHTML = `
             <a href="/pricing.html">Pricing</a>
+            <a href="/docs.html">Docs</a>
             <span style="color:#888;font-size:0.85rem">${userData.email}</span>
-            <a href="/dashboard.html" class="btn btn-nav" style="margin-right:0.5rem">Dashboard</a>
+            <a href="/dashboard.html">Dashboard</a>
             <a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Log Out</a>
         `;
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.reload();
-        });
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.reload();
+            });
+        }
+    } else {
+        navLinks.innerHTML = defaultNav;
     }
 
     // Waitlist form
