@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://primary-production-f8470.up.railway.app https://*.supabase.co https://*.supabase.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data:;">
   <title>Pricing — TokenForge</title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -69,11 +70,22 @@
 <div class="hero">
   <div class="badge">Simple, transparent pricing</div>
   <h1>Pay only for what<br><span class="gradient-text">you actually use</span></h1>
-  <p>No subscriptions, no hidden fees. Buy TFC credits with crypto and spend them across any model. 1 TFC = $1 USD.</p>
-  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:2rem 0;">
-    <button class="btn-primary" onclick="pagarConCrypto(10)">Buy 10 TFC — $10</button>
-    <button class="btn-primary" onclick="pagarConCrypto(37)">Buy 37 TFC — $37</button>
-    <button class="btn-primary" onclick="pagarConCrypto(100)">Buy 100 TFC — $100</button>
+  <p>No subscriptions, no hidden fees. Top up any amount in USD and pay only for what you use. 1 TFC = $1 USD.</p>
+  <div id="rechargePanel" style="max-width:540px;margin:0 auto 2rem;padding:1.25rem;border:1px solid rgba(0,212,255,0.2);border-radius:16px;background:rgba(0,212,255,0.06);">
+    <div id="rechargeScreen1">
+      <label for="rechargeAmount" style="display:block;text-align:left;margin-bottom:0.5rem;color:#888;font-size:0.9rem;">Enter amount in USD</label>
+      <input id="rechargeAmount" type="number" min="1" step="1" value="10" style="width:100%;padding:0.8rem 0.9rem;border-radius:10px;border:1px solid #1F2937;background:#000;color:#fff;outline:none;">
+      <button class="btn-primary" style="margin-top:1rem;" onclick="showRechargeConfirmation()">Continue</button>
+      <p style="margin-top:0.8rem;color:#888;font-size:0.9rem;">No plans. No fixed packages. Pay only for the credits you need.</p>
+    </div>
+    <div id="rechargeScreen2" style="display:none;text-align:left;">
+      <h3 style="margin:0 0 0.5rem;color:#fff;">Confirm your top-up</h3>
+      <p style="color:#888;margin:0 0 1rem;">You will be redirected to the crypto payment flow for <strong id="rechargeSummaryAmount">$10</strong>.</p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="confirmRecharge()">Confirm payment</button>
+        <button style="background:transparent;border:1px solid #1F2937;color:#888;padding:0.8rem 1.1rem;border-radius:10px;cursor:pointer;" onclick="showRechargeInput()">Back</button>
+      </div>
+    </div>
   </div>
   <div class="how-it-works">
     <div class="how-item">
@@ -252,5 +264,27 @@
 </footer>
 
 <script src="/js/main.js"></script>
+<script>
+  function showRechargeConfirmation() {
+    const amount = parseInt(document.getElementById('rechargeAmount').value, 10);
+    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    document.getElementById('rechargeSummaryAmount').textContent = `$${safeAmount}`;
+    document.getElementById('rechargeScreen1').style.display = 'none';
+    document.getElementById('rechargeScreen2').style.display = 'block';
+  }
+
+  function showRechargeInput() {
+    document.getElementById('rechargeScreen2').style.display = 'none';
+    document.getElementById('rechargeScreen1').style.display = 'block';
+  }
+
+  function confirmRecharge() {
+    const amount = parseInt(document.getElementById('rechargeAmount').value, 10);
+    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    if (typeof window.pagarConCrypto === 'function') {
+      window.pagarConCrypto(safeAmount);
+    }
+  }
+</script>
 </body>
 </html>

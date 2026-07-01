@@ -77,18 +77,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('addCreditsBtn').addEventListener('click', () => {
-    showModal({
-      title: 'Add Credits', message: 'Enter amount in USD (min $10, max $500)', inputPlaceholder: '10', confirmText: 'Buy Credits',
-      onConfirm: (val) => {
-        if (!val) return;
-        const num = parseInt(val);
-        if (isNaN(num) || num < 10 || num > 500) {
-          showModal({ title: 'Invalid Amount', message: 'Amount must be between $10 and $500.', confirmText: 'OK', onConfirm: () => {} });
-          return;
-        }
-        pagarConCrypto(num);
-      }
-    });
+    document.getElementById('rechargeConfirm').style.display = 'block';
+    document.getElementById('rechargeConfirmAmount').textContent = `$${document.getElementById('rechargeAmountInput').value || '10'}`;
+  });
+
+  document.getElementById('continueRechargeBtn').addEventListener('click', () => {
+    const amount = parseInt(document.getElementById('rechargeAmountInput').value, 10);
+    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    document.getElementById('rechargeConfirm').style.display = 'block';
+    document.getElementById('rechargeConfirmAmount').textContent = `$${safeAmount}`;
+  });
+
+  document.getElementById('confirmRechargeBtn').addEventListener('click', () => {
+    const amount = parseInt(document.getElementById('rechargeAmountInput').value, 10);
+    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    if (typeof pagarConCrypto === 'function') {
+      pagarConCrypto(safeAmount);
+    }
+  });
+
+  document.getElementById('cancelRechargeBtn').addEventListener('click', () => {
+    document.getElementById('rechargeConfirm').style.display = 'none';
   });
 
   document.getElementById('createKeyBtn').addEventListener('click', () => {

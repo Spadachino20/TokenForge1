@@ -3,7 +3,17 @@ const CRYPTO_CHECKOUT_URL = 'https://primary-production-f8470.up.railway.app/web
 
 async function pagarConCrypto(monto) {
     const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+
+    const diagnostic = {
+        monto,
+        hasToken: Boolean(token),
+        hasStoredUser: Boolean(storedUser),
+        checkoutUrl: CRYPTO_CHECKOUT_URL
+    };
+
     if (!storedUser) {
+        console.error('Crypto payment blocked: no stored user session', diagnostic);
         window.location.href = '/login.html';
         return;
     }
@@ -11,13 +21,15 @@ async function pagarConCrypto(monto) {
     let user;
     try {
         user = JSON.parse(storedUser);
+        diagnostic.user = user;
     } catch (err) {
-        console.error('Invalid user object in storage', err);
+        console.error('Crypto payment blocked: invalid user payload', { ...diagnostic, error: err.message, stack: err.stack });
         window.location.href = '/login.html';
         return;
     }
 
     if (!user?.id || !user?.email) {
+        console.error('Crypto payment blocked: missing user id/email', diagnostic);
         alert('Usuario no válido. Por favor inicia sesión de nuevo.');
         window.location.href = '/login.html';
         return;
@@ -30,19 +42,29 @@ async function pagarConCrypto(monto) {
             body: JSON.stringify({ monto, userId: user.id, email: user.email })
         });
 
+        const responseText = await res.text();
+        diagnostic.status = res.status;
+        diagnostic.responseText = responseText;
+
         if (!res.ok) {
+            console.error('Crypto payment failed: upstream response error', diagnostic);
             throw new Error(`HTTP ${res.status}`);
         }
 
-        const redirectUrl = await res.text();
-        if (!redirectUrl) {
+        if (!responseText) {
+            console.error('Crypto payment failed: empty response body', diagnostic);
             throw new Error('No redirect URL returned from payment service');
         }
 
-        window.location.href = redirectUrl;
+        console.info('Crypto payment request ok', diagnostic);
+        window.location.href = responseText;
     } catch (err) {
-        console.error('Crypto payment init failed:', err);
-        alert('No se pudo iniciar el pago con crypto. Intenta nuevamente más tarde.');
+        console.error('Crypto payment init failed', {
+            ...diagnostic,
+            error: err.message,
+            stack: err.stack
+        });
+        alert('No se pudo iniciar el pago con crypto. Revisa la consola para más detalles.');
     }
 }
 
