@@ -5,13 +5,13 @@ let currentCurrency = 'usd';
 
 async function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem('token');
-    if (!token) { window.location.href = '/login.html'; throw new Error('No token'); }
+    if (!token) { window.location.href = 'login.html'; throw new Error('No token'); }
     options.headers = { ...options.headers, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
     const res = await fetch(`${API_URL}${url}`, options);
     if (res.status === 401 || res.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
         throw new Error('Unauthorized');
     }
     return res;
@@ -47,7 +47,7 @@ function showModal({ title, message, inputPlaceholder = null, confirmText = 'Con
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
-  if (!token) { window.location.href = '/login.html'; return; }
+  if (!token) { window.location.href = 'login.html'; return; }
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   document.getElementById('userEmail').textContent = user.email || '';
 
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/';
+    window.location.href = 'index.html';
   });
 
   document.querySelectorAll('.db-sidebar a').forEach(link => {

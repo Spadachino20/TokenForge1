@@ -14,7 +14,7 @@ async function pagarConCrypto(monto) {
 
     if (!storedUser) {
         console.error('Crypto payment blocked: no stored user session', diagnostic);
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
         return;
     }
 
@@ -24,14 +24,14 @@ async function pagarConCrypto(monto) {
         diagnostic.user = user;
     } catch (err) {
         console.error('Crypto payment blocked: invalid user payload', { ...diagnostic, error: err.message, stack: err.stack });
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
         return;
     }
 
     if (!user?.id || !user?.email) {
         console.error('Crypto payment blocked: missing user id/email', diagnostic);
         alert('Usuario no válido. Por favor inicia sesión de nuevo.');
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
         return;
     }
 
