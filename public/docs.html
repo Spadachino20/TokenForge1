@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <link rel="stylesheet" href="/css/docs.css">
+  <link rel="stylesheet" href="css/docs.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
@@ -16,11 +16,11 @@
 </head>
 <body>
   <header class="docs-header">
-    <a href="/" class="docs-header-brand">⚡ TokenForge <span>/ Docs</span></a>
+    <a href="index.html" class="docs-header-brand">⚡ TokenForge <span>/ Docs</span></a>
     <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
     <div class="docs-header-right" id="navLinks">
-      <a href="/dashboard.html">Dashboard</a>
-      <a href="/login.html">Sign In</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="login.html">Sign In</a>
     </div>
   </header>
 
@@ -89,11 +89,11 @@
         <div class="quickstart-grid">
           <div class="quickstart-card">
             <h4>1. Create Account</h4>
-            <p><a href="/signup.html">Sign up</a>, purchase credits, and start calling any model with a single API key.</p>
+            <p><a href="signup.html">Sign up</a>, purchase credits, and start calling any model with a single API key.</p>
           </div>
           <div class="quickstart-card">
             <h4>2. Generate API Key</h4>
-            <p>Go to <a href="/dashboard.html">Dashboard</a> → API Keys → Create New Key.</p>
+            <p>Go to <a href="dashboard.html">Dashboard</a> → API Keys → Create New Key.</p>
           </div>
           <div class="quickstart-card">
             <h4>3. Change Base URL</h4>
@@ -308,7 +308,7 @@
             <tr>
               <td>402</td>
               <td><code>insufficient_credits</code></td>
-              <td>Not enough credits for this request. <a href="/dashboard.html">Top up</a>.</td>
+              <td>Not enough credits for this request. <a href="dashboard.html">Top up</a>.</td>
             </tr>
             <tr>
               <td>429</td>
@@ -359,6 +359,6 @@
       document.querySelector('.docs-sidebar').classList.toggle('active');
     }
   </script>
-  <script src="/js/main.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
