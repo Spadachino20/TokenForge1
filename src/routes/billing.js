@@ -158,41 +158,59 @@ router.post('/create-invoice', authenticateToken, authLimiter, async (req, res) 
     );
 
     if (userResult.rows.length === 0) {
+      console.error(`User not found: ${req.userId}`);
       return res.status(404).json({ error: 'User not found' });
     }
 
     const userEmail = userResult.rows[0].email;
 
+    console.log(`[Crypto Payment] User: ${req.userId}, Email: ${userEmail}, Amount: ${monto}`);
+
     // Hacer proxy hacia n8n (servidor a servidor, sin CORS)
-    const n8nResponse = await fetch('https://primary-production-f8470.up.railway.app/webhook/crear-factura', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        monto,
-        userId: req.userId,
-        email: userEmail
-      })
-    });
+    let n8nResponse;
+    try {
+      n8nResponse = await fetch('https://primary-production-f8470.up.railway.app/webhook/crear-factura', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          monto,
+          userId: req.userId,
+          email: userEmail
+        }),
+        timeout: 30000
+      });
+    } catch (fetchErr) {
+      console.error('[Crypto Payment] Fetch error to n8n:', fetchErr.message);
+      return res.status(502).json({ error: 'Payment service connection failed', details: fetchErr.message });
+    }
+
+    console.log(`[Crypto Payment] n8n responded with status: ${n8nResponse.status}`);
 
     if (!n8nResponse.ok) {
-      console.error(`n8n webhook failed with status ${n8nResponse.status}`);
-      return res.status(502).json({ error: 'Payment service temporarily unavailable' });
+      const responseBody = await n8nResponse.text();
+      console.error(`[Crypto Payment] n8n error response (${n8nResponse.status}):`, responseBody.substring(0, 500));
+      return res.status(502).json({ 
+        error: 'Payment service error',
+        details: `Service returned ${n8nResponse.status}. Try again in a moment.`
+      });
     }
 
     // n8n retorna la URL de pago como texto
     const paymentUrl = await n8nResponse.text();
 
-    if (!paymentUrl) {
-      console.error('n8n returned empty payment URL');
+    if (!paymentUrl || paymentUrl.trim() === '') {
+      console.error('[Crypto Payment] n8n returned empty payment URL');
       return res.status(502).json({ error: 'Invalid response from payment service' });
     }
+
+    console.log(`[Crypto Payment] Success: returning payment URL for user ${req.userId}`);
 
     // Retornar URL de pago al cliente
     res.json({ paymentUrl });
 
   } catch (err) {
-    console.error('Crypto payment proxy error:', err);
-    res.status(500).json({ error: 'Failed to process payment request' });
+    console.error('[Crypto Payment] Unexpected error:', err.message, err.stack);
+    res.status(500).json({ error: 'Failed to process payment request', details: err.message });
   }
 });
 

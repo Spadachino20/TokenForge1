@@ -50,8 +50,14 @@ async function pagarConCrypto(monto) {
         diagnostic.responseData = responseData;
 
         if (!res.ok) {
-            console.error('Crypto payment failed: server returned error', diagnostic);
-            throw new Error(responseData.error || `HTTP ${res.status}`);
+            const errorMsg = responseData.error || `HTTP ${res.status}`;
+            const errorDetails = responseData.details || '';
+            console.error('Crypto payment failed: server returned error', {
+                ...diagnostic,
+                error: errorMsg,
+                details: errorDetails
+            });
+            throw new Error(errorMsg);
         }
 
         const paymentUrl = responseData.paymentUrl;
@@ -68,7 +74,7 @@ async function pagarConCrypto(monto) {
             error: err.message,
             stack: err.stack
         });
-        alert('No se pudo iniciar el pago con crypto. Revisa la consola para más detalles.');
+        alert(`Pago fallido: ${err.message}. Abre la consola (F12) para más detalles.`);
     }
 }
 
