@@ -1,5 +1,5 @@
 const API_URL = '';
-const PAYMENT_ENDPOINT = '/api/billing/create-invoice';
+const PAYMENT_ENDPOINT = '/billing/create-invoice';
 let usageChart = null;
 let currentCurrency = 'usd';
 
