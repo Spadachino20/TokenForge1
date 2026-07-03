@@ -1,5 +1,5 @@
 const API_URL = '';
-const CRYPTO_CHECKOUT_URL = 'https://primary-production-f8470.up.railway.app/webhook/crear-factura';
+const PAYMENT_ENDPOINT = '/api/billing/create-invoice';
 
 async function pagarConCrypto(monto) {
     const storedUser = localStorage.getItem('user');
@@ -9,7 +9,7 @@ async function pagarConCrypto(monto) {
         monto,
         hasToken: Boolean(token),
         hasStoredUser: Boolean(storedUser),
-        checkoutUrl: CRYPTO_CHECKOUT_URL
+        endpoint: PAYMENT_ENDPOINT
     };
 
     if (!storedUser) {
@@ -36,28 +36,32 @@ async function pagarConCrypto(monto) {
     }
 
     try {
-        const res = await fetch(CRYPTO_CHECKOUT_URL, {
+        const res = await fetch(PAYMENT_ENDPOINT, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ monto, userId: user.id, email: user.email })
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ monto })
         });
 
-        const responseText = await res.text();
+        const responseData = await res.json();
         diagnostic.status = res.status;
-        diagnostic.responseText = responseText;
+        diagnostic.responseData = responseData;
 
         if (!res.ok) {
-            console.error('Crypto payment failed: upstream response error', diagnostic);
-            throw new Error(`HTTP ${res.status}`);
+            console.error('Crypto payment failed: server returned error', diagnostic);
+            throw new Error(responseData.error || `HTTP ${res.status}`);
         }
 
-        if (!responseText) {
-            console.error('Crypto payment failed: empty response body', diagnostic);
+        const paymentUrl = responseData.paymentUrl;
+        if (!paymentUrl) {
+            console.error('Crypto payment failed: no payment URL in response', diagnostic);
             throw new Error('No redirect URL returned from payment service');
         }
 
         console.info('Crypto payment request ok', diagnostic);
-        window.location.href = responseText;
+        window.location.href = paymentUrl;
     } catch (err) {
         console.error('Crypto payment init failed', {
             ...diagnostic,

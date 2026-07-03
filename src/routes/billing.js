@@ -141,4 +141,59 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   res.json({ received: true });
 });
 
+// Crypto payment webhook proxy (servidor a servidor, sin CORS)
+router.post('/create-invoice', authenticateToken, authLimiter, async (req, res) => {
+  const { monto } = req.body;
+
+  // Validación
+  if (!monto || monto < 10 || monto > 10000) {
+    return res.status(400).json({ error: 'Amount must be between $10 and $10,000' });
+  }
+
+  try {
+    // Obtener datos del usuario
+    const userResult = await db.query(
+      'SELECT email FROM users WHERE id = $1',
+      [req.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userEmail = userResult.rows[0].email;
+
+    // Hacer proxy hacia n8n (servidor a servidor, sin CORS)
+    const n8nResponse = await fetch('https://primary-production-f8470.up.railway.app/webhook/crear-factura', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        monto,
+        userId: req.userId,
+        email: userEmail
+      })
+    });
+
+    if (!n8nResponse.ok) {
+      console.error(`n8n webhook failed with status ${n8nResponse.status}`);
+      return res.status(502).json({ error: 'Payment service temporarily unavailable' });
+    }
+
+    // n8n retorna la URL de pago como texto
+    const paymentUrl = await n8nResponse.text();
+
+    if (!paymentUrl) {
+      console.error('n8n returned empty payment URL');
+      return res.status(502).json({ error: 'Invalid response from payment service' });
+    }
+
+    // Retornar URL de pago al cliente
+    res.json({ paymentUrl });
+
+  } catch (err) {
+    console.error('Crypto payment proxy error:', err);
+    res.status(500).json({ error: 'Failed to process payment request' });
+  }
+});
+
 module.exports = router;

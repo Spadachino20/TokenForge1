@@ -1,5 +1,5 @@
 const API_URL = '';
-const CRYPTO_CHECKOUT_URL = 'https://primary-production-f8470.up.railway.app/webhook/crear-factura';
+const PAYMENT_ENDPOINT = '/api/billing/create-invoice';
 let usageChart = null;
 let currentCurrency = 'usd';
 
