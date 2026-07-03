@@ -141,7 +141,47 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   res.json({ received: true });
 });
 
-// Crypto payment webhook proxy (servidor a servidor, sin CORS)
+// ==================== CRYPTO PAYMENT ENDPOINTS ====================
+
+// TEST endpoint - returns mock payment URL (for development)
+router.post('/create-invoice-test', authenticateToken, authLimiter, async (req, res) => {
+  const { monto } = req.body;
+
+  // Validación
+  if (!monto || monto < 10 || monto > 10000) {
+    return res.status(400).json({ error: 'Amount must be between $10 and $10,000' });
+  }
+
+  try {
+    // Obtener datos del usuario
+    const userResult = await db.query(
+      'SELECT email FROM users WHERE id = $1',
+      [req.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      console.error(`User not found: ${req.userId}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userEmail = userResult.rows[0].email;
+
+    console.log(`[Crypto Payment TEST] User: ${req.userId}, Email: ${userEmail}, Amount: ${monto}`);
+
+    // Generate mock payment URL for testing
+    const mockPaymentUrl = `https://payment-test.tokenforge.io/?amount=${monto}&user=${req.userId}&email=${userEmail}&test=true`;
+    
+    console.log(`[Crypto Payment TEST] Returning mock URL: ${mockPaymentUrl}`);
+
+    res.json({ paymentUrl: mockPaymentUrl });
+
+  } catch (err) {
+    console.error('[Crypto Payment TEST] Unexpected error:', err.message);
+    res.status(500).json({ error: 'Failed to process payment request', details: err.message });
+  }
+});
+
+// PRODUCTION endpoint - calls n8n webhook
 router.post('/create-invoice', authenticateToken, authLimiter, async (req, res) => {
   const { monto } = req.body;
 
@@ -207,6 +247,7 @@ router.post('/create-invoice', authenticateToken, authLimiter, async (req, res) 
 
     // Retornar URL de pago al cliente
     res.json({ paymentUrl });
+
 
   } catch (err) {
     console.error('[Crypto Payment] Unexpected error:', err.message, err.stack);

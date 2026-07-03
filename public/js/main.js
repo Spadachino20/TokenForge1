@@ -1,5 +1,5 @@
 const API_URL = '';
-const PAYMENT_ENDPOINT = '/billing/create-invoice';
+const PAYMENT_ENDPOINT = '/billing/create-invoice-test'; // TEST mode - change to '/billing/create-invoice' for production
 
 async function pagarConCrypto(monto) {
     const storedUser = localStorage.getItem('user');
