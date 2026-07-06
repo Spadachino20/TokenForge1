@@ -1,6 +1,6 @@
 const API_URL = '';
 // En tu public/js/main.js
-const PAYMENT_ENDPOINT = '/api/billing/create-invoice'; // (O /billing/create-invoice, según lo que usabas antes)
+const PAYMENT_ENDPOINT = '/billing/create-invoice';
 
 async function pagarConCrypto(monto) {
     const storedUser = localStorage.getItem('user');
