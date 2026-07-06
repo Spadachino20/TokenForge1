@@ -1,6 +1,7 @@
-const PAYMENT_ENDPOINT = '/billing/create-invoice-test'; // TEST mode - change to '/billing/create-invoice' for production
-let usageChart = null;
-let currentCurrency = 'usd';
+var API_URL = '';
+var PAYMENT_ENDPOINT = '/billing/create-invoice-test'; 
+var usageChart = null;
+var currentCurrency = 'usd';
 
 async function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem('token');
