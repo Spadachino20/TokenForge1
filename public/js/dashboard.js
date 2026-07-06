@@ -1,7 +1,5 @@
-var API_URL = '';
-var PAYMENT_ENDPOINT = '/billing/create-invoice-test'; 
-var usageChart = null;
-var currentCurrency = 'usd';
+let usageChart = null;
+let currentCurrency = 'usd';
 
 async function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem('token');
