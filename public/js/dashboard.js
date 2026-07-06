@@ -394,6 +394,10 @@ async function loadBilling() {
     const data = await res.json();
     const container = document.getElementById('billingList');
 
+    if (document.getElementById('balanceTfc')) {
+        document.getElementById('balanceTfc').innerText = parseFloat(data.balance_tfc || 0).toFixed(2) + ' TFC';
+    }
+
     if (!data.transactions || data.transactions.length === 0) {
       container.innerHTML = '<div class="db-empty">No transactions yet.</div>';
       return;
