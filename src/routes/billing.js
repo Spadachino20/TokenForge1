@@ -168,12 +168,12 @@ router.post('/create-invoice-test', authenticateToken, authLimiter, async (req, 
 
     console.log(`[Crypto Payment TEST] User: ${req.userId}, Email: ${userEmail}, Amount: ${monto}`);
 
-    // Generate mock payment URL for testing
-    const mockPaymentUrl = `https://payment-test.tokenforge.io/?amount=${monto}&user=${req.userId}&email=${userEmail}&test=true`;
+    // Generate test payment URL pointing to our success page
+    const testPaymentUrl = `${process.env.FRONTEND_URL || 'http://localhost:8080'}/test-payment-success.html?amount=${monto}&user=${req.userId}&email=${encodeURIComponent(userEmail)}&test=true`;
     
-    console.log(`[Crypto Payment TEST] Returning mock URL: ${mockPaymentUrl}`);
+    console.log(`[Crypto Payment TEST] Returning test URL: ${testPaymentUrl}`);
 
-    res.json({ paymentUrl: mockPaymentUrl });
+    res.json({ paymentUrl: testPaymentUrl });
 
   } catch (err) {
     console.error('[Crypto Payment TEST] Unexpected error:', err.message);
