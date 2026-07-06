@@ -100,7 +100,7 @@ router.post('/create-invoice', authenticateToken, authLimiter, async (req, res) 
       body: JSON.stringify({
         price_amount: monto,
         price_currency: 'usd',
-        order_id: req.userId,
+        order_id: req.userId, // AQUÍ ENVIAMOS EL ID DEL USUARIO A NOWPAYMENTS
         order_description: `Recarga de ${monto} USD en TokenForge`,
         success_url: `${process.env.FRONTEND_URL || 'https://tokenforge1-production.up.railway.app'}/dashboard.html`,
         cancel_url: `${process.env.FRONTEND_URL || 'https://tokenforge1-production.up.railway.app'}/pricing.html`
@@ -124,6 +124,59 @@ router.post('/create-invoice', authenticateToken, authLimiter, async (req, res) 
   } catch (err) {
     console.error('[Crypto Payment] Unexpected error:', err.message, err.stack);
     res.status(500).json({ error: 'Failed to process payment request', details: err.message });
+  }
+});
+
+// ==================== WEBHOOK DE NOWPAYMENTS ====================
+// IMPORTANTE: Este endpoint NO lleva "authenticateToken" porque es llamado automáticamente por los servidores de NOWPayments, no por el usuario.
+router.post('/webhook', async (req, res) => {
+  try {
+    const { payment_status, order_id, price_amount } = req.body;
+    console.log(`[Webhook NOWPayments] Recibido. Estado: ${payment_status} | Usuario ID: ${order_id}`);
+
+    // Si el estado es "finished", el dinero ya está confirmado en la blockchain
+    if (payment_status === 'finished') {
+      const creditsToAdd = parseFloat(price_amount);
+
+      // Usamos BEGIN y COMMIT para asegurar que ambas consultas (update e insert) se ejecuten correctamente juntas
+      await db.query('BEGIN');
+
+      try {
+        // 1. Sumar el saldo en la tabla users
+        await db.query(
+          'UPDATE users SET balance_tfc = balance_tfc + $1 WHERE id = $2',
+          [creditsToAdd, order_id]
+        );
+
+        // 2. Registrar el depósito en la tabla transactions
+        await db.query(
+          `INSERT INTO transactions (user_id, type, amount_tfc, description) 
+           VALUES ($1, 'deposit', $2, 'Recarga Crypto vía NOWPayments')`,
+          [order_id, creditsToAdd]
+        );
+
+        // Si todo salió bien, guardamos los cambios en la base de datos
+        await db.query('COMMIT');
+        console.log(`🎉 [Webhook] Éxito: Se sumaron ${creditsToAdd} TFC al usuario ${order_id}`);
+        
+        // (Opcional) Si quieres enviar un correo al cliente de que su recarga fue exitosa:
+        // const userEmailQuery = await db.query('SELECT email FROM users WHERE id = $1', [order_id]);
+        // if(userEmailQuery.rows[0]) sendPurchaseConfirmation(userEmailQuery.rows[0].email, creditsToAdd);
+
+      } catch (dbError) {
+        // Si hay un error en las consultas, revertimos los cambios por seguridad
+        await db.query('ROLLBACK');
+        console.error('[Webhook] Error en la base de datos, transacción revertida:', dbError);
+        throw dbError; // Enviamos el error al bloque catch principal
+      }
+    }
+
+    // Siempre debemos responder con estado 200 a NOWPayments, sino intentarán reenviar el webhook muchas veces
+    res.status(200).send('OK');
+
+  } catch (err) {
+    console.error('[Webhook] Error crítico procesando la notificación:', err);
+    res.status(500).send('Internal Server Error');
   }
 });
 
