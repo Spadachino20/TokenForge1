@@ -1,4 +1,3 @@
-var  API_URL = '';
 const PAYMENT_ENDPOINT = '/billing/create-invoice-test'; // TEST mode - change to '/billing/create-invoice' for production
 let usageChart = null;
 let currentCurrency = 'usd';
