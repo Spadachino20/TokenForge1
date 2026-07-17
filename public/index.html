@@ -3,234 +3,487 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TokenForge | Premium AI Proxy</title>
+  <title>TokenForge | The Last AI API</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Fonts Premium: Fraunces (Display Serif, ancha), Inter (UI/Cuerpo, ligera), JetBrains Mono (Datos/Tech) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="viewport">
+  <!-- BACKGROUND SYSTEM -->
+  <div class="forge-orb orb-1"></div>
+  <div class="forge-orb orb-2"></div>
+  <div class="forge-orb orb-3"></div>
+
   <!-- NAVBAR -->
-  <nav class="sys-navbar">
-    <div class="nav-brand">
-      <span class="brand-icon">⚡</span> TokenForge
-    </div>
-    <div class="nav-links">
-      <a href="#pricing">Pricing</a>
-      <a href="docs.html">Docs</a>
-      <a href="login.html">Sign In</a>
-      <a href="#waitlist" class="btn btn-sm">Join Waitlist</a>
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="/" class="nav-brand">
+        <!-- Exact Logo Match from Screenshot -->
+        <svg class="brand-logo-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+          <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2" />
+          <circle cx="12" cy="13.5" r="2.5" fill="var(--accent)"/>
+        </svg>
+        TokenForge
+      </a>
+      <div class="nav-links">
+        <a href="#docs">Docs</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#models">Models</a>
+      </div>
+      <div class="nav-actions">
+        <a href="login.html" class="btn-ghost">Sign In</a>
+        <a href="#waitlist" class="btn-solid">Start Forging →</a>
+      </div>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="grid-row hero-grid">
-    <div class="hero-left cell">
-      <h1>One API Key.<br>Every AI Model.</h1>
-      <p class="hero-sub">
-        Access all OpenAI, Claude, and Gemini models through a single OpenAI-compatible endpoint. Pay only for what you use. No subscriptions, no surprises.
-      </p>
+  <main>
+    <!-- HERO SECTION (Exact Typography & Visual match) -->
+    <section class="hero">
+      <div class="container hero-grid">
+        
+        <!-- TEXT COLUMN -->
+        <div class="hero-content">
+          <div class="hero-badge"><span class="badge-icon">⬡</span> NOW IN OPEN BETA</div>
+          <h1 class="hero-title">
+            <span class="title-line1">The Last AI API</span>
+            <span class="title-line2">you will ever need.</span>
+          </h1>
+          <!-- Provider line: the three underlying providers TokenForge routes to -->
+          <div class="title-mono">OpenAI · Claude · Gemini</div>
+          
+          <p class="hero-desc">
+            Access the world's most powerful models through a single unified endpoint. No monthly subscriptions. No surprise bills. Only the tokens you consume.
+          </p>
+          <div class="hero-ctas">
+            <a href="#waitlist" class="btn-solid btn-lg">Start Forging →</a>
+            <a href="docs.html" class="btn-ghost btn-lg">Read the Docs</a>
+          </div>
+          <p class="hero-micro">// No credit card required — from $10 USD</p>
+        </div>
 
-      <div class="metrics-bar">
-        <span class="metric-block">10+ AI Models</span>
-        <span class="metric-block">$0 / month</span>
-        <span class="metric-block">20% transparent markup</span>
+        <!-- VISUAL COLUMN (Terminal as signature element, hexagon as visible backdrop) -->
+        <div class="hero-visual">
+          <div class="hero-visual-frame">
+
+            <!-- SVG Hexagon Radar — decorative backdrop, ~45% of the frame, clearly visible -->
+            <svg class="hex-radar" viewBox="0 0 300 300">
+              <!-- Spider web spokes -->
+              <line x1="150" y1="150" x2="150" y2="20" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="150" y1="150" x2="262.5" y2="85" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="150" y1="150" x2="262.5" y2="215" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="150" y1="150" x2="150" y2="280" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="150" y1="150" x2="37.5" y2="215" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="150" y1="150" x2="37.5" y2="85" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+
+              <!-- Outer Hexagon (Dashed) -->
+              <polygon points="150,20 262.5,85 262.5,215 150,280 37.5,215 37.5,85" fill="none" stroke="rgba(0, 247, 255, 0.32)" stroke-width="1" stroke-dasharray="6,6"/>
+
+              <!-- Mid Hexagon (Solid) -->
+              <polygon points="150,60 227.9,105 227.9,195 150,240 72.1,195 72.1,105" fill="none" stroke="rgba(0, 247, 255, 0.42)" stroke-width="1.25"/>
+
+              <!-- Inner Hexagon -->
+              <polygon points="150,110 184.6,130 184.6,170 150,190 115.4,170 115.4,130" fill="rgba(0, 247, 255, 0.05)" stroke="var(--accent)" stroke-width="1.5"/>
+            </svg>
+
+            <!-- Routing Console — the signature element -->
+            <div class="hero-terminal">
+              <div class="term-dots"><span></span><span></span><span></span></div>
+              <div class="term-line"><span class="term-white">POST /v1/chat/completions</span></div>
+              <div class="term-line"><span class="term-key">model</span> <span class="term-arrow">→</span> claude-3-5-sonnet</div>
+              <div class="term-line"><span class="term-key">fallback</span> <span class="term-arrow">→</span> gpt-4o</div>
+              <div class="term-line"><span class="term-key">billing</span> <span class="term-arrow">→</span> TFC</div>
+              <div class="term-line term-status"><span class="dot active">●</span> 200 OK · 640ms</div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
+    </section>
 
-      <div class="hero-ctas">
-        <a href="#waitlist" class="btn btn-lg">Start Building →</a>
+    <!-- METRICS STRIP -->
+    <section class="metrics-strip">
+      <div class="container metrics-grid">
+        <div class="metric-item">
+          <div class="metric-number">10+</div>
+          <div class="metric-label">MODELS_AVAILABLE</div>
+          <div class="metric-desc">From OpenAI to Google.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-number">$0</div>
+          <div class="metric-label">PLATFORM_FEE</div>
+          <div class="metric-desc">No monthly minimums ever.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-number">20%</div>
+          <div class="metric-label">MARKUP_FIXED</div>
+          <div class="metric-desc">Transparent. Always.</div>
+        </div>
       </div>
+    </section>
 
-      <div class="provider-badges">
-        <span class="sys-badge">● OpenAI</span>
-        <span class="sys-badge">● Anthropic</span>
-        <span class="sys-badge">● Google</span>
-      </div>
-    </div>
-
-    <div class="hero-right cell">
-      <!-- 3D CUBE -->
-      <div class="cube-container">
-        <div class="scene">
-          <div class="cube">
-            <div class="cube-face front"></div>
-            <div class="cube-face back"></div>
-            <div class="cube-face right"></div>
-            <div class="cube-face left"></div>
-            <div class="cube-face top"></div>
-            <div class="cube-face bottom"></div>
+    <!-- HOW IT WORKS -->
+    <section class="how">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">// HOW_IT_WORKS</div>
+          <h2 class="section-title">
+            <span class="title-line1-sm">Zero to production</span><br>
+            <span class="title-line2-sm">in minutes.</span>
+          </h2>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <h3>Buy Credits</h3>
+            <p>Purchase TFC credits. No subscriptions, no lock-in. Start with just $10.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <h3>Get Your Key</h3>
+            <p>One <code>tf_sk_...</code> key works with every model, every provider.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">03</div>
+            <h3>Change One Line</h3>
+            <p>Swap your <code>base_url</code>. Everything else stays exactly the same.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">04</div>
+            <h3>Ship Faster</h3>
+            <p>All providers. Real-time usage tracking. Per-project budgets. Scale instantly.</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- CODE WINDOW -->
-      <div class="ide-window">
-        <div class="ide-header">
-          <div class="ide-tabs">
-            <span class="ide-tab active">integration.ts</span>
+    <!-- FEATURE GRID -->
+    <section class="features">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">// CORE INFRASTRUCTURE</div>
+          <h2 class="section-title">
+            <span class="title-line1-sm">One integration.</span><br>
+            <span class="title-line2-sm">Infinite possibility.</span>
+          </h2>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28">
+                <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
+                <circle cx="12" cy="12" r="3" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <h3>Unified Access</h3>
+            <p>A single integration for all leading LLMs. Switch models instantly by modifying a single SDK parameter. From 'gpt-4o' to 'claude-3-5-sonnet' in literally one line.</p>
           </div>
-          <div class="ide-actions">cfg: tokenforge</div>
+          
+          <div class="feature-card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28">
+                <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
+                <rect x="9" y="9" width="6" height="6" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <h3>The TFC System</h3>
+            <p>Prepaid credits of exactly $1 USD. You decide how much to spend and when. No surprises. No subscriptions. No per-developer seats.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28">
+                <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
+                <line x1="12" y1="2" x2="12" y2="22" stroke="var(--accent)" stroke-width="0.5"/>
+                <line x1="3" y1="7" x2="21" y2="17" stroke="var(--accent)" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <h3>Invisible Infrastructure</h3>
+            <p>Optimized latency, automatic cross-region redundancy, and 99.9% uptime. If your pipelines don't consume tokens, your monthly cost is exactly $0.00.</p>
+          </div>
+
+          <div class="feature-card dashboard-card">
+            <div class="dash-eyebrow">ROUTING_STATUS</div>
+            <div class="dash-divider"></div>
+            <div class="dash-row dash-row-head">
+              <span class="dash-provider">provider</span>
+              <span class="dash-latency">latency</span>
+              <span class="dash-status">status</span>
+            </div>
+            <div class="dash-row">
+              <span class="dash-provider">openai</span>
+              <span class="dash-latency">640ms</span>
+              <span class="dash-status"><span class="dot active">●</span> active</span>
+            </div>
+            <div class="dash-row">
+              <span class="dash-provider">anthropic</span>
+              <span class="dash-latency">580ms</span>
+              <span class="dash-status"><span class="dot active">●</span> active</span>
+            </div>
+            <div class="dash-row">
+              <span class="dash-provider">gemini</span>
+              <span class="dash-latency">710ms</span>
+              <span class="dash-status"><span class="dot active">●</span> active</span>
+            </div>
+          </div>
         </div>
-        <div class="ide-content">
-<pre><code><span class="comment">// Before: 3 SDKs, 3 API keys, 3 bills</span>
-<span class="keyword">const</span> openai <span class="operator">=</span> <span class="keyword">new</span> <span class="class">OpenAI</span>({ apiKey: <span class="string">'sk-...'</span> });
+      </div>
+    </section>
 
-<span class="comment">// After: Change one line, access everything</span>
-<span class="keyword">const</span> tokenforge <span class="operator">=</span> <span class="keyword">new</span> <span class="class">OpenAI</span>({
-  baseURL: <span class="string">'https://api.tokenforge.com/v1'</span>,
-  apiKey: <span class="string">'tf_sk_...'</span> <span class="comment">// gpt-4o, claude-opus, gemini</span>
-});</code></pre>
+    <!-- BEFORE / AFTER CODE COMPARISON -->
+    <section class="compare">
+      <div class="container">
+        <div class="eyebrow">// DROP-IN_REPLACEMENT</div>
+        <div class="compare-grid">
+          <div class="compare-card compare-before">
+            <div class="compare-label">BEFORE</div>
+            <pre><code>base_url = "https://api.openai.com/v1"
+<span class="term-key">+</span> anthropic SDK
+<span class="term-key">+</span> google SDK
+<span class="term-key">+</span> 3 API keys, 3 bills</code></pre>
+          </div>
+          <div class="compare-card compare-after">
+            <div class="compare-label">AFTER</div>
+            <pre><code>base_url = "https://api.tokenforge.ai/v1"
+api_key = "tf_sk_..."
+<span class="term-key">#</span> works with gpt-4o, claude, gemini</code></pre>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- EXECUTION FLOW -->
-  <div class="grid-row section-title cell">
-    <h2>EXECUTION_FLOW</h2>
-  </div>
-  <section class="grid-row four-col-grid">
-    <div class="cell step-cell">
-      <div class="step-num">01</div>
-      <h3>Buy Credits</h3>
-      <p>Purchase TFC credits. No subscriptions, no lock-in. Start with $10.</p>
-    </div>
-    <div class="cell step-cell">
-      <div class="step-num">02</div>
-      <h3>Get Your Key</h3>
-      <p>One <code class="mono-accent">tf_sk_...</code> key works with every model, every provider.</p>
-    </div>
-    <div class="cell step-cell">
-      <div class="step-num">03</div>
-      <h3>Change One Line</h3>
-      <p>Swap your <code class="mono-accent">base_url</code>. Everything else stays exactly the same.</p>
-    </div>
-    <div class="cell step-cell">
-      <div class="step-num">04</div>
-      <h3>Ship Faster</h3>
-      <p>All providers. Real-time usage tracking. Per-project budgets. Scale instantly.</p>
-    </div>
-  </section>
+    <!-- SUPPORTED MODELS -->
+    <section class="models" id="models">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">// SUPPORTED_MODELS</div>
+          <h2 class="section-title">
+            <span class="title-line1-sm">Every model,</span><br>
+            <span class="title-line2-sm">one endpoint.</span>
+          </h2>
+        </div>
+        <div class="models-table">
+          <div class="models-row models-row-head">
+            <span>model</span>
+            <span>provider</span>
+            <span>best for</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">gpt-4o</span>
+            <span class="models-provider">OpenAI</span>
+            <span class="models-note">General purpose, multimodal</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">gpt-4o-mini</span>
+            <span class="models-provider">OpenAI</span>
+            <span class="models-note">High-volume, low-cost tasks</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">o3-mini</span>
+            <span class="models-provider">OpenAI</span>
+            <span class="models-note">Reasoning-heavy workloads</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">claude-opus-4-8</span>
+            <span class="models-provider">Anthropic</span>
+            <span class="models-note">Complex agentic tasks</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">claude-sonnet-5</span>
+            <span class="models-provider">Anthropic</span>
+            <span class="models-note">Balanced quality and speed</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">claude-haiku-4-5</span>
+            <span class="models-provider">Anthropic</span>
+            <span class="models-note">Fast, low-latency replies</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">gemini-2.5-pro</span>
+            <span class="models-provider">Google</span>
+            <span class="models-note">Long-context reasoning</span>
+          </div>
+          <div class="models-row">
+            <span class="models-name">gemini-2.5-flash</span>
+            <span class="models-provider">Google</span>
+            <span class="models-note">Speed at scale</span>
+          </div>
+        </div>
+        <p class="models-note-footer">// Model list updates automatically as providers ship new releases — no code changes on your end.</p>
+      </div>
+    </section>
 
-  <!-- INFRASTRUCTURE -->
-  <div class="grid-row section-title cell">
-    <h2>INFRASTRUCTURE_PROTECTIONS</h2>
-  </div>
-  <section class="grid-row protections-grid">
-    <div class="protection-left cell">
-      <h3>Zero-Downtime Fallback</h3>
-      <p>Automatic redirection in milliseconds. If a provider throws a 503 error, your request is routed to the next best model without breaking your app.</p>
+    <!-- FOR WHO SECTION -->
+    <section class="for-who">
+      <div class="container">
+        <div class="eyebrow">// WHO USES TOKENFORGE</div>
+        <div class="who-grid">
+          <div class="who-column">
+            <div class="who-label">DEVELOPERS</div>
+            <h3 class="who-title">Instant iteration.</h3>
+            <p class="who-desc">Test ideas in minutes without dealing with three different billing portals or configuring multiple APIs.</p>
+          </div>
+          <div class="who-column">
+            <div class="who-label">STARTUPS</div>
+            <h3 class="who-title">Total runway control.</h3>
+            <p class="who-desc">Generate API keys per environment, assign strict daily budgets. Never see a catastrophic bill again.</p>
+          </div>
+          <div class="who-column">
+            <div class="who-label">AI_ENTHUSIASTS</div>
+            <h3 class="who-title">Unbound exploration.</h3>
+            <p class="who-desc">Access cutting-edge models paying exactly for the tokens you consume. Zero monthly commitments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <div class="terminal-log">
-        <div class="log-line"><span class="time">12:33:01.045</span> <span class="req">POST /v1/chat</span> <span class="target">-> anthropic.claude-opus</span></div>
-        <div class="log-line"><span class="time">12:33:04.112</span> <span class="err">[503 Timeout]</span> Provider unavailable.</div>
-        <div class="log-line"><span class="time">12:33:04.115</span> <span class="sys">-> Redirecting to backup... (gpt-4o)</span></div>
-        <div class="log-line"><span class="time">12:33:04.890</span> <span class="ok">[200 OK]</span> Payload delivered.</div>
+    <!-- USE CASES -->
+    <section class="usecases">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">// BUILT_FOR</div>
+          <h2 class="section-title">
+            <span class="title-line1-sm">Every use case,</span><br>
+            <span class="title-line2-sm">one platform.</span>
+          </h2>
+        </div>
+        <div class="usecase-grid">
+          <div class="usecase-card">
+            <div class="usecase-num">AGENTS</div>
+            <h3>Multi-step reasoning</h3>
+            <p>Run agents that call different models for different tasks — reasoning, coding, summarizing — all from one key.</p>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-num">SAAS</div>
+            <h3>Multi-tenant billing</h3>
+            <p>Assign one API key per client project. Set individual TFC budgets. Track cost per client without sharing credentials.</p>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-num">BENCHMARK</div>
+            <h3>Model comparison</h3>
+            <p>Compare GPT-4o, Claude, and Gemini side by side in the same codebase. One request format, zero SDK switching.</p>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-num">FAILOVER</div>
+            <h3>Fallback routing</h3>
+            <p>Switch models on the fly if one provider goes down. Your code stays the same — just change the model parameter.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section class="pricing" id="pricing">
+      <div class="container pricing-grid">
+        <div class="pricing-content">
+          <div class="eyebrow">// PRICING_MODEL</div>
+          <h2 class="pricing-title">Zero Platform Fee.</h2>
+          <p class="pricing-sub">Real pay-as-you-go.</p>
+        </div>
+        
+        <div class="pricing-col">
+        <div class="pricing-ledger">
+          <div class="ledger-row">
+            <span class="ledger-key">SUBSCRIPTION_FEE</span>
+            <span class="ledger-val"><span class="ledger-arrow">→</span> $0.00 / month</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-key">MINIMUM_USAGE_FEE</span>
+            <span class="ledger-val"><span class="ledger-arrow">→</span> $0.00</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-key">PLATFORM_MARKUP</span>
+            <span class="ledger-val"><span class="ledger-arrow">→</span> 20% (fixed, transparent)</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-key">MINIMUM_DEPOSIT</span>
+            <span class="ledger-val"><span class="ledger-arrow">→</span> $10.00 USD</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-key">ACCEPTED</span>
+            <span class="ledger-val"><span class="ledger-arrow">→</span> Crypto</span>
+          </div>
+        </div>
+
+        <div class="pricing-examples">
+          <div class="dash-eyebrow">EXAMPLE_COST · 1M TOKENS</div>
+          <div class="dash-divider"></div>
+          <div class="dash-row">
+            <span class="dash-provider">gpt-4o</span>
+            <span class="dash-status">~$12.00</span>
+          </div>
+          <div class="dash-row">
+            <span class="dash-provider">claude-opus-4-8</span>
+            <span class="dash-status">~$30.00</span>
+          </div>
+          <div class="dash-row">
+            <span class="dash-provider">gemini-2.5-flash</span>
+            <span class="dash-status">~$10.80</span>
+          </div>
+          <div class="dash-row">
+            <span class="dash-provider">gpt-4o-mini</span>
+            <span class="dash-status">~$0.72</span>
+          </div>
+          <p class="pricing-examples-note">// All prices include the 20% platform markup.</p>
+        </div>
+        </div>
+      </div>
+      <div class="container">
+        <p class="pricing-footer-note">If your pipelines aren't working, neither are we charging.</p>
+      </div>
+    </section>
+
+    <!-- WAITLIST SECTION -->
+    <section class="waitlist" id="waitlist">
+      <div class="container waitlist-container">
+        <div class="eyebrow">// GET_EARLY_ACCESS</div>
+        <h2 class="waitlist-title">Enter the forge.</h2>
+        <p class="waitlist-sub">Join the waitlist. We'll notify you when your account is ready.</p>
+        
+        <!-- Original form IDs preserved for main.js functionality -->
+        <form class="waitlist-form" id="waitlistForm">
+          <input type="email" id="waitlistEmail" name="email" placeholder="you@company.com" required>
+          <button type="submit" class="btn-solid btn-submit">Notify Me</button>
+        </form>
+        <p class="waitlist-micro">// Free $5 credits on launch · No spam · No credit card</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-logo">
+          <svg class="brand-logo-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+            <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2" />
+            <circle cx="12" cy="13.5" r="2.5" fill="var(--accent)"/>
+          </svg>
+          TokenForge
+        </div>
+        <div class="footer-tagline">Intelligence, refined.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#docs">Docs</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#models">Models</a>
+        <a href="login.html">Login</a>
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
       </div>
     </div>
-
-    <div class="protection-right cell">
-      <h3>Hard Limits per Sub-Key</h3>
-      <p>Protect your budget. Set strict daily limits (e.g. $5/day in testing) to prevent infinite loops from draining your balance.</p>
-      <div class="data-block">
-        <div class="data-row"><span>KEY_ENV:</span> <span>TESTING_API</span></div>
-        <div class="data-row"><span>QUOTA:</span> <span class="mono-accent">$5.00 / 24H</span></div>
-        <div class="data-row"><span>ACTION:</span> <span class="err">REJECT_429</span></div>
+    <div class="container">
+      <div class="footer-bottom">
+        © 2026 TokenForge. Built with precision.
       </div>
     </div>
-  </section>
-
-  <!-- USE CASES -->
-  <div class="grid-row section-title cell">
-    <h2>BUILT_FOR_EVERY_USE_CASE</h2>
-  </div>
-  <section class="grid-row usecases-grid">
-    <div class="cell usecase-cell">
-      <h3>AI Agents</h3>
-      <p>Run multi-step agents that call different models for different tasks — reasoning, coding, summarizing — all from one key.</p>
-    </div>
-    <div class="cell usecase-cell">
-      <h3>Multi-tenant SaaS</h3>
-      <p>Assign one API key per client project. Set individual TFC budgets. Track costs per client without sharing credentials.</p>
-    </div>
-    <div class="cell usecase-cell">
-      <h3>Model Benchmarking</h3>
-      <p>Compare GPT-4o, Claude, and Gemini side-by-side in the same codebase. One request format, zero SDK switching.</p>
-    </div>
-    <div class="cell usecase-cell">
-      <h3>Fallback Routing</h3>
-      <p>Switch models on the fly if one provider goes down. Your code stays the same — just change the model parameter.</p>
-    </div>
-  </section>
-
-  <!-- PRICING -->
-  <div class="grid-row section-title cell" id="pricing">
-    <h2>PRICING_MATRIX</h2>
-  </div>
-  <section class="grid-row matrix-grid">
-    <div class="matrix-full cell">
-      <div class="matrix-header">
-        <h3>Pay only for what you actually use. 1 TFC = $1 USD. Credits never expire.</h3>
-      </div>
-      <table class="dense-table">
-        <thead>
-          <tr>
-            <th>MODEL_ID</th>
-            <th>EST_COST_PER_1M_TOKENS</th>
-            <th>INCLUDES_MARKUP</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>gpt-4o</code></td>
-            <td class="mono-accent">~$12.00</td>
-            <td class="sys">TRUE (20%)</td>
-          </tr>
-          <tr>
-            <td><code>claude-opus-4.8</code></td>
-            <td class="mono-accent">~$30.00</td>
-            <td class="sys">TRUE (20%)</td>
-          </tr>
-          <tr>
-            <td><code>gemini-3.5-flash</code></td>
-            <td class="mono-accent">~$10.80</td>
-            <td class="sys">TRUE (20%)</td>
-          </tr>
-          <tr>
-            <td><code>gpt-4o-mini</code></td>
-            <td class="mono-accent">~$0.72</td>
-            <td class="sys">TRUE (20%)</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="action-footer">
-        <a href="#waitlist" class="btn btn-lg">[ GET tf_sk_KEY ]</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- WAITLIST -->
-  <section class="grid-row waitlist-grid" id="waitlist">
-    <div class="cell waitlist-content">
-      <h2>Join the waitlist</h2>
-      <p>We're rolling out access gradually. Drop your email and we'll let you know when you're in.</p>
-      <form class="sys-form" id="waitlistForm">
-        <input type="email" id="waitlistEmail" placeholder="dev@company.com" required>
-        <button type="submit" class="btn">Notify Me</button>
-      </form>
-      <p id="waitlistMsg"></p>
-      <div class="perks-list">
-        <span>[✓] Free $5 credits on launch</span>
-        <span>[✓] Early adopter pricing</span>
-        <span>[✓] No spam, ever</span>
-      </div>
-    </div>
-  </section>
-
-  <footer class="sys-footer">
-    <div>© 2026 TokenForge Aggregator</div>
-    <div>STATUS: <span class="sys-ok">OPERATIONAL</span></div>
   </footer>
-</div>
 
+  <script src="js/main.js"></script>
 </body>
 </html>
