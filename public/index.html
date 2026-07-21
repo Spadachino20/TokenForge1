@@ -1,489 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TokenForge | The Last AI API</title>
-  <link rel="stylesheet" href="css/style.css">
-  <!-- Fonts Premium: Fraunces (Display Serif, ancha), Inter (UI/Cuerpo, ligera), JetBrains Mono (Datos/Tech) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TokenForge — One Key. Three Engines.</title>
+<meta name="description" content="A single OpenAI-compatible API key routed across OpenAI, Anthropic and Google. Prepaid TFC credits, a fixed 20% markup, zero subscriptions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --obsidian:#07080a;
+  --obsidian-2:#0d0f12;
+  --surface: rgba(255,255,255,0.035);
+  --surface-hi: rgba(255,255,255,0.06);
+  --line: rgba(0,247,255,0.14);
+  --line-soft: rgba(255,255,255,0.07);
+  --cyan:#00f7ff;
+  --cyan-dim: rgba(0,247,255,0.16);
+  --cyan-dimmer: rgba(0,247,255,0.35);
+  --ember:#ff7a3d;
+  --ember-dim: rgba(255,122,61,0.16);
+  --ink:#f1f1ee;
+  --ink-muted:#93969f;
+  --ink-faint:#5b5e68;
+  --font-serif:'Playfair Display', serif;
+  --font-sans:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+  --radius: 18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--obsidian);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  font-weight:300;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.glow{position:fixed;border-radius:50%;filter:blur(140px);pointer-events:none;z-index:0;}
+.glow-cyan{width:600px;height:600px;top:-260px;left:-200px;background:var(--cyan);opacity:.10;}
+.glow-ember{width:460px;height:460px;bottom:-120px;right:-160px;background:var(--ember);opacity:.06;}
+nav,main,footer{position:relative;z-index:1;}
+.container{max-width:1180px;margin:0 auto;padding:0 2rem;}
+a{color:inherit;}
+p{font-family:var(--font-serif);font-weight:400;color:var(--ink-muted);}
+.eyebrow{
+  font-family:var(--font-mono);color:var(--cyan);font-size:.7rem;
+  letter-spacing:.16em;text-transform:uppercase;margin-bottom:1.1rem;display:inline-block;
+}
+img,svg{max-width:100%;}
+
+/* ============ REVEAL ============ */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease;}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+}
+
+/* ============ BUTTONS ============ */
+.btn{
+  font-family:var(--font-sans);font-weight:600;padding:.8rem 1.7rem;border-radius:50px;
+  display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;cursor:pointer;border:none;
+  transition:all .25s ease;font-size:.95rem;
+}
+.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;}
+.btn-solid{background:var(--cyan);color:#00161a;box-shadow:0 0 18px rgba(0,247,255,.2);}
+.btn-solid:hover{box-shadow:0 0 30px rgba(0,247,255,.4);transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.16);}
+.btn-ghost:hover{border-color:var(--ink);background:rgba(255,255,255,.04);}
+.btn-lg{padding:.95rem 2.1rem;font-size:1.02rem;}
+
+/* ============ NAV ============ */
+.navbar{
+  position:sticky;top:0;z-index:999;background:rgba(7,8,10,.86);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line-soft);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px;}
+.nav-brand{
+  font-family:var(--font-serif);font-weight:700;font-size:1.25rem;text-decoration:none;
+  display:flex;align-items:center;gap:9px;color:var(--ink);
+}
+.nav-brand svg{width:21px;height:21px;}
+.nav-links{display:flex;gap:2.2rem;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{font-size:.92rem;color:var(--ink-muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--ink);}
+.nav-actions{display:flex;gap:.9rem;align-items:center;}
+@media(max-width:880px){.nav-links{display:none;}}
+
+/* ============ HERO ============ */
+.hero{padding:120px 0 90px;}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.68rem;
+  letter-spacing:.14em;color:var(--cyan);background:rgba(0,247,255,.05);border:1px solid rgba(0,247,255,.5);
+  padding:.4rem 1.1rem;border-radius:50px;margin-bottom:2rem;
+}
+.hero-badge .pulse{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+.hero-title{margin-bottom:1.3rem;}
+.hero-title .l1{
+  display:block;font-family:var(--font-serif);font-weight:700;font-size:clamp(3rem,5.6vw,5.3rem);
+  color:var(--ink);line-height:1.05;letter-spacing:-.02em;
+}
+.hero-title .l2{
+  display:block;font-family:var(--font-serif);font-style:italic;font-weight:500;
+  font-size:clamp(2.4rem,4.6vw,4.2rem);color:var(--ink-muted);line-height:1.1;
+}
+.hero-models{
+  font-family:var(--font-mono);font-size:clamp(.8rem,1.1vw,.98rem);color:var(--ember);
+  margin:1.6rem 0 1.8rem;letter-spacing:.01em;
+}
+.hero-desc{font-size:clamp(1.02rem,1.1vw,1.15rem);max-width:520px;margin-bottom:2.6rem;}
+.hero-ctas{display:flex;gap:1.2rem;margin-bottom:1.3rem;flex-wrap:wrap;}
+.hero-micro{font-family:var(--font-mono);font-size:.74rem;color:var(--ink-faint);}
+
+/* schematic diagram */
+.hero-visual{display:flex;justify-content:center;}
+.schema{width:100%;max-width:460px;}
+.schema-line{fill:none;stroke:var(--cyan);stroke-width:1.4;opacity:.4;}
+.schema-line--out{stroke:var(--ember);opacity:.75;stroke-dasharray:4 7;animation:flow 2s linear infinite;}
+@keyframes flow{to{stroke-dashoffset:-22;}}
+.schema-hex{fill:rgba(0,247,255,.045);stroke:var(--cyan);stroke-width:1.4;}
+.schema-hex-inner{fill:rgba(255,122,61,.10);stroke:var(--ember);stroke-width:1.2;}
+.schema-core{fill:var(--ember);filter:drop-shadow(0 0 6px rgba(255,122,61,.8));}
+.schema-node polygon,.schema-node rect,.schema-node path{fill:var(--obsidian-2);stroke:var(--cyan);stroke-width:1.3;}
+.schema-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:2px;fill:var(--ink-faint);}
+.schema-chip{fill:var(--surface);stroke:var(--line-soft);}
+.schema-chip-text{font-family:var(--font-mono);font-size:11px;fill:var(--ink);}
+.schema-chip-text--muted{fill:var(--ink-faint);font-size:9.5px;}
+
+/* ============ METRICS ============ */
+.metrics{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
+  padding:44px 0;background:rgba(0,0,0,.25);}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);}
+.metric{padding:0 2rem;border-right:1px solid var(--line-soft);}
+.metric:last-child{border-right:none;}
+.metric-num{font-family:var(--font-sans);font-weight:800;font-size:2.2rem;color:var(--ink);line-height:1;margin-bottom:.5rem;}
+.metric-label{font-family:var(--font-mono);color:var(--cyan);font-size:.68rem;letter-spacing:.1em;margin-bottom:.35rem;}
+.metric-desc{font-family:var(--font-sans);color:var(--ink-muted);font-size:.85rem;}
+@media(max-width:880px){.metrics-grid{grid-template-columns:1fr 1fr;gap:1.8rem 0;}
+  .metric{border-right:none;padding:0 1rem;}
+  .metric:nth-child(odd){border-right:1px solid var(--line-soft);}}
+
+/* ============ SECTION SHELL ============ */
+section{padding:120px 0;}
+.section-head{margin-bottom:3.2rem;max-width:640px;}
+.section-title{font-family:var(--font-sans);font-weight:800;font-size:clamp(2.1rem,3.6vw,3rem);
+  color:var(--ink);letter-spacing:-.02em;}
+.section-title em{font-family:var(--font-serif);font-style:italic;font-weight:500;color:var(--ink-muted);}
+.section-sub{margin-top:.9rem;font-size:1rem;max-width:520px;}
+
+/* ============ PROVIDERS ============ */
+.providers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
+.provider-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:36px;transition:border-color .3s;}
+.provider-card:hover{border-color:var(--cyan-dimmer);}
+.provider-mark{width:38px;height:38px;margin-bottom:1.3rem;}
+.provider-mark svg{width:100%;height:100%;}
+.provider-name{font-family:var(--font-sans);font-weight:700;font-size:1.15rem;margin-bottom:.5rem;}
+.provider-desc{font-size:.88rem;margin-bottom:1.5rem;line-height:1.55;}
+.provider-tiers{border-top:1px solid var(--line-soft);padding-top:1.1rem;}
+.tier-row{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.74rem;
+  padding:.45rem 0;color:var(--ink-muted);gap:.5rem;}
+.tier-row .tname{color:var(--ink);}
+.tier-badge{font-size:.6rem;letter-spacing:.06em;color:var(--ember);text-transform:uppercase;}
+
+/* ============ PRICING ============ */
+.pricing-top{display:grid;grid-template-columns:1fr 1.15fr;gap:3.5rem;align-items:center;margin-bottom:3.5rem;}
+.ledger{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:34px;font-family:var(--font-mono);font-size:.84rem;}
+.ledger-row{display:flex;justify-content:space-between;padding:1rem 0;border-bottom:1px dashed var(--line-soft);}
+.ledger-row:last-child{border-bottom:none;}
+.ledger-key{color:var(--ink-muted);}
+.ledger-val{color:var(--ink);}
+.ledger-val .arrow{color:var(--cyan);margin-right:6px;}
+
+.price-table-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--surface);}
+.price-table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:.82rem;min-width:640px;}
+.price-table th{text-align:left;padding:1rem 1.4rem;color:var(--ink-faint);font-weight:500;
+  font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line-soft);}
+.price-table td{padding:.85rem 1.4rem;border-bottom:1px solid rgba(255,255,255,.03);color:var(--ink-muted);}
+.price-table tr:last-child td{border-bottom:none;}
+.price-table td:first-child{color:var(--ink);}
+.price-table td:last-child{color:var(--cyan);}
+.price-group td{background:rgba(0,247,255,.035);color:var(--ink);font-size:.68rem;letter-spacing:.12em;
+  padding:.6rem 1.4rem;}
+.price-note{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint);margin-top:1rem;line-height:1.7;}
+
+/* calculator */
+.calc{margin-top:3.5rem;background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:38px;display:grid;grid-template-columns:.9fr 1.1fr;gap:2.6rem;align-items:center;}
+.calc-title{font-family:var(--font-sans);font-weight:700;font-size:1.2rem;margin-bottom:.6rem;color:var(--ink);}
+.calc-desc{font-size:.85rem;margin-bottom:1.4rem;}
+.calc-input-row{display:flex;align-items:center;gap:.7rem;}
+.calc-input-row span{font-family:var(--font-mono);color:var(--ink-muted);}
+.calc-input{
+  background:var(--obsidian);border:1px solid rgba(255,255,255,.14);border-radius:10px;
+  padding:.7rem 1rem;color:var(--ink);font-family:var(--font-mono);font-size:1.1rem;width:130px;
+}
+.calc-input:focus{outline:none;border-color:var(--cyan);}
+.calc-tfc{font-family:var(--font-mono);font-size:.78rem;color:var(--cyan);margin-top:.8rem;}
+.calc-results{display:flex;flex-direction:column;gap:.9rem;}
+.calc-result{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px dashed var(--line-soft);padding-bottom:.7rem;}
+.calc-result:last-child{border-bottom:none;padding-bottom:0;}
+.calc-result-label{font-family:var(--font-sans);font-size:.85rem;color:var(--ink-muted);}
+.calc-result-value{font-family:var(--font-mono);font-size:1.05rem;color:var(--ink);}
+@media(max-width:880px){.pricing-top,.calc{grid-template-columns:1fr;}}
+
+/* ============ LEDGER VISUALIZER ============ */
+.ledger-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);padding:38px;}
+.ledger-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.6rem;flex-wrap:wrap;gap:.6rem;}
+.ledger-card-eyebrow{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.12em;color:var(--cyan);}
+.ledger-card-period{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-faint);}
+.ledger-bar{display:flex;height:14px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.04);margin-bottom:1.1rem;}
+.ledger-seg{height:100%;transform-origin:left;animation:grow 1.1s ease forwards;}
+@keyframes grow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+.seg-anthropic{background:var(--cyan);}
+.seg-openai{background:var(--ember);}
+.seg-google{background:rgba(0,247,255,.35);}
+.ledger-legend{display:flex;gap:1.6rem;flex-wrap:wrap;font-family:var(--font-mono);font-size:.76rem;color:var(--ink-muted);margin-bottom:1.8rem;}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+.dot-anthropic{background:var(--cyan);}
+.dot-openai{background:var(--ember);}
+.dot-google{background:rgba(0,247,255,.35);}
+.ledger-spark{width:100%;height:60px;margin-bottom:1.6rem;}
+.ledger-spark polyline{fill:none;stroke:var(--cyan);stroke-width:1.6;opacity:.75;}
+.ledger-caption{font-size:.88rem;max-width:560px;}
+.ledger-features{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.4rem;}
+.lf-item{border-top:1px solid var(--line-soft);padding-top:1rem;}
+.lf-num{font-family:var(--font-mono);color:var(--ember);font-size:.72rem;letter-spacing:.08em;}
+.lf-text{font-family:var(--font-sans);font-size:.86rem;color:var(--ink-muted);margin-top:.4rem;}
+@media(max-width:880px){.ledger-features{grid-template-columns:1fr;}}
+
+/* ============ USE CASES ============ */
+.usecases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
+.usecase-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);padding:36px;}
+.usecase-label{font-family:var(--font-mono);color:var(--cyan);font-size:.68rem;letter-spacing:.12em;margin-bottom:1.3rem;display:block;}
+.usecase-title{font-family:var(--font-sans);font-weight:700;font-size:1.3rem;margin-bottom:.9rem;}
+.usecase-desc{font-size:.92rem;}
+@media(max-width:880px){.providers-grid,.usecases-grid{grid-template-columns:1fr;}}
+
+/* ============ COMPARISON ============ */
+.compare-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--surface);}
+.compare-table{width:100%;border-collapse:collapse;font-family:var(--font-sans);font-size:.86rem;min-width:720px;}
+.compare-table th{text-align:left;padding:1.1rem 1.4rem;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);border-bottom:1px solid var(--line-soft);font-weight:600;}
+.compare-table th.hl{color:var(--cyan);}
+.compare-table td{padding:1rem 1.4rem;border-bottom:1px solid rgba(255,255,255,.03);color:var(--ink-muted);vertical-align:top;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table td:first-child{color:var(--ink);font-weight:500;}
+.compare-table td.hl{color:var(--ink);background:rgba(0,247,255,.035);}
+.yes{color:var(--cyan);}
+.no{color:var(--ink-faint);}
+
+/* ============ SERVICES ============ */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.service-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);padding:30px;}
+.service-icon{width:26px;height:26px;margin-bottom:1.1rem;color:var(--cyan);}
+.service-title{font-family:var(--font-sans);font-weight:600;font-size:1rem;margin-bottom:.5rem;color:var(--ink);}
+.service-desc{font-size:.85rem;}
+@media(max-width:880px){.services-grid{grid-template-columns:1fr;}}
+
+/* ============ WAITLIST ============ */
+.waitlist-box{max-width:680px;margin:0 auto;text-align:center;background:var(--surface);
+  border:1px solid var(--line-soft);border-radius:28px;padding:64px 42px;}
+.waitlist-title{font-family:var(--font-sans);font-weight:800;font-size:clamp(2.2rem,4vw,3.2rem);letter-spacing:-.03em;margin-bottom:.9rem;}
+.waitlist-sub{font-family:var(--font-sans);font-size:1.02rem;color:var(--ink-muted);margin-bottom:2.2rem;}
+.waitlist-form{display:flex;gap:.8rem;max-width:440px;margin:0 auto 1.3rem;flex-wrap:wrap;justify-content:center;}
+.waitlist-form input{
+  flex:1;min-width:200px;background:var(--obsidian);border:1px solid rgba(255,255,255,.14);border-radius:50px;
+  padding:.9rem 1.4rem;color:var(--ink);font-family:var(--font-sans);font-size:.95rem;
+}
+.waitlist-form input:focus{outline:none;border-color:var(--cyan);}
+.waitlist-micro{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint);}
+.waitlist-success{display:none;font-family:var(--font-mono);color:var(--cyan);font-size:.9rem;}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--line-soft);padding:56px 0 38px;background:rgba(0,0,0,.3);}
+.footer-grid{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3rem;flex-wrap:wrap;gap:2rem;}
+.footer-brand{font-family:var(--font-sans);font-weight:800;font-size:1.15rem;display:flex;align-items:center;gap:8px;margin-bottom:.5rem;}
+.footer-brand svg{width:19px;height:19px;}
+.footer-tagline{font-family:var(--font-serif);font-style:italic;color:var(--ink-muted);}
+.footer-links{display:flex;gap:2.2rem;flex-wrap:wrap;}
+.footer-links a{font-size:.9rem;color:var(--ink-muted);text-decoration:none;}
+.footer-links a:hover{color:var(--ink);}
+.footer-bottom{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint);border-top:1px solid var(--line-soft);padding-top:26px;}
+
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;text-align:center;}
+  .hero-desc{margin:0 auto 2.4rem;}
+  .hero-ctas{justify-content:center;}
+  .hero-visual{margin-top:1rem;}
+  section{padding:80px 0;}
+}
+</style>
 </head>
 <body>
 
-  <!-- BACKGROUND SYSTEM -->
-  <div class="forge-orb orb-1"></div>
-  <div class="forge-orb orb-2"></div>
-  <div class="forge-orb orb-3"></div>
+<div class="glow glow-cyan"></div>
+<div class="glow glow-ember"></div>
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="container nav-inner">
-      <a href="/" class="nav-brand">
-        <!-- Exact Logo Match from Screenshot -->
-        <svg class="brand-logo-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
-          <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2" />
-          <circle cx="12" cy="13.5" r="2.5" fill="var(--accent)"/>
-        </svg>
-        TokenForge
-      </a>
-      <div class="nav-links">
-        <a href="#docs">Docs</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#models">Models</a>
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="#top" class="nav-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2">
+        <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
+        <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
+      </svg>
+      TokenForge
+    </a>
+    <div class="nav-links">
+      <a href="#providers">Providers</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#usecases">Use cases</a>
+      <a href="#compare">Compare</a>
+      <a href="#services">Services</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#waitlist" class="btn btn-solid">Join waitlist →</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="pulse"></span> UPDATED · JULY 2026</div>
+        <h1 class="hero-title">
+          <span class="l1">One key.</span>
+          <span class="l2">Three engines, forged into one.</span>
+        </h1>
+        <div class="hero-models">gpt-5.6-sol · claude-opus-4-8 · gemini-3.1-pro</div>
+        <p class="hero-desc">TokenForge routes a single OpenAI-compatible endpoint across OpenAI, Anthropic and Google. Prepaid TFC credits, a fixed 20% markup, and zero subscriptions — you only ever pay for the tokens you actually burn.</p>
+        <div class="hero-ctas">
+          <a href="#waitlist" class="btn btn-solid btn-lg">Join the waitlist →</a>
+          <a href="#pricing" class="btn btn-ghost btn-lg">See pricing</a>
+        </div>
+        <p class="hero-micro">// No card required — from $10 USD in stablecoins</p>
       </div>
-      <div class="nav-actions">
-        <a href="login.html" class="btn-ghost">Sign In</a>
-        <a href="#waitlist" class="btn-solid">Start Forging →</a>
+
+      <div class="hero-visual">
+        <svg class="schema" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path class="schema-line" d="M90,70 C90,140 150,175 186,198"/>
+          <path class="schema-line" d="M240,55 L240,168"/>
+          <path class="schema-line" d="M390,70 C390,140 330,175 294,198"/>
+          <path class="schema-line schema-line--out" d="M240,292 L240,348"/>
+
+          <polygon class="schema-hex" points="240,168 291.9,198 291.9,258 240,288 188.1,258 188.1,198"/>
+          <polygon class="schema-hex-inner" points="240,198 267,213 267,243 240,258 213,243 213,213"/>
+          <circle class="schema-core" cx="240" cy="228" r="4"/>
+
+          <g class="schema-node" transform="translate(90,55)">
+            <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10"/>
+          </g>
+          <g class="schema-node" transform="translate(240,40)">
+            <rect x="-14" y="-14" width="28" height="28" transform="rotate(45)"/>
+          </g>
+          <g class="schema-node" transform="translate(390,55)">
+            <path d="M0,-20 L5,-5 L20,0 L5,5 L0,20 L-5,5 L-20,0 L-5,-5 Z"/>
+          </g>
+
+          <text class="schema-label" x="90" y="100" text-anchor="middle">OPENAI</text>
+          <text class="schema-label" x="240" y="18" text-anchor="middle">ANTHROPIC</text>
+          <text class="schema-label" x="390" y="100" text-anchor="middle">GOOGLE</text>
+
+          <rect class="schema-chip" x="108" y="348" width="264" height="58" rx="10"/>
+          <text class="schema-chip-text" x="240" y="372" text-anchor="middle">tf_sk_••••••••••••</text>
+          <text class="schema-chip-text schema-chip-text--muted" x="240" y="391" text-anchor="middle">POST /v1/chat/completions</text>
+        </svg>
       </div>
     </div>
-  </nav>
+  </section>
 
-  <main>
-    <!-- HERO SECTION (Exact Typography & Visual match) -->
-    <section class="hero">
-      <div class="container hero-grid">
-        
-        <!-- TEXT COLUMN -->
-        <div class="hero-content">
-          <div class="hero-badge"><span class="badge-icon">⬡</span> NOW IN OPEN BETA</div>
-          <h1 class="hero-title">
-            <span class="title-line1">The Last AI API</span>
-            <span class="title-line2">you will ever need.</span>
-          </h1>
-          <!-- Provider line: the three underlying providers TokenForge routes to -->
-          <div class="title-mono">OpenAI · Claude · Gemini</div>
-          
-          <p class="hero-desc">
-            Access the world's most powerful models through a single unified endpoint. No monthly subscriptions. No surprise bills. Only the tokens you consume.
-          </p>
-          <div class="hero-ctas">
-            <a href="#waitlist" class="btn-solid btn-lg">Start Forging →</a>
-            <a href="docs.html" class="btn-ghost btn-lg">Read the Docs</a>
-          </div>
-          <p class="hero-micro">// No credit card required — from $10 USD</p>
-        </div>
+  <!-- METRICS -->
+  <section class="metrics" style="padding:44px 0;">
+    <div class="container metrics-grid">
+      <div class="metric"><div class="metric-num">3</div><div class="metric-label">PROVIDERS_UNIFIED</div><div class="metric-desc">OpenAI, Anthropic, Google — one endpoint.</div></div>
+      <div class="metric"><div class="metric-num">$0</div><div class="metric-label">PLATFORM_FEE</div><div class="metric-desc">No subscriptions, no seats, ever.</div></div>
+      <div class="metric"><div class="metric-num">20%</div><div class="metric-label">MARKUP_FIXED</div><div class="metric-desc">Same rate on every model, always visible.</div></div>
+      <div class="metric"><div class="metric-num">$10</div><div class="metric-label">MIN_DEPOSIT</div><div class="metric-desc">Stablecoins in, 1 TFC = $1 USD.</div></div>
+    </div>
+  </section>
 
-        <!-- VISUAL COLUMN (Terminal as signature element, hexagon as visible backdrop) -->
-        <div class="hero-visual">
-          <div class="hero-visual-frame">
-
-            <!-- SVG Hexagon Radar — decorative backdrop, ~45% of the frame, clearly visible -->
-            <svg class="hex-radar" viewBox="0 0 300 300">
-              <!-- Spider web spokes -->
-              <line x1="150" y1="150" x2="150" y2="20" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
-              <line x1="150" y1="150" x2="262.5" y2="85" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
-              <line x1="150" y1="150" x2="262.5" y2="215" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
-              <line x1="150" y1="150" x2="150" y2="280" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
-              <line x1="150" y1="150" x2="37.5" y2="215" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
-              <line x1="150" y1="150" x2="37.5" y2="85" stroke="rgba(0, 247, 255, 0.18)" stroke-width="1" stroke-dasharray="4,4"/>
-
-              <!-- Outer Hexagon (Dashed) -->
-              <polygon points="150,20 262.5,85 262.5,215 150,280 37.5,215 37.5,85" fill="none" stroke="rgba(0, 247, 255, 0.32)" stroke-width="1" stroke-dasharray="6,6"/>
-
-              <!-- Mid Hexagon (Solid) -->
-              <polygon points="150,60 227.9,105 227.9,195 150,240 72.1,195 72.1,105" fill="none" stroke="rgba(0, 247, 255, 0.42)" stroke-width="1.25"/>
-
-              <!-- Inner Hexagon -->
-              <polygon points="150,110 184.6,130 184.6,170 150,190 115.4,170 115.4,130" fill="rgba(0, 247, 255, 0.05)" stroke="var(--accent)" stroke-width="1.5"/>
-            </svg>
-
-            <!-- Routing Console — the signature element -->
-            <div class="hero-terminal">
-              <div class="term-dots"><span></span><span></span><span></span></div>
-              <div class="term-line"><span class="term-white">POST /v1/chat/completions</span></div>
-              <div class="term-line"><span class="term-key">model</span> <span class="term-arrow">→</span> claude-3-5-sonnet</div>
-              <div class="term-line"><span class="term-key">fallback</span> <span class="term-arrow">→</span> gpt-4o</div>
-              <div class="term-line"><span class="term-key">billing</span> <span class="term-arrow">→</span> TFC</div>
-              <div class="term-line term-status"><span class="dot active">●</span> 200 OK · 640ms</div>
-            </div>
-
-          </div>
-        </div>
-
+  <!-- PROVIDERS -->
+  <section id="providers">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">// The three engines</span>
+        <h2 class="section-title">Route to whichever model <em>fits the job.</em></h2>
+        <p class="section-sub">Switch providers by changing one parameter — TokenForge handles the auth, billing, and format translation underneath.</p>
       </div>
-    </section>
 
-    <!-- METRICS STRIP -->
-    <section class="metrics-strip">
-      <div class="container metrics-grid">
-        <div class="metric-item">
-          <div class="metric-number">10+</div>
-          <div class="metric-label">MODELS_AVAILABLE</div>
-          <div class="metric-desc">From OpenAI to Google.</div>
+      <div class="providers-grid">
+        <div class="provider-card reveal">
+          <div class="provider-mark"><svg viewBox="0 0 40 40" fill="none" stroke="#00f7ff" stroke-width="1.4"><polygon points="20,4 34,12 34,28 20,36 6,28 6,12"/></svg></div>
+          <div class="provider-name">OpenAI</div>
+          <p class="provider-desc">General-purpose reasoning and the broadest tool ecosystem. GA since July 9, 2026.</p>
+          <div class="provider-tiers">
+            <div class="tier-row"><span class="tname">gpt-5.6-luna</span><span class="tier-badge">budget</span><span>$1.00 / $6.00</span></div>
+            <div class="tier-row"><span class="tname">gpt-5.6-terra</span><span class="tier-badge">balanced</span><span>$2.50 / $15.00</span></div>
+            <div class="tier-row"><span class="tname">gpt-5.6-sol</span><span class="tier-badge">flagship</span><span>$5.00 / $30.00</span></div>
+          </div>
         </div>
-        <div class="metric-item">
-          <div class="metric-number">$0</div>
-          <div class="metric-label">PLATFORM_FEE</div>
-          <div class="metric-desc">No monthly minimums ever.</div>
-        </div>
-        <div class="metric-item">
-          <div class="metric-number">20%</div>
-          <div class="metric-label">MARKUP_FIXED</div>
-          <div class="metric-desc">Transparent. Always.</div>
-        </div>
-      </div>
-    </section>
 
-    <!-- HOW IT WORKS -->
-    <section class="how">
-      <div class="container">
-        <div class="section-header">
-          <div class="eyebrow">// HOW_IT_WORKS</div>
-          <h2 class="section-title">
-            <span class="title-line1-sm">Zero to production</span><br>
-            <span class="title-line2-sm">in minutes.</span>
-          </h2>
+        <div class="provider-card reveal">
+          <div class="provider-mark"><svg viewBox="0 0 40 40" fill="none" stroke="#00f7ff" stroke-width="1.4"><rect x="8" y="8" width="24" height="24" transform="rotate(45 20 20)"/></svg></div>
+          <div class="provider-name">Anthropic</div>
+          <p class="provider-desc">Careful reasoning, million-token context, and the deepest coding benchmarks.</p>
+          <div class="provider-tiers">
+            <div class="tier-row"><span class="tname">claude-haiku-4-5</span><span class="tier-badge">budget</span><span>$1.00 / $5.00</span></div>
+            <div class="tier-row"><span class="tname">claude-sonnet-5</span><span class="tier-badge">balanced</span><span>$3.00 / $15.00</span></div>
+            <div class="tier-row"><span class="tname">claude-opus-4-8</span><span class="tier-badge">flagship</span><span>$5.00 / $25.00</span></div>
+          </div>
         </div>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-num">01</div>
-            <h3>Buy Credits</h3>
-            <p>Purchase TFC credits. No subscriptions, no lock-in. Start with just $10.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-num">02</div>
-            <h3>Get Your Key</h3>
-            <p>One <code>tf_sk_...</code> key works with every model, every provider.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-num">03</div>
-            <h3>Change One Line</h3>
-            <p>Swap your <code>base_url</code>. Everything else stays exactly the same.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-num">04</div>
-            <h3>Ship Faster</h3>
-            <p>All providers. Real-time usage tracking. Per-project budgets. Scale instantly.</p>
+
+        <div class="provider-card reveal">
+          <div class="provider-mark"><svg viewBox="0 0 40 40" fill="none" stroke="#00f7ff" stroke-width="1.4"><path d="M20,4 L23,17 L36,20 L23,23 L20,36 L17,23 L4,20 L17,17 Z"/></svg></div>
+          <div class="provider-name">Google</div>
+          <p class="provider-desc">The largest context windows at every price tier — 1M tokens on every model.</p>
+          <div class="provider-tiers">
+            <div class="tier-row"><span class="tname">gemini-3.1-flash-lite</span><span class="tier-badge">budget</span><span>$0.25 / $1.50</span></div>
+            <div class="tier-row"><span class="tname">gemini-3.5-flash</span><span class="tier-badge">balanced</span><span>$1.50 / $9.00</span></div>
+            <div class="tier-row"><span class="tname">gemini-3.1-pro</span><span class="tier-badge">flagship</span><span>$2.00 / $12.00</span></div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- FEATURE GRID -->
-    <section class="features">
-      <div class="container">
-        <div class="section-header">
-          <div class="eyebrow">// CORE INFRASTRUCTURE</div>
-          <h2 class="section-title">
-            <span class="title-line1-sm">One integration.</span><br>
-            <span class="title-line2-sm">Infinite possibility.</span>
-          </h2>
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">// Pricing</span>
+        <h2 class="section-title">Zero platform fee. <em>Real pay-as-you-go.</em></h2>
+      </div>
+
+      <div class="pricing-top">
+        <div class="ledger reveal">
+          <div class="ledger-row"><span class="ledger-key">SUBSCRIPTION_FEE</span><span class="ledger-val"><span class="arrow">→</span>$0.00 / month</span></div>
+          <div class="ledger-row"><span class="ledger-key">MINIMUM_USAGE_FEE</span><span class="ledger-val"><span class="arrow">→</span>$0.00</span></div>
+          <div class="ledger-row"><span class="ledger-key">PLATFORM_MARKUP</span><span class="ledger-val"><span class="arrow">→</span>20% (fixed, transparent)</span></div>
+          <div class="ledger-row"><span class="ledger-key">MINIMUM_DEPOSIT</span><span class="ledger-val"><span class="arrow">→</span>$10.00 USD</span></div>
+          <div class="ledger-row"><span class="ledger-key">ACCEPTED</span><span class="ledger-val"><span class="arrow">→</span>USDT / USDC + stablecoins</span></div>
+          <div class="ledger-row"><span class="ledger-key">PROCESSOR</span><span class="ledger-val"><span class="arrow">→</span>NOWPayments</span></div>
         </div>
 
-        <div class="feature-grid">
-          <div class="feature-card">
-            <div class="card-icon">
-              <svg viewBox="0 0 24 24" width="28" height="28">
-                <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
-                <circle cx="12" cy="12" r="3" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
-              </svg>
-            </div>
-            <h3>Unified Access</h3>
-            <p>A single integration for all leading LLMs. Switch models instantly by modifying a single SDK parameter. From 'gpt-4o' to 'claude-3-5-sonnet' in literally one line.</p>
+        <div class="reveal">
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1.15rem;margin-bottom:.8rem;">Every model, at cost + 20%.</h3>
+          <div class="price-table-wrap">
+            <table class="price-table">
+              <thead><tr><th>Model</th><th>Tier</th><th>Provider cost (in / out)</th><th>TokenForge (+20%)</th></tr></thead>
+              <tbody>
+                <tr class="price-group"><td colspan="4">OPENAI</td></tr>
+                <tr><td>gpt-5.6-luna</td><td>Budget</td><td>$1.00 / $6.00</td><td>$1.20 / $7.20</td></tr>
+                <tr><td>gpt-5.6-terra</td><td>Balanced</td><td>$2.50 / $15.00</td><td>$3.00 / $18.00</td></tr>
+                <tr><td>gpt-5.6-sol</td><td>Flagship</td><td>$5.00 / $30.00</td><td>$6.00 / $36.00</td></tr>
+                <tr class="price-group"><td colspan="4">ANTHROPIC</td></tr>
+                <tr><td>claude-haiku-4-5</td><td>Budget</td><td>$1.00 / $5.00</td><td>$1.20 / $6.00</td></tr>
+                <tr><td>claude-sonnet-5</td><td>Balanced</td><td>$3.00 / $15.00*</td><td>$3.60 / $18.00*</td></tr>
+                <tr><td>claude-opus-4-8</td><td>Flagship</td><td>$5.00 / $25.00</td><td>$6.00 / $30.00</td></tr>
+                <tr class="price-group"><td colspan="4">GOOGLE</td></tr>
+                <tr><td>gemini-3.1-flash-lite</td><td>Budget</td><td>$0.25 / $1.50</td><td>$0.30 / $1.80</td></tr>
+                <tr><td>gemini-3.5-flash</td><td>Balanced</td><td>$1.50 / $9.00</td><td>$1.80 / $10.80</td></tr>
+                <tr><td>gemini-3.1-pro</td><td>Flagship</td><td>$2.00 / $12.00</td><td>$2.40 / $14.40</td></tr>
+              </tbody>
+            </table>
           </div>
-          
-          <div class="feature-card">
-            <div class="card-icon">
-              <svg viewBox="0 0 24 24" width="28" height="28">
-                <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
-                <rect x="9" y="9" width="6" height="6" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
-              </svg>
-            </div>
-            <h3>The TFC System</h3>
-            <p>Prepaid credits of exactly $1 USD. You decide how much to spend and when. No surprises. No subscriptions. No per-developer seats.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="card-icon">
-              <svg viewBox="0 0 24 24" width="28" height="28">
-                <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke="var(--accent)" stroke-width="0.5"/>
-                <line x1="12" y1="2" x2="12" y2="22" stroke="var(--accent)" stroke-width="0.5"/>
-                <line x1="3" y1="7" x2="21" y2="17" stroke="var(--accent)" stroke-width="0.5"/>
-              </svg>
-            </div>
-            <h3>Invisible Infrastructure</h3>
-            <p>Optimized latency, automatic cross-region redundancy, and 99.9% uptime. If your pipelines don't consume tokens, your monthly cost is exactly $0.00.</p>
-          </div>
-
-          <div class="feature-card dashboard-card">
-            <div class="dash-eyebrow">ROUTING_STATUS</div>
-            <div class="dash-divider"></div>
-            <div class="dash-row dash-row-head">
-              <span class="dash-provider">provider</span>
-              <span class="dash-latency">latency</span>
-              <span class="dash-status">status</span>
-            </div>
-            <div class="dash-row">
-              <span class="dash-provider">openai</span>
-              <span class="dash-latency">640ms</span>
-              <span class="dash-status"><span class="dot active">●</span> active</span>
-            </div>
-            <div class="dash-row">
-              <span class="dash-provider">anthropic</span>
-              <span class="dash-latency">580ms</span>
-              <span class="dash-status"><span class="dot active">●</span> active</span>
-            </div>
-            <div class="dash-row">
-              <span class="dash-provider">gemini</span>
-              <span class="dash-latency">710ms</span>
-              <span class="dash-status"><span class="dot active">●</span> active</span>
-            </div>
-          </div>
+          <p class="price-note">*Sonnet 5 intro pricing is $2.00 / $10.00 through Aug 31, 2026 → TokenForge $2.40 / $12.00 during the promo. Rates per 1M tokens, provider standard tier, verified July 2026 — confirm exact IDs against each provider's docs before wiring routing.</p>
         </div>
       </div>
-    </section>
 
-    <!-- BEFORE / AFTER CODE COMPARISON -->
-    <section class="compare">
-      <div class="container">
-        <div class="eyebrow">// DROP-IN_REPLACEMENT</div>
-        <div class="compare-grid">
-          <div class="compare-card compare-before">
-            <div class="compare-label">BEFORE</div>
-            <pre><code>base_url = "https://api.openai.com/v1"
-<span class="term-key">+</span> anthropic SDK
-<span class="term-key">+</span> google SDK
-<span class="term-key">+</span> 3 API keys, 3 bills</code></pre>
+      <div class="calc reveal">
+        <div>
+          <div class="calc-title">See what your balance buys</div>
+          <p class="calc-desc">1 TFC = $1 USD, no fee on deposit. The 20% markup applies only when you spend against a model.</p>
+          <div class="calc-input-row">
+            <span>$</span>
+            <input type="number" class="calc-input" id="calcAmount" value="10" min="10" step="5">
+            <span>USD →</span>
+            <span class="calc-tfc" id="calcTfc">10.00 TFC</span>
           </div>
-          <div class="compare-card compare-after">
-            <div class="compare-label">AFTER</div>
-            <pre><code>base_url = "https://api.tokenforge.ai/v1"
-api_key = "tf_sk_..."
-<span class="term-key">#</span> works with gpt-4o, claude, gemini</code></pre>
-          </div>
+        </div>
+        <div class="calc-results">
+          <div class="calc-result"><span class="calc-result-label">Claude Sonnet 5 · output tokens</span><span class="calc-result-value" id="calcSonnet">—</span></div>
+          <div class="calc-result"><span class="calc-result-label">GPT-5.6 Terra · output tokens</span><span class="calc-result-value" id="calcTerra">—</span></div>
+          <div class="calc-result"><span class="calc-result-label">Gemini 3.5 Flash · output tokens</span><span class="calc-result-value" id="calcGemini">—</span></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- SUPPORTED MODELS -->
-    <section class="models" id="models">
-      <div class="container">
-        <div class="section-header">
-          <div class="eyebrow">// SUPPORTED_MODELS</div>
-          <h2 class="section-title">
-            <span class="title-line1-sm">Every model,</span><br>
-            <span class="title-line2-sm">one endpoint.</span>
-          </h2>
-        </div>
-        <div class="models-table">
-          <div class="models-row models-row-head">
-            <span>model</span>
-            <span>provider</span>
-            <span>best for</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">gpt-4o</span>
-            <span class="models-provider">OpenAI</span>
-            <span class="models-note">General purpose, multimodal</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">gpt-4o-mini</span>
-            <span class="models-provider">OpenAI</span>
-            <span class="models-note">High-volume, low-cost tasks</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">o3-mini</span>
-            <span class="models-provider">OpenAI</span>
-            <span class="models-note">Reasoning-heavy workloads</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">claude-opus-4-8</span>
-            <span class="models-provider">Anthropic</span>
-            <span class="models-note">Complex agentic tasks</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">claude-sonnet-5</span>
-            <span class="models-provider">Anthropic</span>
-            <span class="models-note">Balanced quality and speed</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">claude-haiku-4-5</span>
-            <span class="models-provider">Anthropic</span>
-            <span class="models-note">Fast, low-latency replies</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">gemini-2.5-pro</span>
-            <span class="models-provider">Google</span>
-            <span class="models-note">Long-context reasoning</span>
-          </div>
-          <div class="models-row">
-            <span class="models-name">gemini-2.5-flash</span>
-            <span class="models-provider">Google</span>
-            <span class="models-note">Speed at scale</span>
-          </div>
-        </div>
-        <p class="models-note-footer">// Model list updates automatically as providers ship new releases — no code changes on your end.</p>
+  <!-- TFC VISUALIZER -->
+  <section id="ledger-visualizer">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">// Your ledger, visualized</span>
+        <h2 class="section-title">Watch every TFC <em>before it's spent.</em></h2>
+        <p class="section-sub">The live dashboard breaks spend down by provider and by project, in real time, built on Chart.js. Below is a preview with sample data.</p>
       </div>
-    </section>
 
-    <!-- FOR WHO SECTION -->
-    <section class="for-who">
-      <div class="container">
-        <div class="eyebrow">// WHO USES TOKENFORGE</div>
-        <div class="who-grid">
-          <div class="who-column">
-            <div class="who-label">DEVELOPERS</div>
-            <h3 class="who-title">Instant iteration.</h3>
-            <p class="who-desc">Test ideas in minutes without dealing with three different billing portals or configuring multiple APIs.</p>
-          </div>
-          <div class="who-column">
-            <div class="who-label">STARTUPS</div>
-            <h3 class="who-title">Total runway control.</h3>
-            <p class="who-desc">Generate API keys per environment, assign strict daily budgets. Never see a catastrophic bill again.</p>
-          </div>
-          <div class="who-column">
-            <div class="who-label">AI_ENTHUSIASTS</div>
-            <h3 class="who-title">Unbound exploration.</h3>
-            <p class="who-desc">Access cutting-edge models paying exactly for the tokens you consume. Zero monthly commitments.</p>
-          </div>
+      <div class="ledger-card reveal">
+        <div class="ledger-card-head">
+          <span class="ledger-card-eyebrow">SPEND_LEDGER · SAMPLE DATA</span>
+          <span class="ledger-card-period">Last 30 days</span>
+        </div>
+        <div class="ledger-bar">
+          <div class="ledger-seg seg-anthropic" style="width:52%"></div>
+          <div class="ledger-seg seg-openai" style="width:33%"></div>
+          <div class="ledger-seg seg-google" style="width:15%"></div>
+        </div>
+        <div class="ledger-legend">
+          <span><i class="dot dot-anthropic"></i>Anthropic — 52%</span>
+          <span><i class="dot dot-openai"></i>OpenAI — 33%</span>
+          <span><i class="dot dot-google"></i>Google — 15%</span>
+        </div>
+        <svg class="ledger-spark" viewBox="0 0 300 60" preserveAspectRatio="none">
+          <polyline points="0,45 20,42 40,38 60,40 80,30 100,33 120,25 140,28 160,18 180,22 200,15 220,17 240,10 260,13 280,8 300,10"/>
+        </svg>
+        <p class="ledger-caption">Balance alerts fire automatically at 20% and 10% remaining. When a project hits its budget, TokenForge blocks it before it overspends — there's no invoice to be surprised by, because there's no invoice at all.</p>
+
+        <div class="ledger-features">
+          <div class="lf-item"><div class="lf-num">PER_PROJECT</div><div class="lf-text">Budgets and tracking scoped to each API key or environment.</div></div>
+          <div class="lf-item"><div class="lf-num">REAL_TIME</div><div class="lf-text">Requests, tokens and cost update live as they happen.</div></div>
+          <div class="lf-item"><div class="lf-num">AUTO_BLOCK</div><div class="lf-text">A project that runs out of balance stops — automatically.</div></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- USE CASES -->
-    <section class="usecases">
-      <div class="container">
-        <div class="section-header">
-          <div class="eyebrow">// BUILT_FOR</div>
-          <h2 class="section-title">
-            <span class="title-line1-sm">Every use case,</span><br>
-            <span class="title-line2-sm">one platform.</span>
-          </h2>
+  <!-- USE CASES -->
+  <section id="usecases">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">// Who it's for</span>
+        <h2 class="section-title">Built for people <em>watching their runway.</em></h2>
+      </div>
+      <div class="usecases-grid">
+        <div class="usecase-card reveal">
+          <span class="usecase-label">DEVELOPERS</span>
+          <h3 class="usecase-title">Instant iteration.</h3>
+          <p class="usecase-desc">Test ideas across three providers without three billing portals or three sets of API keys to rotate.</p>
         </div>
-        <div class="usecase-grid">
-          <div class="usecase-card">
-            <div class="usecase-num">AGENTS</div>
-            <h3>Multi-step reasoning</h3>
-            <p>Run agents that call different models for different tasks — reasoning, coding, summarizing — all from one key.</p>
-          </div>
-          <div class="usecase-card">
-            <div class="usecase-num">SAAS</div>
-            <h3>Multi-tenant billing</h3>
-            <p>Assign one API key per client project. Set individual TFC budgets. Track cost per client without sharing credentials.</p>
-          </div>
-          <div class="usecase-card">
-            <div class="usecase-num">BENCHMARK</div>
-            <h3>Model comparison</h3>
-            <p>Compare GPT-4o, Claude, and Gemini side by side in the same codebase. One request format, zero SDK switching.</p>
-          </div>
-          <div class="usecase-card">
-            <div class="usecase-num">FAILOVER</div>
-            <h3>Fallback routing</h3>
-            <p>Switch models on the fly if one provider goes down. Your code stays the same — just change the model parameter.</p>
-          </div>
+        <div class="usecase-card reveal">
+          <span class="usecase-label">STARTUPS</span>
+          <h3 class="usecase-title">Total runway control.</h3>
+          <p class="usecase-desc">Issue keys per environment, cap each one with a hard budget, and never see a catastrophic bill.</p>
+        </div>
+        <div class="usecase-card reveal">
+          <span class="usecase-label">STUDENTS & EXPLORERS</span>
+          <h3 class="usecase-title">Unbound exploration.</h3>
+          <p class="usecase-desc">Access frontier models paying exactly for the tokens you consume — no subscription to justify.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- PRICING SECTION -->
-    <section class="pricing" id="pricing">
-      <div class="container pricing-grid">
-        <div class="pricing-content">
-          <div class="eyebrow">// PRICING_MODEL</div>
-          <h2 class="pricing-title">Zero Platform Fee.</h2>
-          <p class="pricing-sub">Real pay-as-you-go.</p>
-        </div>
-        
-        <div class="pricing-col">
-        <div class="pricing-ledger">
-          <div class="ledger-row">
-            <span class="ledger-key">SUBSCRIPTION_FEE</span>
-            <span class="ledger-val"><span class="ledger-arrow">→</span> $0.00 / month</span>
-          </div>
-          <div class="ledger-row">
-            <span class="ledger-key">MINIMUM_USAGE_FEE</span>
-            <span class="ledger-val"><span class="ledger-arrow">→</span> $0.00</span>
-          </div>
-          <div class="ledger-row">
-            <span class="ledger-key">PLATFORM_MARKUP</span>
-            <span class="ledger-val"><span class="ledger-arrow">→</span> 20% (fixed, transparent)</span>
-          </div>
-          <div class="ledger-row">
-            <span class="ledger-key">MINIMUM_DEPOSIT</span>
-            <span class="ledger-val"><span class="ledger-arrow">→</span> $10.00 USD</span>
-          </div>
-          <div class="ledger-row">
-            <span class="ledger-key">ACCEPTED</span>
-            <span class="ledger-val"><span class="ledger-arrow">→</span> Crypto</span>
-          </div>
-        </div>
+  <!-- COMPARISON -->
+  <section id="compare">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">// TokenForge vs. the alternatives</span>
+        <h2 class="section-title">Why not just <em>call each API directly?</em></h2>
+      </div>
+      <div class="compare-wrap reveal">
+        <table class="compare-table">
+          <thead>
+            <tr><th>Dimension</th><th class="hl">TokenForge</th><th>Subscription aggregators</th><th>Calling each API yourself</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Monthly fee</td><td class="hl yes">$0</td><td>$20–$200/mo typical</td><td>$0</td></tr>
+            <tr><td>Minimum to start</td><td class="hl yes">$10 in stablecoins</td><td>Monthly plan required</td><td>3 separate signups + cards</td></tr>
+            <tr><td>Markup visibility</td><td class="hl yes">Fixed 20%, shown per model</td><td class="no">Usually folded into the plan</td><td>None — but 3 bills to reconcile</td></tr>
+            <tr><td>Per-project budgets + auto-block</td><td class="hl yes">Yes</td><td class="no">Rare</td><td class="no">No</td></tr>
+            <tr><td>Real-time spend dashboard</td><td class="hl yes">Yes, per project</td><td>Sometimes</td><td class="no">Only inside each provider's own console</td></tr>
+            <tr><td>Pay without a bank card</td><td class="hl yes">Stablecoins (USDT/USDC)</td><td class="no">Rarely supported</td><td class="no">Rarely supported</td></tr>
+            <tr><td>Setup time</td><td class="hl yes">One key, ~2 minutes</td><td>Account + plan selection</td><td>Three accounts, three keys</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-        <div class="pricing-examples">
-          <div class="dash-eyebrow">EXAMPLE_COST · 1M TOKENS</div>
-          <div class="dash-divider"></div>
-          <div class="dash-row">
-            <span class="dash-provider">gpt-4o</span>
-            <span class="dash-status">~$12.00</span>
-          </div>
-          <div class="dash-row">
-            <span class="dash-provider">claude-opus-4-8</span>
-            <span class="dash-status">~$30.00</span>
-          </div>
-          <div class="dash-row">
-            <span class="dash-provider">gemini-2.5-flash</span>
-            <span class="dash-status">~$10.80</span>
-          </div>
-          <div class="dash-row">
-            <span class="dash-provider">gpt-4o-mini</span>
-            <span class="dash-status">~$0.72</span>
-          </div>
-          <p class="pricing-examples-note">// All prices include the 20% platform markup.</p>
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">// What you get</span>
+        <h2 class="section-title">Everything you need, <em>nothing you don't.</em></h2>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/></svg>
+          <div class="service-title">Unified endpoint</div>
+          <p class="service-desc">One OpenAI-compatible key routes to OpenAI, Anthropic and Google — swap models with one parameter.</p>
         </div>
+        <div class="service-card reveal">
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16"/></svg>
+          <div class="service-title">Per-project budgets</div>
+          <p class="service-desc">Set a spending ceiling per project or environment — no code changes required.</p>
+        </div>
+        <div class="service-card reveal">
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7z"/></svg>
+          <div class="service-title">Auto-block</div>
+          <p class="service-desc">Requests stop the instant a project's budget runs out — no overage, ever.</p>
+        </div>
+        <div class="service-card reveal">
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+          <div class="service-title">Balance alerts</div>
+          <p class="service-desc">Email alerts at 20% and 10% of your remaining balance, so you never run dry mid-project.</p>
+        </div>
+        <div class="service-card reveal">
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <div class="service-title">Real-time dashboard</div>
+          <p class="service-desc">Track spend, requests and latency per model, live, as they happen.</p>
+        </div>
+        <div class="service-card reveal">
+          <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18V6M10 18V10M16 18V3"/></svg>
+          <div class="service-title">TFC ledger</div>
+          <p class="service-desc">A running, visual breakdown of every credit spent, by provider and by project.</p>
         </div>
       </div>
-      <div class="container">
-        <p class="pricing-footer-note">If your pipelines aren't working, neither are we charging.</p>
-      </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- WAITLIST SECTION -->
-    <section class="waitlist" id="waitlist">
-      <div class="container waitlist-container">
-        <div class="eyebrow">// GET_EARLY_ACCESS</div>
+  <!-- WAITLIST -->
+  <section id="waitlist">
+    <div class="container">
+      <div class="waitlist-box reveal">
+        <span class="eyebrow">// Get early access</span>
         <h2 class="waitlist-title">Enter the forge.</h2>
-        <p class="waitlist-sub">Join the waitlist. We'll notify you when your account is ready.</p>
-        
-        <!-- Original form IDs preserved for main.js functionality -->
+        <p class="waitlist-sub">Join the waitlist — we'll email you the moment your account is ready.</p>
         <form class="waitlist-form" id="waitlistForm">
           <input type="email" id="waitlistEmail" name="email" placeholder="you@company.com" required>
-          <button type="submit" class="btn-solid btn-submit">Notify Me</button>
+          <button type="submit" class="btn btn-solid">Notify me</button>
         </form>
-        <p class="waitlist-micro">// Free $5 credits on launch · No spam · No credit card</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container footer-grid">
-      <div class="footer-brand-col">
-        <div class="footer-logo">
-          <svg class="brand-logo-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
-            <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2" />
-            <circle cx="12" cy="13.5" r="2.5" fill="var(--accent)"/>
-          </svg>
-          TokenForge
-        </div>
-        <div class="footer-tagline">Intelligence, refined.</div>
-      </div>
-      <div class="footer-links">
-        <a href="#docs">Docs</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#models">Models</a>
-        <a href="login.html">Login</a>
-        <a href="terms.html">Terms</a>
-        <a href="privacy.html">Privacy</a>
+        <p class="waitlist-micro" id="waitlistMicro">// No spam. No card. No commitment.</p>
+        <p class="waitlist-success" id="waitlistSuccess">You're on the list — we'll be in touch.</p>
       </div>
     </div>
-    <div class="container">
-      <div class="footer-bottom">
-        © 2026 TokenForge. Built with precision.
-      </div>
-    </div>
-  </footer>
+  </section>
 
-  <script src="js/main.js"></script>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2"><polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/><circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/></svg>
+        TokenForge
+      </div>
+      <div class="footer-tagline">Intelligence, refined.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#providers">Providers</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#usecases">Use cases</a>
+      <a href="#compare">Compare</a>
+      <a href="#services">Services</a>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-bottom">© 2026 TokenForge. Currently routing OpenAI, Anthropic and Google — pricing verified July 2026.</div>
+  </div>
+</footer>
+
+<script>
+// reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+},{threshold:.15});
+revealEls.forEach(el=>io.observe(el));
+
+// calculator
+const outputPrices = { sonnet: 15, terra: 15, gemini: 9 }; // provider $/1M output tokens
+const amountEl = document.getElementById('calcAmount');
+const tfcEl = document.getElementById('calcTfc');
+const rSonnet = document.getElementById('calcSonnet');
+const rTerra = document.getElementById('calcTerra');
+const rGemini = document.getElementById('calcGemini');
+
+function fmtTokens(n){
+  if(n >= 1e6) return (n/1e6).toFixed(2) + 'M';
+  if(n >= 1e3) return (n/1e3).toFixed(0) + 'K';
+  return Math.round(n).toString();
+}
+function updateCalc(){
+  let amount = parseFloat(amountEl.value);
+  if(isNaN(amount) || amount < 10) amount = 10;
+  tfcEl.textContent = amount.toFixed(2) + ' TFC';
+  Object.entries({sonnet:rSonnet, terra:rTerra, gemini:rGemini}).forEach(([key, el])=>{
+    const tfPrice = outputPrices[key] * 1.2; // per 1M output tokens with 20% markup
+    const tokens = (amount / tfPrice) * 1e6;
+    el.textContent = '~' + fmtTokens(tokens);
+  });
+}
+amountEl.addEventListener('input', updateCalc);
+updateCalc();
+
+// waitlist (UI preview only — wire to your real endpoint)
+document.getElementById('waitlistForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  document.getElementById('waitlistMicro').style.display = 'none';
+  this.style.display = 'none';
+  document.getElementById('waitlistSuccess').style.display = 'block';
+});
+</script>
 </body>
 </html>
