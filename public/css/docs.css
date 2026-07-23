@@ -1,15 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap');
 
 :root {
-  --primary: #00d4ff;
-  --primary-dark: #00a8cc;
-  --bg: #000000;
-  --bg-card: #0d0d0d;
-  --bg-border: #1a1a1a;
-  --text: #ffffff;
-  --text-muted: #888888;
+  --primary: #00f7ff;
+  --primary-dark: #00c2c9;
+  --bg: #07080a;
+  --bg-card: rgba(255,255,255,0.035);
+  --bg-border: rgba(255,255,255,0.07);
+  --text: #f1f1ee;
+  --text-muted: #93969f;
   --success: #22c55e;
   --error: #ef4444;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 18px;
   --docs-sidebar-width: 260px;
   --docs-header-height: 60px;
 }
@@ -17,11 +21,13 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
+  font-weight: 300;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ===== HEADER ===== */
@@ -31,9 +37,9 @@ body {
   left: 0;
   right: 0;
   height: var(--docs-header-height);
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(7, 8, 10, 0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--bg-border);
   display: flex;
   align-items: center;
@@ -102,14 +108,15 @@ body {
 }
 
 .sidebar-title {
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  color: var(--primary);
   padding: 0 1.5rem;
   margin-bottom: 0.75rem;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .sidebar-nav {
@@ -139,7 +146,7 @@ body {
 .sidebar-nav li a:hover,
 .sidebar-nav li a.active {
   color: var(--primary);
-  background: rgba(0, 212, 255, 0.05);
+  background: rgba(0, 247, 255, 0.05);
   border-left-color: var(--primary);
 }
 
@@ -153,22 +160,26 @@ body {
 }
 
 .docs-content h1 {
+  font-family: var(--font-sans);
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 0.75rem;
-  letter-spacing: -1px;
+  letter-spacing: -0.02em;
   line-height: 1.2;
+  color: var(--text);
 }
 
 .docs-content h2 {
+  font-family: var(--font-sans);
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--bg-border);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
   line-height: 1.3;
+  color: var(--text);
 }
 
 .docs-content h3 {
@@ -217,12 +228,12 @@ body {
 
 /* Inline code */
 .docs-content code {
-  background: rgba(0, 212, 255, 0.1);
+  background: rgba(0, 247, 255, 0.1);
   color: var(--primary);
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   font-size: 0.85em;
-  font-family: 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
+  font-family: var(--font-mono), 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
 }
 
 /* Code blocks */
@@ -242,13 +253,13 @@ body {
   padding: 0;
   font-size: 0.85rem;
   line-height: 1.6;
-  font-family: 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
+  font-family: var(--font-mono), 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
 }
 
 /* Blockquote */
 .docs-content blockquote {
   border-left: 3px solid var(--primary);
-  background: rgba(0, 212, 255, 0.05);
+  background: rgba(0, 247, 255, 0.05);
   padding: 1rem 1.25rem;
   margin: 1.5rem 0;
   border-radius: 0 8px 8px 0;
@@ -267,7 +278,7 @@ body {
 .toc {
   background: var(--bg-card);
   border: 1px solid var(--bg-border);
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 1.5rem;
   margin: 2rem 0;
 }
@@ -305,7 +316,7 @@ body {
 .endpoint-card {
   background: var(--bg-card);
   border: 1px solid var(--bg-border);
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 1.5rem;
   margin: 1.5rem 0;
 }
@@ -332,7 +343,7 @@ body {
 .method-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 
 .endpoint-path {
-  font-family: 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
+  font-family: var(--font-mono), 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
   font-size: 0.95rem;
   color: var(--text);
   word-break: break-all;
@@ -389,16 +400,16 @@ body {
 }
 
 .param-table td:first-child {
-  font-family: 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
+  font-family: var(--font-mono), 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
   color: var(--primary);
 }
 
 .param-table td code {
-  background: rgba(0, 212, 255, 0.1);
+  background: rgba(0, 247, 255, 0.1);
   padding: 0.15rem 0.3rem;
   border-radius: 3px;
   font-size: 0.8em;
-  font-family: 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
+  font-family: var(--font-mono), 'SF Mono', Monaco, 'Courier New', Consolas, monospace;
 }
 
 .param-required {
@@ -451,13 +462,13 @@ body {
 .quickstart-card {
   background: var(--bg-card);
   border: 1px solid var(--bg-border);
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 1.5rem;
   transition: border-color 0.2s;
 }
 
 .quickstart-card:hover {
-  border-color: rgba(0, 212, 255, 0.3);
+  border-color: rgba(0, 247, 255, 0.35);
 }
 
 .quickstart-card h4 {
