@@ -20,13 +20,13 @@ curl -X POST https://api.tokenforge.ai/v1/chat/completions \
   -H "Authorization: Bearer tf_sk_your_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-4o",
+    "model": "gpt-5.6-luna",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'
 ```
 
 ## Available Models
 
-- OpenAI: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo
-- Anthropic: claude-3-sonnet, claude-3-opus, claude-3-haiku
-- Google: gemini-1.5-pro, gemini-1.5-flash
+- OpenAI: gpt-5.6-luna, gpt-5.6-terra, gpt-5.6-sol
+- Anthropic: claude-haiku-4-5-20251001, claude-sonnet-5, claude-opus-4-8
+- Google: gemini-3.1-flash-lite, gemini-3.5-flash, gemini-3.1-pro-preview

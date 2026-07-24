@@ -12,10 +12,10 @@ async function getModelPricing(model) {
   );
   
   if (result.rows.length === 0) {
-    // Fallback to gpt-4o-mini pricing
+    // Fallback to gpt-5.6-luna pricing
     const fallback = await db.query(
       'SELECT input_cost_per_1k, output_cost_per_1k, markup_multiplier FROM model_pricing WHERE model = $1',
-      ['gpt-4o-mini']
+      ['gpt-5.6-luna']
     );
     return fallback.rows[0];
   }
@@ -32,7 +32,7 @@ async function calculateCost(model, tokensIn, tokensOut) {
 }
 
 async function chatCompletion(requestBody, onChunk) {
-  const { model = 'gpt-4o-mini', messages, stream = true, ...rest } = requestBody;
+  const { model = 'gpt-5.6-luna', messages, stream = true, ...rest } = requestBody;
 
   try {
     if (stream) {

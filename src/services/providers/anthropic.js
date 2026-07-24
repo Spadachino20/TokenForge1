@@ -14,7 +14,7 @@ async function getModelPricing(model) {
   if (result.rows.length === 0) {
     const fallback = await db.query(
       'SELECT input_cost_per_1k, output_cost_per_1k, markup_multiplier FROM model_pricing WHERE model = $1',
-      ['claude-3-sonnet-20240229']
+      ['claude-haiku-4-5-20251001']
     );
     return fallback.rows[0];
   }
@@ -47,7 +47,7 @@ function convertMessages(messages) {
 }
 
 async function chatCompletion(requestBody, onChunk) {
-  const { model = 'claude-3-sonnet-20240229', messages, stream = true, ...rest } = requestBody;
+  const { model = 'claude-haiku-4-5-20251001', messages, stream = true, ...rest } = requestBody;
 
   try {
     const { system, messages: anthropicMessages } = convertMessages(messages);

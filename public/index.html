@@ -92,11 +92,12 @@ img,svg{max-width:100%;}
   display:flex;align-items:center;gap:9px;color:var(--ink);
 }
 .nav-brand svg{width:21px;height:21px;}
-.nav-links{display:flex;gap:2.2rem;position:absolute;left:50%;transform:translateX(-50%);}
-.nav-links a{font-size:.92rem;color:var(--ink-muted);text-decoration:none;transition:color .2s;}
+.nav-brand{flex-shrink:0;}
+.nav-links{display:flex;gap:2.2rem;flex:1;justify-content:center;}
+.nav-links a{font-size:.92rem;color:var(--ink-muted);text-decoration:none;transition:color .2s;white-space:nowrap;}
 .nav-links a:hover{color:var(--ink);}
-.nav-actions{display:flex;gap:.9rem;align-items:center;}
-@media(max-width:880px){.nav-links{display:none;}}
+.nav-actions{display:flex;gap:.9rem;align-items:center;flex-shrink:0;}
+@media(max-width:1150px){.nav-links{display:none;}}
 
 /* ============ HERO ============ */
 .hero{padding:120px 0 90px;}
@@ -314,7 +315,7 @@ footer{border-top:1px solid var(--line-soft);padding:56px 0 38px;background:rgba
 <nav class="navbar">
   <div class="container nav-inner">
     <a href="#top" class="nav-brand">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true">
         <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
         <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
       </svg>
@@ -663,7 +664,7 @@ footer{border-top:1px solid var(--line-soft);padding:56px 0 38px;background:rgba
   <div class="container footer-grid">
     <div>
       <div class="footer-brand">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2"><polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/><circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true"><polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/><circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/></svg>
         TokenForge
       </div>
       <div class="footer-tagline">Intelligence, refined.</div>

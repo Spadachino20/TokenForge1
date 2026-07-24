@@ -2,28 +2,23 @@ const { pool } = require('../config/db');
 
 // --- TIERS Y ALTERNATIVAS 2026 ---
 const MODEL_EQUIVALENTS = {
-  'gpt-4o-mini':           { tier: 'cheap',  alternatives: ['claude-haiku-4-5', 'gemini-3.1-flash-lite'] },
-  'claude-haiku-4-5':       { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-3.1-flash-lite'] },
-  'gemini-3.1-flash-lite': { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'claude-haiku-4-5'] },
-  'gemini-3-flash':         { tier: 'cheap',  alternatives: ['gpt-4o-mini', 'gemini-3.1-flash-lite'] },
+  'gpt-5.6-luna':                { tier: 'budget',   alternatives: ['claude-haiku-4-5-20251001', 'gemini-3.1-flash-lite'] },
+  'claude-haiku-4-5-20251001':   { tier: 'budget',   alternatives: ['gpt-5.6-luna', 'gemini-3.1-flash-lite'] },
+  'gemini-3.1-flash-lite':       { tier: 'budget',   alternatives: ['gpt-5.6-luna', 'claude-haiku-4-5-20251001'] },
 
-  'gpt-4o':                 { tier: 'mid',    alternatives: ['claude-sonnet-4-6', 'gemini-3.5-flash'] },
-  'claude-sonnet-4-6':      { tier: 'mid',    alternatives: ['gpt-4o', 'gemini-3.5-flash'] },
-  'claude-3.5-sonnet':      { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
-  'gemini-3.5-flash':       { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
-  'gemini-3.1-pro':         { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
-  'o3-mini':                { tier: 'mid',    alternatives: ['gpt-4o', 'claude-sonnet-4-6'] },
+  'gpt-5.6-terra':               { tier: 'balanced', alternatives: ['claude-sonnet-5', 'gemini-3.5-flash'] },
+  'claude-sonnet-5':             { tier: 'balanced', alternatives: ['gpt-5.6-terra', 'gemini-3.5-flash'] },
+  'gemini-3.5-flash':            { tier: 'balanced', alternatives: ['gpt-5.6-terra', 'claude-sonnet-5'] },
 
-  'gpt-5.5':                { tier: 'high',   alternatives: ['claude-opus-4-8', 'o1'] },
-  'gpt-5':                  { tier: 'high',   alternatives: ['claude-opus-4-8', 'o1'] },
-  'o1':                     { tier: 'high',   alternatives: ['gpt-5', 'claude-opus-4-8'] },
-  'claude-opus-4-8':        { tier: 'high',   alternatives: ['gpt-5', 'o1'] }
+  'gpt-5.6-sol':                 { tier: 'flagship', alternatives: ['claude-opus-4-8', 'gemini-3.1-pro-preview'] },
+  'claude-opus-4-8':             { tier: 'flagship', alternatives: ['gpt-5.6-sol', 'gemini-3.1-pro-preview'] },
+  'gemini-3.1-pro-preview':      { tier: 'flagship', alternatives: ['gpt-5.6-sol', 'claude-opus-4-8'] }
 };
 
 const MODEL_PROVIDER = {
-  'gpt-5.5': 'openai', 'gpt-5': 'openai', 'gpt-4o': 'openai', 'gpt-4o-mini': 'openai', 'o1': 'openai', 'o3-mini': 'openai',
-  'claude-opus-4-8': 'anthropic', 'claude-sonnet-4-6': 'anthropic', 'claude-haiku-4-5': 'anthropic', 'claude-3.5-sonnet': 'anthropic',
-  'gemini-3.5-flash': 'gemini', 'gemini-3.1-pro': 'gemini', 'gemini-3.1-flash-lite': 'gemini', 'gemini-3-flash': 'gemini'
+  'gpt-5.6-luna': 'openai', 'gpt-5.6-terra': 'openai', 'gpt-5.6-sol': 'openai',
+  'claude-haiku-4-5-20251001': 'anthropic', 'claude-sonnet-5': 'anthropic', 'claude-opus-4-8': 'anthropic',
+  'gemini-3.1-flash-lite': 'gemini', 'gemini-3.5-flash': 'gemini', 'gemini-3.1-pro-preview': 'gemini'
 };
 
 async function getAllProviderBalances() {

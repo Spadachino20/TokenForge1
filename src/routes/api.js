@@ -12,20 +12,17 @@ const gemini = require('../services/providers/gemini');
 const router = express.Router();
 
 const AVAILABLE_MODELS = {
-  'gpt-4o': 'openai',
-  'gpt-4o-mini': 'openai',
-  'o1': 'openai',
-  'o3-mini': 'openai',
+  'gpt-5.6-luna': 'openai',
+  'gpt-5.6-terra': 'openai',
+  'gpt-5.6-sol': 'openai',
 
-  'claude-opus-4-8': 'anthropic',
-  'claude-sonnet-4-6': 'anthropic',
   'claude-haiku-4-5-20251001': 'anthropic',
-  'claude-3-5-sonnet-20241022': 'anthropic',
+  'claude-sonnet-5': 'anthropic',
+  'claude-opus-4-8': 'anthropic',
 
+  'gemini-3.1-flash-lite': 'gemini',
   'gemini-3.5-flash': 'gemini',
   'gemini-3.1-pro-preview': 'gemini',
-  'gemini-3.1-flash-lite': 'gemini',
-  'gemini-3-flash': 'gemini',
 };
 // List models
 router.get('/models', async (req, res) => {

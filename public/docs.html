@@ -16,9 +16,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 </head>
 <body>
+  <div class="glow glow-cyan"></div>
+  <div class="glow glow-ember"></div>
   <header class="docs-header">
     <a href="index.html" class="docs-header-brand">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" width="20" height="20">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" width="20" height="20" aria-hidden="true">
         <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
         <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
       </svg>
@@ -56,6 +58,7 @@
         <ul class="sidebar-nav">
           <li><a href="#sdks">SDKs & Libraries</a></li>
           <li><a href="#credits">Credits & Billing</a></li>
+          <li><a href="#faq">FAQ</a></li>
           <li><a href="#projects">Projects & API Keys</a></li>
           <li><a href="#streaming">Streaming Responses</a></li>
         </ul>
@@ -85,6 +88,7 @@
             <li><a href="#error-handling">Error Handling</a></li>
             <li><a href="#sdks">SDKs</a></li>
             <li><a href="#credits">Credits & Billing</a></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href="#projects">Projects & API Keys</a></li>
             <li><a href="#streaming">Streaming</a></li>
           </ul>
@@ -95,15 +99,15 @@
 
         <div class="quickstart-grid">
           <div class="quickstart-card">
-            <h4>1. Create Account</h4>
+            <h4><span class="step-num">1</span> Create Account</h4>
             <p><a href="signup.html">Sign up</a>, purchase credits, and start calling any model with a single API key.</p>
           </div>
           <div class="quickstart-card">
-            <h4>2. Generate API Key</h4>
+            <h4><span class="step-num">2</span> Generate API Key</h4>
             <p>Go to <a href="dashboard.html">Dashboard</a> → API Keys → Create New Key.</p>
           </div>
           <div class="quickstart-card">
-            <h4>3. Change Base URL</h4>
+            <h4><span class="step-num">3</span> Change Base URL</h4>
             <p>Replace <code>https://api.openai.com/v1</code> with our endpoint.</p>
           </div>
         </div>
@@ -115,7 +119,7 @@
   -H "Authorization: Bearer tf_sk_your_key_here" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-4o",
+    "model": "gpt-5.6-luna",
     "messages": [{"role": "user", "content": "Hello, world!"}]
   }'</code></pre>
         </div>
@@ -206,20 +210,20 @@
                 <td>stream</td>
                 <td>boolean</td>
                 <td><span class="param-optional">No</span></td>
-                <td>Stream response as SSE. Default: false.</td>
+                <td>Stream response as SSE. <strong>Default: true</strong> — pass <code>"stream": false</code> explicitly if you want a single JSON response instead.</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h3>Example Response</h3>
+        <h3>Example Response <span style="font-weight:400;color:var(--text-muted);font-size:0.85rem;">(non-streaming, <code>stream: false</code>)</span></h3>
         <div class="code-block-wrapper">
           <button class="copy-btn" onclick="copyCode(this)">Copy</button>
           <pre><code class="language-json">{
   "id": "chatcmpl-abc123",
   "object": "chat.completion",
   "created": 1718900000,
-  "model": "gpt-4o",
+  "model": "gpt-5.6-luna",
   "choices": [{
     "index": 0,
     "message": {
@@ -251,44 +255,40 @@
             <tr>
               <th>Model</th>
               <th>Provider</th>
+              <th>Tier</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><code>gpt-4o</code></td><td>OpenAI</td>
+              <td><code>gpt-5.6-luna</code></td><td>OpenAI</td><td>Budget</td>
             </tr>
             <tr>
-              <td><code>gpt-4o-mini</code></td><td>OpenAI</td>
+              <td><code>gpt-5.6-terra</code></td><td>OpenAI</td><td>Balanced</td>
             </tr>
             <tr>
-              <td><code>o1</code></td><td>OpenAI</td>
+              <td><code>gpt-5.6-sol</code></td><td>OpenAI</td><td>Flagship</td>
             </tr>
             <tr>
-              <td><code>o3-mini</code></td><td>OpenAI</td>
+              <td><code>claude-haiku-4-5-20251001</code></td><td>Anthropic</td><td>Budget</td>
             </tr>
             <tr>
-              <td><code>claude-opus-4-8</code></td><td>Anthropic</td>
+              <td><code>claude-sonnet-5</code></td><td>Anthropic</td><td>Balanced</td>
             </tr>
             <tr>
-              <td><code>claude-sonnet-4-6</code></td><td>Anthropic</td>
+              <td><code>claude-opus-4-8</code></td><td>Anthropic</td><td>Flagship</td>
             </tr>
             <tr>
-              <td><code>claude-haiku-4-5</code></td><td>Anthropic</td>
+              <td><code>gemini-3.1-flash-lite</code></td><td>Google</td><td>Budget</td>
             </tr>
             <tr>
-              <td><code>gemini-3.5-flash</code></td><td>Google</td>
+              <td><code>gemini-3.5-flash</code></td><td>Google</td><td>Balanced</td>
             </tr>
             <tr>
-              <td><code>gemini-3.1-pro</code></td><td>Google</td>
-            </tr>
-            <tr>
-              <td><code>gemini-3.1-flash-lite</code></td><td>Google</td>
-            </tr>
-            <tr>
-              <td><code>gemini-3-flash</code></td><td>Google</td>
+              <td><code>gemini-3.1-pro-preview</code></td><td>Google</td><td>Flagship</td>
             </tr>
           </tbody>
         </table>
+        <p style="margin-top:0.75rem;">See exact per-model pricing on the <a href="pricing.html">Pricing page</a>.</p>
 
         <h2 id="error-handling">Error Handling</h2>
         <p>TokenForge uses standard HTTP status codes and returns JSON error responses.</p>
@@ -314,13 +314,13 @@
             </tr>
             <tr>
               <td>402</td>
-              <td><code>insufficient_credits</code></td>
-              <td>Not enough credits for this request. <a href="dashboard.html">Top up</a>.</td>
+              <td><code>insufficient_balance</code></td>
+              <td>Not enough TFC balance for this request. <a href="dashboard.html">Top up</a>.</td>
             </tr>
             <tr>
               <td>429</td>
               <td><code>rate_limit</code></td>
-              <td>Too many requests. Wait before retrying.</td>
+              <td>Too many requests — limit is 100 requests/minute per API key. Wait before retrying.</td>
             </tr>
             <tr>
               <td>500</td>
@@ -331,13 +331,69 @@
         </table>
 
         <h2 id="sdks">SDKs & Libraries</h2>
-        <p>Use any OpenAI-compatible SDK. Just change the base URL.</p>
+        <p>Use any OpenAI-compatible SDK — just change the base URL and use your <code>tf_sk_...</code> key. No custom client required.</p>
+
+        <h3>Python</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(
+    api_key="tf_sk_your_key_here",
+    base_url="https://tokenforge1-production.up.railway.app/v1"
+)
+
+response = client.chat.completions.create(
+    model="gpt-5.6-luna",
+    messages=[{"role": "user", "content": "Hello, world!"}]
+)
+print(response.choices[0].message.content)</code></pre>
+        </div>
+
+        <h3>Node.js</h3>
+        <div class="code-block-wrapper">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code class="language-javascript">import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "tf_sk_your_key_here",
+  baseURL: "https://tokenforge1-production.up.railway.app/v1"
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-5.6-luna",
+  messages: [{ role: "user", content: "Hello, world!" }]
+});
+console.log(response.choices[0].message.content);</code></pre>
+        </div>
 
         <h2 id="credits">Credits & Billing</h2>
-        <p>1 TFC = $1.00 USD. Buy as many credits as you need. Minimum purchase: $10 USD (10 TFC). No subscriptions, no commitments.</p>
+        <p>1 TFC = $1.00 USD. Buy as many credits as you need. Minimum purchase: $10 USD (10 TFC). No subscriptions, no commitments — credits are prepaid and deducted per request, and never expire.</p>
+        <p>Payment is currently accepted <strong>only in cryptocurrency stablecoins (USDT / USDC)</strong>, processed through <a href="https://nowpayments.io" target="_blank" rel="noopener">NOWPayments</a>. No credit cards or bank transfers yet. Every model is billed at raw provider cost plus a fixed, transparent 20% platform fee — see the <a href="pricing.html">Pricing page</a> for the exact rate per model.</p>
+        <p>Your balance auto-blocks new requests the instant it hits $0 — you'll never see a surprise overage bill. You'll also get an email alert at 20% and 10% of your remaining balance so you can top up ahead of time.</p>
 
         <h2 id="projects">Projects & API Keys</h2>
         <p>Organize usage by creating projects. Each project gets its own API key and usage tracking.</p>
+
+        <h2 id="faq">Frequently Asked Questions</h2>
+
+        <h3>I sent USDT/USDC but my balance hasn't updated yet — what's wrong?</h3>
+        <p>Credits are added automatically once your transaction gets enough confirmations on-chain, which is typically a few minutes but can take longer depending on network congestion. If it's been over 30 minutes, check your <a href="dashboard.html">Dashboard</a> billing history first, then reach out with your transaction hash.</p>
+
+        <h3>I sent funds on the wrong network — did I lose them?</h3>
+        <p>Always double-check the network (e.g. TRC20 vs ERC20) shown on the payment screen before sending — sending USDT/USDC on a network the deposit address doesn't support is the most common way crypto payments get stuck or lost industry-wide. Use exactly the network and address shown at checkout.</p>
+
+        <h3>What if I send more or less than the invoice amount?</h3>
+        <p>Underpayments are held until you send the remaining balance to the same invoice; overpayments are credited to your TFC balance rather than refunded on-chain (crypto transactions can't be reversed). If a payment looks stuck, check your Dashboard billing history before resending.</p>
+
+        <h3>Are unused credits refundable?</h3>
+        <p>Credits don't expire, but they aren't refundable once purchased — there is currently no automated refund flow. If something went wrong with a specific charge, contact us through your Dashboard.</p>
+
+        <h3>Can I get a receipt for accounting or taxes?</h3>
+        <p>Every deposit and charge is itemized in your <a href="dashboard.html">Dashboard</a> billing history in USD. A downloadable invoice/receipt export is on our roadmap but not available yet — for now, your transaction history plus your on-chain transaction hash cover most bookkeeping needs.</p>
+
+        <h3>I'm not a company, can I still use TokenForge?</h3>
+        <p>Yes — TokenForge is built for anyone, from hobbyist developers experimenting with a side project to small businesses running production traffic. There's no minimum commitment beyond the $10 top-up, no seat limits, and no sales calls required to get started.</p>
 
         <h2 id="streaming">Streaming Responses</h2>
         <p>Set <code>stream: true</code> for Server-Sent Events (SSE) responses.</p>

@@ -6,61 +6,100 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' *; connect-src 'self' https://cdn.jsdelivr.net https://primary-production-f8470.up.railway.app https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
   <title>Pricing — TokenForge</title>
   <link rel="stylesheet" href="css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
   <style>
-    body{background:#000;color:#fff;font-family:'Inter',sans-serif;margin:0}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid #1a1a1a}
-    .nav-brand{color:#00d4ff;font-weight:800;font-size:1.2rem;text-decoration:none}
+    :root{
+      --obsidian:#07080a;
+      --obsidian-2:#0d0f12;
+      --surface:rgba(255,255,255,0.035);
+      --line-soft:rgba(255,255,255,0.07);
+      --cyan:#00f7ff;
+      --cyan-dim:rgba(0,247,255,0.16);
+      --ember:#ff7a3d;
+      --ember-dim:rgba(255,122,61,0.16);
+      --ink:#f1f1ee;
+      --ink-muted:#93969f;
+      --ink-faint:#5b5e68;
+      --font-serif:'Playfair Display', serif;
+      --font-sans:'Inter', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
+      --radius:18px;
+    }
+    body{background:var(--obsidian);color:var(--ink);font-family:var(--font-sans);font-weight:300;margin:0;-webkit-font-smoothing:antialiased;}
+    body::before{
+      content:'';
+      position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.03;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .glow{position:fixed;border-radius:50%;filter:blur(140px);pointer-events:none;z-index:0;}
+    .glow-cyan{width:600px;height:600px;top:-260px;left:-200px;background:var(--cyan);opacity:.10;}
+    .glow-ember{width:460px;height:460px;bottom:-120px;right:-160px;background:var(--ember);opacity:.06;}
+    .nav,.hero,.section,.faq,.cta-section,.footer{position:relative;z-index:1;}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(7,8,10,0.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line-soft);}
+    .nav-brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-family:var(--font-serif);font-weight:700;font-size:1.2rem;text-decoration:none}
+    .nav-brand svg{width:20px;height:20px;}
     .nav-links{display:flex;gap:1.5rem;align-items:center}
-    .nav-links a{color:#888;text-decoration:none;font-size:0.9rem;transition:color 0.2s}
-    .nav-links a:hover{color:#fff}
-    .btn-cta{background:#00d4ff;color:#000;padding:0.5rem 1.2rem;border-radius:8px;font-weight:700;font-size:0.85rem}
+    .nav-links a{color:var(--ink-muted);text-decoration:none;font-size:0.9rem;transition:color 0.2s}
+    .nav-links a:hover{color:var(--ink)}
+    .btn-cta{background:var(--cyan);color:#00161a;padding:0.5rem 1.2rem;border-radius:50px;font-weight:600;font-size:0.85rem}
     .hero{text-align:center;padding:5rem 2rem 3rem}
-    .hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
-    .hero p{color:#888;font-size:1.05rem;max-width:520px;margin:0 auto 2rem}
-    .gradient-text{background:linear-gradient(135deg,#00d4ff,#0088ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .badge{display:inline-block;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:#00d4ff;padding:0.3rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.5rem}
+    .hero h1{font-family:var(--font-sans);font-size:2.8rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:1rem;color:var(--ink);}
+    .hero p{color:var(--ink-muted);font-size:1.05rem;max-width:520px;margin:0 auto 2rem}
+    .gradient-text{background:linear-gradient(135deg,var(--cyan),var(--ember));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .badge{display:inline-block;background:var(--cyan-dim);border:1px solid rgba(0,247,255,0.3);color:var(--cyan);padding:0.3rem 1rem;border-radius:100px;font-family:var(--font-mono);font-size:0.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;margin-bottom:1.5rem}
     .how-it-works{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin:2rem auto;max-width:700px}
     .how-item{text-align:center;flex:1;min-width:160px}
-    .how-num{font-size:2rem;font-weight:800;color:#00d4ff;margin-bottom:0.3rem}
-    .how-label{font-size:0.85rem;color:#888}
+    .how-num{font-size:2rem;font-weight:800;color:var(--cyan);margin-bottom:0.3rem}
+    .how-label{font-size:0.85rem;color:var(--ink-muted)}
     .section{max-width:960px;margin:0 auto;padding:0 2rem 4rem}
-    .section-title{font-size:1.3rem;font-weight:700;margin-bottom:0.5rem}
-    .section-sub{color:#666;font-size:0.9rem;margin-bottom:1.5rem}
-    .table-wrap{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:1rem}
+    .section-title{font-family:var(--font-sans);font-size:1.3rem;font-weight:800;margin-bottom:0.5rem;color:var(--ink);}
+    .section-sub{color:var(--ink-muted);font-size:0.9rem;margin-bottom:1.5rem}
+    .table-wrap{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem}
     table{width:100%;border-collapse:collapse;font-size:0.88rem}
-    thead{background:#111}
-    th{padding:0.9rem 1.2rem;text-align:left;color:#666;font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px}
-    td{padding:0.85rem 1.2rem;border-top:1px solid #111;vertical-align:middle}
+    thead{background:rgba(255,255,255,0.03)}
+    th{padding:0.9rem 1.2rem;text-align:left;color:var(--ink-faint);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px}
+    td{padding:0.85rem 1.2rem;border-top:1px solid var(--line-soft);vertical-align:middle}
     tr:hover td{background:rgba(255,255,255,0.02)}
-    .model-name{font-weight:600;color:#fff}
+    .model-name{font-weight:600;color:var(--ink)}
     .provider-tag{display:inline-block;padding:0.15rem 0.55rem;border-radius:100px;font-size:0.7rem;font-weight:700;margin-left:0.4rem}
     .tag-openai{background:rgba(16,163,127,0.15);color:#10a37f}
     .tag-anthropic{background:rgba(205,133,63,0.15);color:#cd853f}
     .tag-gemini{background:rgba(66,133,244,0.15);color:#4285f4}
-    .price{font-family:monospace;color:#00d4ff;font-size:0.85rem}
-    .ctx{color:#555;font-size:0.8rem}
-    .divider{border:none;border-top:1px solid #1a1a1a;margin:0.5rem 0}
-    .note{color:#555;font-size:0.78rem;margin-top:0.8rem;text-align:center}
+    .tier-tag{font-family:var(--font-mono);color:var(--ember);font-size:0.68rem;letter-spacing:.08em;text-transform:uppercase;}
+    .price{font-family:var(--font-mono);color:var(--cyan);font-size:0.85rem}
+    .ctx{color:var(--ink-faint);font-size:0.8rem}
+    .divider{border:none;border-top:1px solid var(--line-soft);margin:0.5rem 0}
+    .note{color:var(--ink-faint);font-size:0.78rem;margin-top:0.8rem;text-align:center}
     .faq{max-width:700px;margin:0 auto;padding:0 2rem 5rem}
-    .faq h2{font-size:1.3rem;font-weight:700;margin-bottom:1.5rem}
-    .faq-item{border-bottom:1px solid #1a1a1a;padding:1.2rem 0}
-    .faq-item h3{font-size:0.95rem;font-weight:600;margin-bottom:0.4rem}
-    .faq-item p{color:#888;font-size:0.88rem;line-height:1.6;margin:0}
-    .cta-section{text-align:center;padding:3rem 2rem 5rem;border-top:1px solid #1a1a1a}
-    .cta-section h2{font-size:1.8rem;font-weight:800;margin-bottom:0.8rem}
-    .cta-section p{color:#888;margin-bottom:2rem}
-    .btn-primary{background:#00d4ff;color:#000;padding:0.8rem 2rem;border-radius:10px;font-weight:700;font-size:1rem;text-decoration:none;display:inline-block;transition:opacity 0.2s}
-    .btn-primary:hover{opacity:0.85}
-    .footer{text-align:center;padding:2rem;border-top:1px solid #1a1a1a;color:#555;font-size:0.85rem}
-    .footer a{color:#555;text-decoration:none}
-    .footer a:hover{color:#888}
+    .faq h2{font-family:var(--font-sans);font-size:1.3rem;font-weight:800;margin-bottom:1.5rem;color:var(--ink);}
+    .faq-item{border-bottom:1px solid var(--line-soft);padding:1.2rem 0}
+    .faq-item h3{font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;color:var(--ink);}
+    .faq-item p{color:var(--ink-muted);font-size:0.88rem;line-height:1.6;margin:0}
+    .cta-section{text-align:center;padding:3rem 2rem 5rem;border-top:1px solid var(--line-soft)}
+    .cta-section h2{font-family:var(--font-sans);font-size:1.8rem;font-weight:800;margin-bottom:0.8rem;color:var(--ink);}
+    .cta-section p{color:var(--ink-muted);margin-bottom:2rem}
+    .btn-primary{background:var(--cyan);color:#00161a;padding:0.8rem 2rem;border-radius:50px;font-weight:600;font-size:1rem;text-decoration:none;display:inline-block;transition:all 0.25s ease;box-shadow:0 0 18px rgba(0,247,255,.2);}
+    .btn-primary:hover{box-shadow:0 0 30px rgba(0,247,255,.4);transform:translateY(-1px);}
+    .footer{text-align:center;padding:2rem;border-top:1px solid var(--line-soft);color:var(--ink-faint);font-size:0.85rem}
+    .footer a{color:var(--ink-faint);text-decoration:none}
+    .footer a:hover{color:var(--ink-muted)}
   </style>
 </head>
 <body>
 
+<div class="glow glow-cyan"></div>
+<div class="glow glow-ember"></div>
+
 <nav class="nav">
-  <a href="index.html" class="nav-brand">⚡ TokenForge</a>
+  <a href="index.html" class="nav-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true">
+      <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
+      <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
+    </svg>
+    TokenForge
+  </a>
   <div class="nav-links" id="navLinks">
     <a href="login.html">Sign In</a>
     <a href="signup.html" class="btn-cta">Get Started</a>
@@ -71,19 +110,19 @@
   <div class="badge">Simple, transparent pricing</div>
   <h1>Pay only for what<br><span class="gradient-text">you actually use</span></h1>
   <p>No subscriptions, no hidden fees. Top up any amount in USD and pay only for what you use. 1 TFC = $1 USD.</p>
-  <div id="rechargePanel" style="max-width:540px;margin:0 auto 2rem;padding:1.25rem;border:1px solid rgba(0,212,255,0.2);border-radius:16px;background:rgba(0,212,255,0.06);">
+  <div id="rechargePanel" style="max-width:540px;margin:0 auto 2rem;padding:1.25rem;border:1px solid rgba(0,247,255,0.2);border-radius:var(--radius);background:var(--cyan-dim);">
     <div id="rechargeScreen1">
-      <label for="rechargeAmount" style="display:block;text-align:left;margin-bottom:0.5rem;color:#888;font-size:0.9rem;">Enter amount in USD</label>
-      <input id="rechargeAmount" type="number" min="1" step="1" value="10" style="width:100%;padding:0.8rem 0.9rem;border-radius:10px;border:1px solid #1F2937;background:#000;color:#fff;outline:none;">
+      <label for="rechargeAmount" style="display:block;text-align:left;margin-bottom:0.5rem;color:var(--ink-muted);font-size:0.9rem;">Enter amount in USD</label>
+      <input id="rechargeAmount" type="number" min="1" step="1" value="10" style="width:100%;padding:0.8rem 0.9rem;border-radius:10px;border:1px solid var(--line-soft);background:var(--obsidian);color:var(--ink);outline:none;">
       <button class="btn-primary" style="margin-top:1rem;" onclick="showRechargeConfirmation()">Continue</button>
-      <p style="margin-top:0.8rem;color:#888;font-size:0.9rem;">No plans. No fixed packages. Pay only for the credits you need.</p>
+      <p style="margin-top:0.8rem;color:var(--ink-muted);font-size:0.9rem;">No plans. No fixed packages. Pay only for the credits you need.</p>
     </div>
     <div id="rechargeScreen2" style="display:none;text-align:left;">
-      <h3 style="margin:0 0 0.5rem;color:#fff;">Confirm your top-up</h3>
-      <p style="color:#888;margin:0 0 1rem;">You will be redirected to the crypto payment flow for <strong id="rechargeSummaryAmount">$10</strong>.</p>
+      <h3 style="margin:0 0 0.5rem;color:var(--ink);">Confirm your top-up</h3>
+      <p style="color:var(--ink-muted);margin:0 0 1rem;">You will be redirected to the crypto payment flow for <strong id="rechargeSummaryAmount">$10</strong>.</p>
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
         <button class="btn-primary" onclick="confirmRecharge()">Confirm payment</button>
-        <button style="background:transparent;border:1px solid #1F2937;color:#888;padding:0.8rem 1.1rem;border-radius:10px;cursor:pointer;" onclick="showRechargeInput()">Back</button>
+        <button style="background:transparent;border:1px solid var(--line-soft);color:var(--ink-muted);padding:0.8rem 1.1rem;border-radius:10px;cursor:pointer;font-family:inherit;" onclick="showRechargeInput()">Back</button>
       </div>
     </div>
   </div>
@@ -120,28 +159,22 @@
     </thead>
     <tbody>
       <tr>
-        <td style="color:#666">Fast</td>
-        <td><span class="model-name">GPT-4o-mini</span><span class="provider-tag tag-openai">OpenAI</span></td>
-        <td><span class="price">0.000180 TFC</span></td>
-        <td><span class="price">0.000720 TFC</span></td>
+        <td class="tier-tag">Budget</td>
+        <td><span class="model-name">GPT-5.6 Luna</span><span class="provider-tag tag-openai">OpenAI</span></td>
+        <td><span class="price">0.001200 TFC</span></td>
+        <td><span class="price">0.007200 TFC</span></td>
       </tr>
       <tr>
-        <td style="color:#666">Balanced</td>
-        <td><span class="model-name">GPT-4o</span><span class="provider-tag tag-openai">OpenAI</span></td>
+        <td class="tier-tag">Balanced</td>
+        <td><span class="model-name">GPT-5.6 Terra</span><span class="provider-tag tag-openai">OpenAI</span></td>
         <td><span class="price">0.003000 TFC</span></td>
-        <td><span class="price">0.012000 TFC</span></td>
-      </tr>
-      <tr>
-        <td style="color:#666">Reasoning</td>
-        <td><span class="model-name">o3-mini</span><span class="provider-tag tag-openai">OpenAI</span></td>
-        <td><span class="price">0.001320 TFC</span></td>
-        <td><span class="price">0.005280 TFC</span></td>
-      </tr>
-      <tr>
-        <td style="color:#666">Reasoning</td>
-        <td><span class="model-name">o1</span><span class="provider-tag tag-openai">OpenAI</span></td>
         <td><span class="price">0.018000 TFC</span></td>
-        <td><span class="price">0.072000 TFC</span></td>
+      </tr>
+      <tr>
+        <td class="tier-tag">Flagship</td>
+        <td><span class="model-name">GPT-5.6 Sol</span><span class="provider-tag tag-openai">OpenAI</span></td>
+        <td><span class="price">0.006000 TFC</span></td>
+        <td><span class="price">0.036000 TFC</span></td>
       </tr>
     </tbody>
   </table>
@@ -159,28 +192,22 @@
     </thead>
     <tbody>
       <tr>
-        <td style="color:#666">Fast</td>
+        <td class="tier-tag">Budget</td>
         <td><span class="model-name">Claude Haiku 4.5</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
-        <td><span class="price">0.000360 TFC</span></td>
-        <td><span class="price">0.001440 TFC</span></td>
+        <td><span class="price">0.001200 TFC</span></td>
+        <td><span class="price">0.006000 TFC</span></td>
       </tr>
       <tr>
-        <td style="color:#666">Balanced</td>
-        <td><span class="model-name">Claude Sonnet 4.6</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
+        <td class="tier-tag">Balanced</td>
+        <td><span class="model-name">Claude Sonnet 5</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
         <td><span class="price">0.003600 TFC</span></td>
         <td><span class="price">0.018000 TFC</span></td>
       </tr>
       <tr>
-        <td style="color:#666">Legacy</td>
-        <td><span class="model-name">Claude 3.5 Sonnet</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
-        <td><span class="price">0.003600 TFC</span></td>
-        <td><span class="price">0.018000 TFC</span></td>
-      </tr>
-      <tr>
-        <td style="color:#666">Powerful</td>
+        <td class="tier-tag">Flagship</td>
         <td><span class="model-name">Claude Opus 4.8</span><span class="provider-tag tag-anthropic">Anthropic</span></td>
-        <td><span class="price">0.018000 TFC</span></td>
-        <td><span class="price">0.090000 TFC</span></td>
+        <td><span class="price">0.006000 TFC</span></td>
+        <td><span class="price">0.030000 TFC</span></td>
       </tr>
     </tbody>
   </table>
@@ -198,28 +225,22 @@
     </thead>
     <tbody>
       <tr>
-        <td style="color:#666">Ultra-Light</td>
+        <td class="tier-tag">Budget</td>
         <td><span class="model-name">Gemini 3.1 Flash-Lite</span><span class="provider-tag tag-google">Google</span></td>
-        <td><span class="price">0.000090 TFC</span></td>
-        <td><span class="price">0.000360 TFC</span></td>
+        <td><span class="price">0.000300 TFC</span></td>
+        <td><span class="price">0.001800 TFC</span></td>
       </tr>
       <tr>
-        <td style="color:#666">Fast</td>
-        <td><span class="model-name">Gemini 3 Flash</span><span class="provider-tag tag-google">Google</span></td>
-        <td><span class="price">0.000090 TFC</span></td>
-        <td><span class="price">0.000360 TFC</span></td>
-      </tr>
-      <tr>
-        <td style="color:#666">Default Pro</td>
+        <td class="tier-tag">Balanced</td>
         <td><span class="model-name">Gemini 3.5 Flash</span><span class="provider-tag tag-google">Google</span></td>
         <td><span class="price">0.001800 TFC</span></td>
         <td><span class="price">0.010800 TFC</span></td>
       </tr>
       <tr>
-        <td style="color:#666">Advanced</td>
+        <td class="tier-tag">Flagship</td>
         <td><span class="model-name">Gemini 3.1 Pro</span><span class="provider-tag tag-google">Google</span></td>
-        <td><span class="price">0.001500 TFC</span></td>
-        <td><span class="price">0.006000 TFC</span></td>
+        <td><span class="price">0.002400 TFC</span></td>
+        <td><span class="price">0.014400 TFC</span></td>
       </tr>
     </tbody>
   </table>
@@ -241,7 +262,7 @@
   </div>
   <div class="faq-item">
     <h3>How do I switch between models?</h3>
-    <p>Just change the <code style="background:#111;padding:0.1rem 0.4rem;border-radius:4px;color:#00d4ff">model</code> parameter in your request. No SDK changes, no new API keys needed.</p>
+    <p>Just change the <code style="background:var(--surface);padding:0.1rem 0.4rem;border-radius:4px;color:var(--cyan)">model</code> parameter in your request. No SDK changes, no new API keys needed.</p>
   </div>
   <div class="faq-item">
     <h3>Is TokenForge more expensive than going direct?</h3>

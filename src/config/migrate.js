@@ -126,23 +126,28 @@ const migrations = [
   `,
   `
 INSERT INTO model_pricing (model, provider, display_name, input_cost_per_1k, output_cost_per_1k, context_window, max_output_tokens, markup_multiplier) VALUES
-('gpt-4o',                     'openai',    'GPT-4o',               0.0025,   0.010,   128000,  16384,  1.20),
-('gpt-4o-mini',                'openai',    'GPT-4o Mini',          0.000150, 0.000600,128000,  16384,  1.20),
-('o1',                         'openai',    'o1',                   0.015,    0.060,   128000,  4096,   1.20),
-('o3-mini',                    'openai',    'o3-mini',              0.0011,   0.0044,  128000,  4096,   1.20),
-('claude-opus-4-8',            'anthropic', 'Claude Opus 4.8',      0.005,    0.025,   1000000, 128000, 1.20),
-('claude-sonnet-4-6',          'anthropic', 'Claude Sonnet 4.6',    0.003,    0.015,   1000000, 8192,   1.20),
+('gpt-5.6-luna',               'openai',    'GPT-5.6 Luna',         0.001,    0.006,   1000000, 128000, 1.20),
+('gpt-5.6-terra',              'openai',    'GPT-5.6 Terra',        0.0025,   0.015,   1000000, 128000, 1.20),
+('gpt-5.6-sol',                'openai',    'GPT-5.6 Sol',          0.005,    0.030,   1000000, 128000, 1.20),
 ('claude-haiku-4-5-20251001',  'anthropic', 'Claude Haiku 4.5',     0.001,    0.005,   200000,  8192,   1.20),
-('claude-3-5-sonnet-20241022', 'anthropic', 'Claude 3.5 Sonnet',    0.003,    0.015,   200000,  8192,   1.20),
-('gemini-3.5-flash',           'gemini',    'Gemini 3.5 Flash',     0.0015,   0.009,   1000000, 65536,  1.20),
-('gemini-3.1-pro-preview',     'gemini',    'Gemini 3.1 Pro',       0.002,    0.012,   1000000, 65536,  1.20),
+('claude-sonnet-5',            'anthropic', 'Claude Sonnet 5',      0.003,    0.015,   1000000, 8192,   1.20),
+('claude-opus-4-8',            'anthropic', 'Claude Opus 4.8',      0.005,    0.025,   1000000, 128000, 1.20),
 ('gemini-3.1-flash-lite',      'gemini',    'Gemini 3.1 Flash Lite',0.00025,  0.0015,  1000000, 65536,  1.20),
-('gemini-3-flash',             'gemini',    'Gemini 3 Flash',       0.0005,   0.003,   1000000, 65536,  1.20)
+('gemini-3.5-flash',           'gemini',    'Gemini 3.5 Flash',     0.0015,   0.009,   1000000, 65536,  1.20),
+('gemini-3.1-pro-preview',     'gemini',    'Gemini 3.1 Pro',       0.002,    0.012,   1000000, 65536,  1.20)
 ON CONFLICT (model) DO UPDATE SET
   markup_multiplier = EXCLUDED.markup_multiplier,
   input_cost_per_1k = EXCLUDED.input_cost_per_1k,
   output_cost_per_1k = EXCLUDED.output_cost_per_1k,
-  display_name = EXCLUDED.display_name;
+  display_name = EXCLUDED.display_name,
+  is_active = true;
+
+UPDATE model_pricing SET is_active = false
+WHERE model NOT IN (
+  'gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol',
+  'claude-haiku-4-5-20251001', 'claude-sonnet-5', 'claude-opus-4-8',
+  'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'
+);
   `
 ];
 async function runMigrations() {
