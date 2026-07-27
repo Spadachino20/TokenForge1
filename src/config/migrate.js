@@ -133,7 +133,9 @@ INSERT INTO model_pricing (model, provider, display_name, input_cost_per_1k, out
 ('claude-sonnet-5',            'anthropic', 'Claude Sonnet 5',      0.003,    0.015,   1000000, 8192,   1.20),
 ('claude-opus-4-8',            'anthropic', 'Claude Opus 4.8',      0.005,    0.025,   1000000, 128000, 1.20),
 ('gemini-3.1-flash-lite',      'gemini',    'Gemini 3.1 Flash Lite',0.00025,  0.0015,  1000000, 65536,  1.20),
+('gemini-3.5-flash-lite',      'gemini',    'Gemini 3.5 Flash Lite',0.0003,   0.0025,  1000000, 65536,  1.20),
 ('gemini-3.5-flash',           'gemini',    'Gemini 3.5 Flash',     0.0015,   0.009,   1000000, 65536,  1.20),
+('gemini-3.6-flash',           'gemini',    'Gemini 3.6 Flash',     0.0015,   0.0075,  1000000, 65536,  1.20),
 ('gemini-3.1-pro-preview',     'gemini',    'Gemini 3.1 Pro',       0.002,    0.012,   1000000, 65536,  1.20)
 ON CONFLICT (model) DO UPDATE SET
   markup_multiplier = EXCLUDED.markup_multiplier,
@@ -146,7 +148,8 @@ UPDATE model_pricing SET is_active = false
 WHERE model NOT IN (
   'gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol',
   'claude-haiku-4-5-20251001', 'claude-sonnet-5', 'claude-opus-4-8',
-  'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'
+  'gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.5-flash',
+  'gemini-3.6-flash', 'gemini-3.1-pro-preview'
 );
   `
 ];

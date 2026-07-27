@@ -21,7 +21,9 @@ const AVAILABLE_MODELS = {
   'claude-opus-4-8': 'anthropic',
 
   'gemini-3.1-flash-lite': 'gemini',
+  'gemini-3.5-flash-lite': 'gemini',
   'gemini-3.5-flash': 'gemini',
+  'gemini-3.6-flash': 'gemini',
   'gemini-3.1-pro-preview': 'gemini',
 };
 // List models

@@ -5,10 +5,12 @@ const MODEL_EQUIVALENTS = {
   'gpt-5.6-luna':                { tier: 'budget',   alternatives: ['claude-haiku-4-5-20251001', 'gemini-3.1-flash-lite'] },
   'claude-haiku-4-5-20251001':   { tier: 'budget',   alternatives: ['gpt-5.6-luna', 'gemini-3.1-flash-lite'] },
   'gemini-3.1-flash-lite':       { tier: 'budget',   alternatives: ['gpt-5.6-luna', 'claude-haiku-4-5-20251001'] },
+  'gemini-3.5-flash-lite':       { tier: 'budget',   alternatives: ['gpt-5.6-luna', 'claude-haiku-4-5-20251001'] },
 
-  'gpt-5.6-terra':               { tier: 'balanced', alternatives: ['claude-sonnet-5', 'gemini-3.5-flash'] },
-  'claude-sonnet-5':             { tier: 'balanced', alternatives: ['gpt-5.6-terra', 'gemini-3.5-flash'] },
+  'gpt-5.6-terra':               { tier: 'balanced', alternatives: ['claude-sonnet-5', 'gemini-3.6-flash'] },
+  'claude-sonnet-5':             { tier: 'balanced', alternatives: ['gpt-5.6-terra', 'gemini-3.6-flash'] },
   'gemini-3.5-flash':            { tier: 'balanced', alternatives: ['gpt-5.6-terra', 'claude-sonnet-5'] },
+  'gemini-3.6-flash':            { tier: 'balanced', alternatives: ['gpt-5.6-terra', 'claude-sonnet-5'] },
 
   'gpt-5.6-sol':                 { tier: 'flagship', alternatives: ['claude-opus-4-8', 'gemini-3.1-pro-preview'] },
   'claude-opus-4-8':             { tier: 'flagship', alternatives: ['gpt-5.6-sol', 'gemini-3.1-pro-preview'] },
@@ -18,7 +20,8 @@ const MODEL_EQUIVALENTS = {
 const MODEL_PROVIDER = {
   'gpt-5.6-luna': 'openai', 'gpt-5.6-terra': 'openai', 'gpt-5.6-sol': 'openai',
   'claude-haiku-4-5-20251001': 'anthropic', 'claude-sonnet-5': 'anthropic', 'claude-opus-4-8': 'anthropic',
-  'gemini-3.1-flash-lite': 'gemini', 'gemini-3.5-flash': 'gemini', 'gemini-3.1-pro-preview': 'gemini'
+  'gemini-3.1-flash-lite': 'gemini', 'gemini-3.5-flash-lite': 'gemini', 'gemini-3.5-flash': 'gemini',
+  'gemini-3.6-flash': 'gemini', 'gemini-3.1-pro-preview': 'gemini'
 };
 
 async function getAllProviderBalances() {

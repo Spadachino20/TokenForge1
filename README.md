@@ -29,4 +29,4 @@ curl -X POST https://api.tokenforge.ai/v1/chat/completions \
 
 - OpenAI: gpt-5.6-luna, gpt-5.6-terra, gpt-5.6-sol
 - Anthropic: claude-haiku-4-5-20251001, claude-sonnet-5, claude-opus-4-8
-- Google: gemini-3.1-flash-lite, gemini-3.5-flash, gemini-3.1-pro-preview
+- Google: gemini-3.1-flash-lite, gemini-3.5-flash-lite, gemini-3.5-flash, gemini-3.6-flash, gemini-3.1-pro-preview
