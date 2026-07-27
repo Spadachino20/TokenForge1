@@ -79,7 +79,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
       const data = hours.map(h => {
         const val = info.data[h] || 0;
         // currency conversion: 1 TFC = 1 USD
-        return currency === 'usd' ? parseFloat(val.toFixed(6)) : parseFloat(val.toFixed(6));
+        return parseFloat(val.toFixed(6));
       });
 
       return { model, provider: p, color, data };

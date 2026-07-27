@@ -1,7 +1,7 @@
 /* ==========================================================================
    TOKENFORGE — DESIGN TOKENS
    Palette:   #050505 obsidian / #0a1414 deep-teal wash / #00f7ff accent (used sparingly)
-   Type:      Fraunces (display, wide+serif) · Inter (UI, light) · JetBrains Mono (data)
+   Type:      Playfair Display (display, serif) · Inter (UI, light) · JetBrains Mono (data)
    Signature: the Routing Console — a real JSON request card, hexagon linework as quiet backdrop
    ========================================================================== */
 
@@ -20,7 +20,7 @@
   --text-muted: #a1a1aa;
   --text-faint: #5c5c66;
 
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Playfair Display', serif;
   --font-sans: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 

@@ -109,11 +109,11 @@
 <div class="hero">
   <div class="badge">Simple, transparent pricing</div>
   <h1>Pay only for what<br><span class="gradient-text">you actually use</span></h1>
-  <p>No subscriptions, no hidden fees. Top up any amount in USD and pay only for what you use. 1 TFC = $1 USD.</p>
+  <p>No subscriptions, no hidden fees. Top up any amount from $10 USD and pay only for what you use. 1 TFC = $1 USD.</p>
   <div id="rechargePanel" style="max-width:540px;margin:0 auto 2rem;padding:1.25rem;border:1px solid rgba(0,247,255,0.2);border-radius:var(--radius);background:var(--cyan-dim);">
     <div id="rechargeScreen1">
       <label for="rechargeAmount" style="display:block;text-align:left;margin-bottom:0.5rem;color:var(--ink-muted);font-size:0.9rem;">Enter amount in USD</label>
-      <input id="rechargeAmount" type="number" min="1" step="1" value="10" style="width:100%;padding:0.8rem 0.9rem;border-radius:10px;border:1px solid var(--line-soft);background:var(--obsidian);color:var(--ink);outline:none;">
+      <input id="rechargeAmount" type="number" min="10" step="1" value="10" style="width:100%;padding:0.8rem 0.9rem;border-radius:10px;border:1px solid var(--line-soft);background:var(--obsidian);color:var(--ink);outline:none;">
       <button class="btn-primary" style="margin-top:1rem;" onclick="showRechargeConfirmation()">Continue</button>
       <p style="margin-top:0.8rem;color:var(--ink-muted);font-size:0.9rem;">No plans. No fixed packages. Pay only for the credits you need.</p>
     </div>
@@ -293,14 +293,14 @@
 </div>
 
 <footer class="footer">
-  <p>© 2026 TokenForge · <a href="terms.html">Terms of Service</a> · <a href="pricing.html">Pricing</a></p>
+  <p>© 2026 TokenForge · <a href="index.html">Home</a> · <a href="docs.html">Docs</a> · <a href="terms.html">Terms of Service</a></p>
 </footer>
 
 <script src="js/main.js"></script>
 <script>
   function showRechargeConfirmation() {
     const amount = parseInt(document.getElementById('rechargeAmount').value, 10);
-    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    const safeAmount = Number.isNaN(amount) || amount < 10 ? 10 : amount;
     document.getElementById('rechargeSummaryAmount').textContent = `$${safeAmount}`;
     document.getElementById('rechargeScreen1').style.display = 'none';
     document.getElementById('rechargeScreen2').style.display = 'block';
@@ -313,7 +313,7 @@
 
   function confirmRecharge() {
     const amount = parseInt(document.getElementById('rechargeAmount').value, 10);
-    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    const safeAmount = Number.isNaN(amount) || amount < 10 ? 10 : amount;
     if (typeof window.pagarConCrypto === 'function') {
       window.pagarConCrypto(safeAmount);
     }

@@ -1,5 +1,4 @@
 const API_URL = '';
-// En tu public/js/main.js
 const PAYMENT_ENDPOINT = '/billing/create-invoice';
 
 async function pagarConCrypto(monto) {
@@ -31,7 +30,7 @@ async function pagarConCrypto(monto) {
 
     if (!user?.id || !user?.email) {
         console.error('Crypto payment blocked: missing user id/email', diagnostic);
-        alert('Usuario no válido. Por favor inicia sesión de nuevo.');
+        alert('Invalid user session. Please sign in again.');
         window.location.href = 'login.html';
         return;
     }
@@ -75,7 +74,7 @@ async function pagarConCrypto(monto) {
             error: err.message,
             stack: err.stack
         });
-        alert(`Pago fallido: ${err.message}. Abre la consola (F12) para más detalles.`);
+        alert(`Payment failed: ${err.message}. Please try again or contact support.`);
     }
 }
 
@@ -133,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Waitlist form
     const waitlistForm = document.getElementById('waitlistForm');
-    const waitlistMsg = document.getElementById('waitlistMsg');
+    const waitlistMsg = document.getElementById('waitlistSuccess');
     if (waitlistForm) {
         waitlistForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -160,12 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json();
                     waitlistMsg.textContent = data.error || 'Something went wrong. Please try again.';
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Notify Me';
+                    submitBtn.textContent = 'Notify me';
                 }
             } catch (err) {
                 waitlistMsg.textContent = 'Network error. Please try again.';
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Notify Me';
+                submitBtn.textContent = 'Notify me';
             }
         });
     }
@@ -179,5 +178,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
+    document.querySelectorAll('.reveal').forEach(card => observer.observe(card));
 });

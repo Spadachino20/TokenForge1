@@ -35,9 +35,8 @@ app.use(generalLimiter);
 
 // Body parsing — webhook needs raw body BEFORE json middleware
 // Body parsing
-// app.use('/billing/webhook', express.raw({ type: 'application/json' })); <-- Bórrala o ponle //
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Static files (frontend)
 app.use(express.static(path.join(__dirname, '../public')));

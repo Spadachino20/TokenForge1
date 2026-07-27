@@ -4,19 +4,21 @@ One key, every AI model. TFC credits system.
 
 ## Quick Start
 
-1. Copy `.env.example` to `.env` and fill in your keys
+1. Create a `.env` file with `DATABASE_URL`, `JWT_SECRET`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `NOWPAYMENTS_API_KEY`, `RESEND_API_KEY` and `FRONTEND_URL`
 2. Run `npm install`
 3. Run `npm run db:migrate`
 4. Run `npm run dev`
 
 ## Environment Variables
 
-See `.env.example` for required variables.
+Required: `DATABASE_URL`, `JWT_SECRET`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `NOWPAYMENTS_API_KEY`, `RESEND_API_KEY`, `FRONTEND_URL`.
+
+Optional: `ADMIN_EMAILS` (comma-separated; low-balance alerts go nowhere if unset), `PORT`, `NODE_ENV`.
 
 ## API Usage
 
 ```bash
-curl -X POST https://api.tokenforge.ai/v1/chat/completions \
+curl -X POST https://tokenforge1-production.up.railway.app/v1/chat/completions \
   -H "Authorization: Bearer tf_sk_your_key" \
   -H "Content-Type: application/json" \
   -d '{

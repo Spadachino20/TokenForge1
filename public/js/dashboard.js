@@ -81,14 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('continueRechargeBtn').addEventListener('click', () => {
     const amount = parseInt(document.getElementById('rechargeAmountInput').value, 10);
-    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    const safeAmount = Number.isNaN(amount) || amount < 10 ? 10 : amount;
     document.getElementById('rechargeConfirm').style.display = 'block';
     document.getElementById('rechargeConfirmAmount').textContent = `$${safeAmount}`;
   });
 
   document.getElementById('confirmRechargeBtn').addEventListener('click', () => {
     const amount = parseInt(document.getElementById('rechargeAmountInput').value, 10);
-    const safeAmount = Number.isNaN(amount) || amount < 1 ? 10 : amount;
+    const safeAmount = Number.isNaN(amount) || amount < 10 ? 10 : amount;
     if (typeof pagarConCrypto === 'function') {
       pagarConCrypto(safeAmount);
     }
@@ -394,7 +394,7 @@ async function loadBilling() {
     const container = document.getElementById('billingList');
 
     if (document.getElementById('balanceTfc')) {
-        document.getElementById('balanceTfc').innerText = parseFloat(data.balance_tfc || 0).toFixed(2) + ' TFC';
+        document.getElementById('balanceTfc').innerText = parseFloat(data.balance_tfc || 0).toFixed(4) + ' TFC';
     }
 
     if (!data.transactions || data.transactions.length === 0) {

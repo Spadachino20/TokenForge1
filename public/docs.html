@@ -58,8 +58,8 @@
         <ul class="sidebar-nav">
           <li><a href="#sdks">SDKs & Libraries</a></li>
           <li><a href="#credits">Credits & Billing</a></li>
-          <li><a href="#faq">FAQ</a></li>
           <li><a href="#projects">Projects & API Keys</a></li>
+          <li><a href="#faq">FAQ</a></li>
           <li><a href="#streaming">Streaming Responses</a></li>
         </ul>
       </div>
@@ -88,8 +88,8 @@
             <li><a href="#error-handling">Error Handling</a></li>
             <li><a href="#sdks">SDKs</a></li>
             <li><a href="#credits">Credits & Billing</a></li>
-            <li><a href="#faq">FAQ</a></li>
             <li><a href="#projects">Projects & API Keys</a></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href="#streaming">Streaming</a></li>
           </ul>
         </div>
@@ -222,7 +222,7 @@
           <pre><code class="language-json">{
   "id": "chatcmpl-abc123",
   "object": "chat.completion",
-  "created": 1718900000,
+  "created": 1785000000,
   "model": "gpt-5.6-luna",
   "choices": [{
     "index": 0,
@@ -310,7 +310,7 @@
           <tbody>
             <tr>
               <td>400</td>
-              <td><code>invalid_request</code></td>
+              <td><code>missing_parameters</code> / <code>model_not_available</code></td>
               <td>Malformed request or missing required parameters.</td>
             </tr>
             <tr>
@@ -398,11 +398,11 @@ console.log(response.choices[0].message.content);</code></pre>
         <h3>Can I get a receipt for accounting or taxes?</h3>
         <p>Every deposit and charge is itemized in your <a href="dashboard.html">Dashboard</a> billing history in USD. A downloadable invoice/receipt export is on our roadmap but not available yet — for now, your transaction history plus your on-chain transaction hash cover most bookkeeping needs.</p>
 
-        <h3>I'm not a company, can I still use TokenForge?</h3>
+        <h3>I'm not a company — can I still use TokenForge?</h3>
         <p>Yes — TokenForge is built for anyone, from hobbyist developers experimenting with a side project to small businesses running production traffic. There's no minimum commitment beyond the $10 top-up, no seat limits, and no sales calls required to get started.</p>
 
         <h2 id="streaming">Streaming Responses</h2>
-        <p>Set <code>stream: true</code> for Server-Sent Events (SSE) responses.</p>
+        <p>Streaming is on by default. Pass <code>"stream": false</code> for a single JSON response, or <code>"stream": true</code> for Server-Sent Events (SSE).</p>
 
         <h2 id="support">Support</h2>
         <p>TokenForge is currently in early access. For support, use the feedback form in your Dashboard or reach out directly through your account.</p>
