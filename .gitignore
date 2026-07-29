@@ -4,3 +4,5 @@ node_modules/
 *.log
 *.pid
 apis.txt
+graphify-out/
+public/openclaw_export.tar.gz
