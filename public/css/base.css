@@ -1,0 +1,583 @@
+/* ==========================================================================
+   TOKENFORGE — BASE
+   Single source of truth for tokens, reset, ambient layer, typography
+   primitives, buttons, navigation and footer. Every surface loads this
+   first; page stylesheets only add what is genuinely local to them.
+
+   Palette   #07080a obsidian · #00f7ff cyan (routing) · #ff7a3d ember (spend)
+   Type      Inter (UI + body) · Playfair Display (brand + emphatic clause)
+             JetBrains Mono (identifiers, prices, code, measurements)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* Surface */
+  --obsidian: #07080a;
+  --obsidian-2: #0d0f12;
+  --surface: rgba(255, 255, 255, 0.035);
+  --surface-hi: rgba(255, 255, 255, 0.06);
+  --surface-sunken: rgba(0, 0, 0, 0.3);
+
+  /* Line */
+  --line-soft: rgba(255, 255, 255, 0.07);
+  --line-hair: rgba(255, 255, 255, 0.03);
+  --line: rgba(0, 247, 255, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  /* Accent — cyan carries routing, ember carries spend */
+  --cyan: #00f7ff;
+  --cyan-dim: rgba(0, 247, 255, 0.16);
+  --cyan-dimmer: rgba(0, 247, 255, 0.35);
+  --cyan-wash: rgba(0, 247, 255, 0.05);
+  --on-cyan: #00161a;
+  --ember: #ff7a3d;
+  --ember-dim: rgba(255, 122, 61, 0.16);
+
+  /* Status */
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --danger: #f87171;
+
+  /* Ink — every value below is ≥4.5:1 on --obsidian */
+  --ink: #f1f1ee;
+  --ink-muted: #93969f;
+  --ink-faint: #7a7d87;
+
+  /* Type */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-xs: 0.72rem;
+  --text-sm: 0.82rem;
+  --text-base: 0.92rem;
+  --text-md: 1rem;
+  --text-lg: 1.15rem;
+  --measure: 68ch;
+
+  /* Space */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4.5rem;
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 28px;
+  --r-pill: 50px;
+  --radius: var(--r-lg); /* legacy alias */
+
+  /* Elevation — every shadow carries an offset, then a soft blur.
+     The cyan halo is an accent layered on top, never the depth itself. */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.28);
+  --shadow-2: 0 4px 10px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.38);
+  --shadow-3: 0 8px 20px rgba(0, 0, 0, 0.45), 0 32px 64px rgba(0, 0, 0, 0.5);
+  --halo-cyan: 0 0 24px rgba(0, 247, 255, 0.18);
+  --halo-cyan-hi: 0 0 34px rgba(0, 247, 255, 0.32);
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-1: 0.18s;
+  --dur-2: 0.32s;
+  --dur-3: 0.6s;
+
+  /* Shell */
+  --nav-h: 68px;
+  --container-w: 1180px;
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 1rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--obsidian);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--text-md);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--cyan-dim);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   3. AMBIENT LAYER
+   Fine grain over the whole page, plus two blurred pools that give the
+   obsidian some depth without becoming a subject of their own.
+   -------------------------------------------------------------------------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-cyan {
+  width: 600px;
+  height: 600px;
+  top: -260px;
+  left: -200px;
+  background: var(--cyan);
+  opacity: 0.1;
+}
+.glow-ember {
+  width: 460px;
+  height: 460px;
+  bottom: -120px;
+  right: -160px;
+  background: var(--ember);
+  opacity: 0.06;
+}
+
+nav,
+main,
+header,
+footer,
+section,
+.docs-layout,
+.db-layout {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   4. TYPOGRAPHY PRIMITIVES
+   Playfair is reserved: the wordmark, the emphatic clause in a headline,
+   and the footer line. Everything a reader actually reads is Inter.
+   -------------------------------------------------------------------------- */
+.container {
+  max-width: var(--container-w);
+  margin: 0 auto;
+  padding: 0 var(--sp-6);
+}
+
+p {
+  color: var(--ink-muted);
+}
+
+.lede {
+  font-size: var(--text-lg);
+  line-height: 1.65;
+  color: var(--ink-muted);
+  max-width: 54ch;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 1.1rem;
+}
+
+.serif-em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS
+   -------------------------------------------------------------------------- */
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  padding: 0.8rem 1.7rem;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease),
+    box-shadow var(--dur-2) var(--ease), transform var(--dur-2) var(--ease),
+    color var(--dur-1) var(--ease);
+}
+
+.btn-solid {
+  background: var(--cyan);
+  color: var(--on-cyan);
+  box-shadow: var(--shadow-1), var(--halo-cyan);
+}
+.btn-solid:hover {
+  box-shadow: var(--shadow-2), var(--halo-cyan-hi);
+  transform: translateY(-1px);
+}
+.btn-solid:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-1), var(--halo-cyan);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.btn-ghost:hover {
+  border-color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--ink-muted);
+  border-color: var(--line-soft);
+  border-radius: var(--r-sm);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  padding: 0.45rem 0.9rem;
+}
+.btn-quiet:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.btn-quiet.danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-lg {
+  padding: 0.95rem 2.1rem;
+  font-size: 1.02rem;
+}
+.btn-sm {
+  padding: 0.5rem 1.2rem;
+  font-size: var(--text-sm);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. NAVIGATION
+   One component across every surface. `--app` is the fixed, full-bleed
+   variant used by Docs and the Dashboard, which own their own scroll shell.
+   -------------------------------------------------------------------------- */
+.tf-nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: rgba(7, 8, 10, 0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.tf-nav--app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.tf-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  height: var(--nav-h);
+  max-width: var(--container-w);
+  margin: 0 auto;
+  padding: 0 var(--sp-6);
+}
+
+.tf-nav--app .tf-nav-inner {
+  max-width: none;
+}
+
+.tf-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  transition: opacity var(--dur-1) var(--ease);
+}
+.tf-brand:hover {
+  opacity: 0.82;
+}
+.tf-brand svg {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+.tf-brand-ctx {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  align-self: center;
+}
+
+.tf-nav-links {
+  display: flex;
+  gap: 2.2rem;
+  flex: 1;
+  justify-content: center;
+}
+.tf-nav-links a {
+  font-size: var(--text-base);
+  color: var(--ink-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-1) var(--ease);
+}
+.tf-nav-links a:hover,
+.tf-nav-links a[aria-current='page'] {
+  color: var(--ink);
+}
+
+.tf-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-shrink: 0;
+}
+.tf-nav-actions .tf-nav-link {
+  font-size: var(--text-base);
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color var(--dur-1) var(--ease);
+}
+.tf-nav-actions .tf-nav-link:hover {
+  color: var(--ink);
+}
+.tf-nav-user {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 860px) {
+  .tf-nav-user {
+    display: none;
+  }
+}
+
+.tf-nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease);
+}
+.tf-nav-toggle:hover {
+  border-color: var(--line-strong);
+}
+.tf-nav-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 1150px) {
+  .tf-nav-links {
+    display: none;
+  }
+}
+@media (max-width: 620px) {
+  .tf-nav-inner {
+    padding: 0 var(--sp-4);
+    gap: var(--sp-3);
+  }
+  .tf-brand {
+    font-size: 1.1rem;
+  }
+  .tf-brand-ctx {
+    display: none;
+  }
+  .tf-nav-actions {
+    gap: 0.7rem;
+    min-width: 0;
+  }
+  .tf-nav-actions .btn {
+    padding: 0.55rem 1rem;
+    font-size: var(--text-sm);
+  }
+  /* On marketing pages the secondary links also live in the footer, so the
+     bar keeps only the wordmark and the primary action. App surfaces own
+     their session controls and keep theirs. */
+  .tf-nav:not(.tf-nav--app) .tf-nav-actions .tf-nav-link {
+    display: none;
+  }
+  .tf-nav--app .tf-nav-actions .tf-nav-link {
+    font-size: var(--text-sm);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. FOOTER
+   -------------------------------------------------------------------------- */
+.tf-footer {
+  border-top: 1px solid var(--line-soft);
+  padding: 56px 0 38px;
+  background: var(--surface-sunken);
+}
+.tf-footer-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-7);
+}
+.tf-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--ink);
+  text-decoration: none;
+  margin-bottom: var(--sp-2);
+}
+.tf-footer-brand svg {
+  width: 19px;
+  height: 19px;
+}
+.tf-footer-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--ink-muted);
+}
+.tf-footer-links {
+  display: flex;
+  gap: 2.2rem;
+  flex-wrap: wrap;
+}
+.tf-footer-links a {
+  font-size: var(--text-base);
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color var(--dur-1) var(--ease);
+}
+.tf-footer-links a:hover {
+  color: var(--ink);
+}
+.tf-footer-bottom {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  border-top: 1px solid var(--line-soft);
+  padding-top: 26px;
+}
+
+@media (max-width: 720px) {
+  .tf-footer-grid {
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+  .tf-footer-links {
+    gap: 1.2rem 2rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. MOTION PREFERENCE
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

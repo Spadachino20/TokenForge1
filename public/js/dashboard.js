@@ -1,6 +1,26 @@
 let usageChart = null;
 let currentCurrency = 'usd';
 
+// Chart.js draws to canvas and cannot read CSS variables, so the palette is
+// mirrored here. Keep in step with css/base.css.
+const CHART_INK_MUTED = '#93969f';
+const CHART_INK_FAINT = '#7a7d87';
+const CHART_GRID = 'rgba(255,255,255,0.06)';
+
+const ICON = {
+  purchase: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>',
+  usage: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+  key: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3.2"/><path d="M11.2 12H21M18 12v3M15 12v2"/></svg>',
+  folder: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h3.6l2 2.4H19a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  card: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>'
+};
+
+const EMPTY = {
+  keys: `<div class="db-empty">${ICON.key}No API keys yet. Create one to get started.</div>`,
+  projects: `<div class="db-empty">${ICON.folder}No projects yet. Create one to track usage separately.</div>`,
+  billing: `<div class="db-empty">${ICON.card}No transactions yet.</div>`
+};
+
 async function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; throw new Error('No token'); }
@@ -22,24 +42,30 @@ function showModal({ title, message, inputPlaceholder = null, confirmText = 'Con
   const hasInput = inputPlaceholder !== null;
   const modal = document.createElement('div');
   modal.id = 'tf-modal';
-  modal.style.cssText = `position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);`;
+  modal.className = 'tf-modal-backdrop';
   modal.innerHTML = `
-    <div style="background:#0d0d0d;border:1px solid #1F2937;border-radius:14px;padding:2rem;width:100%;max-width:420px;margin:1rem;box-shadow:0 0 40px rgba(0,212,255,0.08);">
-      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#fff">${title}</h3>
-      <p style="font-size:0.85rem;color:#888;margin-bottom:${hasInput ? '1rem' : '1.5rem'}">${message}</p>
-      ${hasInput ? `<input id="tf-modal-input" type="text" placeholder="${inputPlaceholder}" style="width:100%;background:#000;border:1px solid #1F2937;border-radius:8px;padding:0.65rem 0.9rem;color:#fff;font-size:0.9rem;outline:none;margin-bottom:1.5rem;"/>` : ''}
-      <div style="display:flex;gap:0.75rem;justify-content:flex-end">
-        <button id="tf-modal-cancel" style="padding:0.5rem 1.1rem;border-radius:8px;border:1px solid #1F2937;background:transparent;color:#888;font-size:0.85rem;cursor:pointer;">Cancel</button>
-        <button id="tf-modal-confirm" style="padding:0.5rem 1.1rem;border-radius:8px;border:none;font-weight:700;font-size:0.85rem;cursor:pointer;background:${confirmDanger ? '#ef4444' : '#00d4ff'};color:${confirmDanger ? '#fff' : '#000'};">${confirmText}</button>
+    <div class="tf-modal" role="dialog" aria-modal="true" aria-labelledby="tf-modal-title">
+      <h3 id="tf-modal-title">${title}</h3>
+      <div class="tf-modal-body">
+        <p>${message}</p>
+        ${hasInput ? `<input id="tf-modal-input" class="tf-modal-input" type="text" placeholder="${inputPlaceholder}"/>` : ''}
+      </div>
+      <div class="tf-modal-actions">
+        <button id="tf-modal-cancel" class="tf-modal-btn">Cancel</button>
+        <button id="tf-modal-confirm" class="tf-modal-btn ${confirmDanger ? 'danger' : 'confirm'}">${confirmText}</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
   const input = document.getElementById('tf-modal-input');
   if (input) { input.focus(); input.addEventListener('keydown', e => { if (e.key === 'Enter') handleConfirm(); }); }
-  function handleConfirm() { const val = input ? input.value.trim() : null; modal.remove(); onConfirm(val); }
+  else { document.getElementById('tf-modal-confirm').focus(); }
+  function handleConfirm() { const val = input ? input.value.trim() : null; close(); onConfirm(val); }
+  function close() { document.removeEventListener('keydown', onKeydown); modal.remove(); }
+  function onKeydown(e) { if (e.key === 'Escape') close(); }
+  document.addEventListener('keydown', onKeydown);
   document.getElementById('tf-modal-confirm').addEventListener('click', handleConfirm);
-  document.getElementById('tf-modal-cancel').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.getElementById('tf-modal-cancel').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
 }
 
 // ── INIT ──────────────────────────────────────────────────────
@@ -192,15 +218,15 @@ async function loadChart(period, date = null) {
       options: {
         responsive: true,
         plugins: {
-          legend: { labels: { color: '#888', font: { size: 11 } } },
+          legend: { labels: { color: CHART_INK_MUTED, font: { size: 11 }, boxWidth: 10, boxHeight: 10, usePointStyle: true } },
           tooltip: { callbacks: { label: (ctx) => {
             const val = ctx.parsed.y;
             return currentCurrency === 'usd' ? ` ${ctx.dataset.label}: $${val.toFixed(6)}` : ` ${ctx.dataset.label}: ${val.toFixed(6)} TFC`;
           }}}
         },
         scales: {
-          x: { ticks: { color: '#555' }, grid: { color: '#111' } },
-          y: { ticks: { color: '#555', callback: (val) => currentCurrency === 'usd' ? `$${val}` : `${val} TFC` }, grid: { color: '#111' } }
+          x: { ticks: { color: CHART_INK_FAINT }, grid: { color: CHART_GRID }, border: { color: CHART_GRID } },
+          y: { ticks: { color: CHART_INK_FAINT, callback: (val) => currentCurrency === 'usd' ? `$${val}` : `${val} TFC` }, grid: { color: CHART_GRID }, border: { color: CHART_GRID } }
         }
       }
     });
@@ -220,7 +246,7 @@ async function loadKeys() {
     const activeKeys = (data.keys || []).filter(k => k.is_active);
 
     if (activeKeys.length === 0) {
-      container.innerHTML = '<div class="db-empty">No API keys yet. Create one to get started.</div>';
+      container.innerHTML = EMPTY.keys;
       return;
     }
 
@@ -231,7 +257,7 @@ async function loadKeys() {
           <div class="db-key-meta">
             Created ${new Date(key.created_at).toLocaleDateString()} ·
             ${key.last_used_at ? 'Last used ' + new Date(key.last_used_at).toLocaleDateString() : 'Never used'} ·
-            ${key.project_id ? `<span style="color:#00d4ff">📁 ${key.project_name || 'Project'}</span>` : '<span style="color:#888">🔑 Master Key</span>'}
+            ${key.project_id ? `<span class="tag-project">${key.project_name || 'Project'}</span>` : '<span class="tag-master">Master Key</span>'}
           </div>
         </div>
         <div class="db-key-actions">
@@ -255,15 +281,15 @@ async function createKey(name) {
       const data = await res.json();
       if (data.key) {
         showModal({
-          title: '⚠️ Save Your API Key',
-          message: `Copy it now — won't be shown again:<br><br><code style="background:#000;padding:0.4rem 0.6rem;border-radius:6px;font-size:0.8rem;color:#00d4ff;word-break:break-all">${data.key.value}</code><br><br>${project_id ? '📁 Assigned to project' : '🔑 Master Key — works on all projects'}`,
+          title: 'Save Your API Key',
+          message: `Copy it now — won't be shown again:<br><br><code>${data.key.value}</code><br><br>${project_id ? 'Assigned to project' : 'Master Key — works on all projects'}`,
           confirmText: 'Done', onConfirm: () => loadKeys()
         });
       }
     };
 
     if (projects.length === 0) { doCreate(null); return; }
-    const projectOptions = projects.map((p, i) => `<span style="color:#888">${i+1}. 📁 ${p.name}</span>`).join('<br>');
+    const projectOptions = projects.map((p, i) => `<span class="tag-master">${i+1}. ${p.name}</span>`).join('<br>');
 
     showModal({
       title: 'Assign to Project (optional)',
@@ -283,7 +309,7 @@ async function createKey(name) {
 
 function editKey(keyId, currentName) {
   showModal({
-    title: 'Rename API Key', message: `Current name: <strong style="color:#fff">${currentName}</strong>`,
+    title: 'Rename API Key', message: `Current name: <strong>${currentName}</strong>`,
     inputPlaceholder: currentName, confirmText: 'Save',
     onConfirm: (val) => { if (val && val !== currentName) renameKey(keyId, val); }
   });
@@ -298,7 +324,7 @@ async function renameKey(keyId, name) {
 
 function deleteKey(keyId, keyName) {
   showModal({
-    title: 'Delete API Key', message: `Are you sure you want to delete <strong style="color:#fff">${keyName}</strong>? Any apps using this key will stop working.`,
+    title: 'Delete API Key', message: `Are you sure you want to delete <strong>${keyName}</strong>? Any apps using this key will stop working.`,
     confirmText: 'Delete', confirmDanger: true,
     onConfirm: async () => {
       try {
@@ -306,7 +332,7 @@ function deleteKey(keyId, keyName) {
         const row = document.getElementById(`key-row-${keyId}`);
         if (row) row.remove();
         const container = document.getElementById('keysList');
-        if (!container.querySelector('.db-key-row')) container.innerHTML = '<div class="db-empty">No API keys yet. Create one to get started.</div>';
+        if (!container.querySelector('.db-key-row')) container.innerHTML = EMPTY.keys;
       } catch (err) { alert('Failed to delete key'); }
     }
   });
@@ -320,7 +346,7 @@ async function loadProjects() {
     const container = document.getElementById('projectsList');
 
     if (!data.projects || data.projects.length === 0) {
-      container.innerHTML = '<div class="db-empty">No projects yet. Create one to track usage separately.</div>';
+      container.innerHTML = EMPTY.projects;
       return;
     }
 
@@ -330,15 +356,15 @@ async function loadProjects() {
       const unlimited = budget === 0;
       const usedPct = unlimited ? 100 : Math.min(100, (used / budget) * 100);
       const remainingPct = unlimited ? 100 : 100 - usedPct;
-      const barColor = unlimited ? '#00d4ff' : remainingPct > 70 ? '#22c55e' : remainingPct > 20 ? '#f59e0b' : '#ef4444';
+      const barClass = unlimited ? 'unlimited' : remainingPct > 70 ? 'ok' : remainingPct > 20 ? 'warn' : 'crit';
 
       return `
         <div class="db-key-row" id="project-${p.id}">
-          <div style="flex:1">
+          <div style="flex:1;min-width:0">
             <div class="db-key-name">${p.name}</div>
-            <div class="db-key-meta">${used.toFixed(4)} TFC used ${unlimited ? '· <span style="color:#00d4ff">Unlimited</span>' : '· of ' + budget.toFixed(2) + ' TFC'}</div>
+            <div class="db-key-meta">${used.toFixed(4)} TFC used ${unlimited ? '· <span class="tag-project">Unlimited</span>' : '· of ' + budget.toFixed(2) + ' TFC'}</div>
             <div class="db-proj-bar">
-              <div style="height:100%;width:${unlimited ? 100 : usedPct}%;background:${barColor};border-radius:100px;transition:width 0.5s"></div>
+              <div class="db-proj-bar-fill ${barClass}" style="width:${unlimited ? 100 : usedPct}%"></div>
             </div>
           </div>
           <div class="db-key-actions">
@@ -354,7 +380,7 @@ async function loadProjects() {
 
 async function editProject(id, currentName, currentBudget) {
   showModal({
-    title: 'Edit Project Name', message: `Current name: <strong style="color:#fff">${currentName}</strong>`,
+    title: 'Edit Project Name', message: `Current name: <strong>${currentName}</strong>`,
     inputPlaceholder: currentName, confirmText: 'Next',
     onConfirm: (newNameVal) => {
       const newName = (newNameVal && newNameVal.trim()) || currentName;
@@ -377,7 +403,7 @@ async function editProject(id, currentName, currentBudget) {
 
 async function deleteProject(id, name) {
   showModal({
-    title: 'Delete Project', message: `Are you sure you want to delete <strong style="color:#fff">${name}</strong>?`,
+    title: 'Delete Project', message: `Are you sure you want to delete <strong>${name}</strong>?`,
     confirmText: 'Delete', confirmDanger: true,
     onConfirm: async () => {
       try { await fetchWithAuth(`/projects/${id}`, { method: 'DELETE' }); loadProjects(); }
@@ -398,14 +424,14 @@ async function loadBilling() {
     }
 
     if (!data.transactions || data.transactions.length === 0) {
-      container.innerHTML = '<div class="db-empty">No transactions yet.</div>';
+      container.innerHTML = EMPTY.billing;
       return;
     }
 
     container.innerHTML = data.transactions.map(tx => `
       <div class="db-tx-row">
         <div>
-          <div style="font-weight:600;font-size:0.9rem">${tx.type === 'purchase' ? '💳 Purchase' : '⚡ Usage'}</div>
+          <div class="db-tx-title">${tx.type === 'purchase' ? ICON.purchase + 'Purchase' : ICON.usage + 'Usage'}</div>
           <div class="db-tx-desc">${tx.description || ''} · ${new Date(tx.created_at).toLocaleDateString()}</div>
         </div>
         <div class="db-tx-amount ${tx.amount_tfc < 0 ? 'negative' : ''}">

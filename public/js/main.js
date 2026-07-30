@@ -90,10 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const defaultNav = `
-        <a href="/pricing.html">Pricing</a>
-        <a href="/docs.html">Docs</a>
-        <a href="/login.html">Sign In</a>
-        <a href="/signup.html">Sign Up</a>
+        <a href="/pricing.html" class="tf-nav-link">Pricing</a>
+        <a href="/docs.html" class="tf-nav-link">Docs</a>
+        <a href="/login.html" class="tf-nav-link">Sign In</a>
+        <a href="/signup.html" class="btn btn-solid btn-sm">Sign Up</a>
     `;
 
     if (!token || !user) {
@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (userData?.email) {
         navLinks.innerHTML = `
-            <a href="/pricing.html">Pricing</a>
-            <a href="/docs.html">Docs</a>
-            <span style="color:#888;font-size:0.85rem">${userData.email}</span>
-            <a href="/dashboard.html">Dashboard</a>
-            <a href="#" id="logoutBtn" style="color:#888;font-size:0.85rem;margin-left:1rem">Log Out</a>
+            <a href="/pricing.html" class="tf-nav-link">Pricing</a>
+            <a href="/docs.html" class="tf-nav-link">Docs</a>
+            <span class="tf-nav-user">${userData.email}</span>
+            <a href="/dashboard.html" class="btn btn-solid btn-sm">Dashboard</a>
+            <a href="#" id="logoutBtn" class="tf-nav-link">Log Out</a>
         `;
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -150,10 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     waitlistForm.style.display = 'none';
                     waitlistMsg.innerHTML = `
-                        <div style="text-align: center; padding: 2rem 0;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
-                            <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">You're on the waitlist!</h3>
-                            <p style="color: #94a3b8;">We'll email you at <strong>${email}</strong> when access is available.</p>
+                        <div style="text-align:center;padding:2rem 0;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:34px;height:34px;margin:0 auto 1rem;">
+                                <circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>
+                            </svg>
+                            <h3 style="color:var(--cyan);font-size:1.05rem;font-weight:600;margin-bottom:0.5rem;">You're on the waitlist!</h3>
+                            <p style="color:var(--ink-muted);">We'll email you at <strong style="color:var(--ink);">${email}</strong> when access is available.</p>
                         </div>
                     `;
                 } else {

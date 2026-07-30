@@ -4,15 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terms of Service - TokenForge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand"><a href="index.html">⚡ TokenForge</a></div>
+  <div class="glow glow-cyan"></div>
+  <div class="glow glow-ember"></div>
+
+  <nav class="tf-nav">
+    <div class="tf-nav-inner">
+      <a href="index.html" class="tf-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true">
+          <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
+          <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
+        </svg>
+        TokenForge <span class="tf-brand-ctx">/ Terms</span>
+      </a>
+      <div class="tf-nav-links">
+        <a href="index.html#providers">Providers</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="docs.html">Docs</a>
+      </div>
+      <div class="tf-nav-actions">
+        <a href="login.html" class="tf-nav-link">Sign In</a>
+        <a href="signup.html" class="btn btn-solid btn-sm">Get Started</a>
+      </div>
+    </div>
   </nav>
-  <div class="container" style="max-width:800px;margin:80px auto;padding:0 20px">
+
+  <main class="legal">
     <h1>Terms of Service</h1>
-    <p><em>Last updated: May 2026</em></p>
+    <p class="legal-meta">Last updated: May 2026</p>
 
     <h2>1. Service Description</h2>
     <p>TokenForge ("we", "us") provides an API aggregation service that proxies requests to third-party AI providers (OpenAI, Anthropic, Google). By using our service, you agree to these terms AND the terms of service of each underlying provider.</p>
@@ -20,13 +45,13 @@
     <h2>2. Acceptable Use</h2>
     <p>You must comply with the usage policies of:</p>
     <ul>
-      <li><a href="https://openai.com/policies/usage-policies" target="_blank">OpenAI Usage Policies</a></li>
-      <li><a href="https://www.anthropic.com/legal/aup" target="_blank">Anthropic Acceptable Use Policy</a></li>
-      <li><a href="https://ai.google.dev/gemini-api/terms" target="_blank">Google Generative AI Terms</a></li>
+      <li><a href="https://openai.com/policies/usage-policies" target="_blank" rel="noopener">OpenAI Usage Policies</a></li>
+      <li><a href="https://www.anthropic.com/legal/aup" target="_blank" rel="noopener">Anthropic Acceptable Use Policy</a></li>
+      <li><a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener">Google Generative AI Terms</a></li>
     </ul>
     <p>You may NOT use TokenForge to generate harmful, illegal, or abusive content as defined by any of the above providers.</p>
 
-    <h2>3. Credits & Billing</h2>
+    <h2>3. Credits &amp; Billing</h2>
     <p>TokenForge Credits (TFC) are pre-paid credits consumed per API call. Credits are non-refundable once purchased, whether or not they have been used.</p>
 
     <h2>4. Service Availability</h2>
@@ -43,6 +68,27 @@
 
     <h2>Contact</h2>
     <p>Questions: <a href="mailto:legal@tokenforge.ai">legal@tokenforge.ai</a></p>
-  </div>
+  </main>
+
+  <footer class="tf-footer">
+    <div class="container tf-footer-grid">
+      <div>
+        <a href="index.html" class="tf-footer-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true"><polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/><circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/></svg>
+          TokenForge
+        </a>
+        <div class="tf-footer-tagline">Intelligence, refined.</div>
+      </div>
+      <div class="tf-footer-links">
+        <a href="index.html#providers">Providers</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="docs.html">Docs</a>
+        <a href="terms.html">Terms</a>
+      </div>
+    </div>
+    <div class="container">
+      <div class="tf-footer-bottom">© 2026 TokenForge. Currently routing OpenAI, Anthropic and Google — pricing verified July 2026.</div>
+    </div>
+  </footer>
 </body>
 </html>

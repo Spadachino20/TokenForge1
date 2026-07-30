@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/docs.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
@@ -18,23 +19,34 @@
 <body>
   <div class="glow glow-cyan"></div>
   <div class="glow glow-ember"></div>
-  <header class="docs-header">
-    <a href="index.html" class="docs-header-brand">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" width="20" height="20" aria-hidden="true">
-        <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
-        <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
-      </svg>
-      TokenForge <span>/ Docs</span>
-    </a>
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-    <div class="docs-header-right" id="navLinks">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="login.html">Sign In</a>
+  <header class="tf-nav tf-nav--app">
+    <div class="tf-nav-inner">
+      <a href="index.html" class="tf-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true">
+          <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
+          <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
+        </svg>
+        TokenForge <span class="tf-brand-ctx">/ Docs</span>
+      </a>
+      <div class="tf-nav-links">
+        <a href="index.html#providers">Providers</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="docs.html" aria-current="page">Docs</a>
+      </div>
+      <div class="tf-nav-actions" id="navLinks">
+        <a href="dashboard.html" class="tf-nav-link">Dashboard</a>
+        <a href="login.html" class="btn btn-solid btn-sm">Sign In</a>
+      </div>
+      <button class="tf-nav-toggle" onclick="toggleSidebar()" aria-label="Toggle documentation menu" aria-controls="docsSidebar" aria-expanded="false" id="sidebarToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
     </div>
   </header>
 
   <div class="docs-layout">
-    <aside class="docs-sidebar">
+    <aside class="docs-sidebar" id="docsSidebar">
       <div class="sidebar-section">
         <div class="sidebar-title">Getting Started</div>
         <ul class="sidebar-nav">
@@ -138,7 +150,7 @@
         </div>
 
         <h3>API Key Types</h3>
-        <table class="param-table">
+        <div class="table-scroll"><table class="param-table">
           <thead>
             <tr>
               <th>Type</th>
@@ -153,7 +165,7 @@
               <td>Full access to all endpoints. Use for backend services.</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
 
         <h2 id="base-url">Base URL</h2>
         <div class="code-block-wrapper">
@@ -172,7 +184,7 @@
           <p class="endpoint-desc">Send a chat completion request. Supports all OpenAI parameters.</p>
 
           <h4>Request Body</h4>
-          <table class="param-table">
+          <div class="table-scroll"><table class="param-table">
             <thead>
               <tr>
                 <th>Parameter</th>
@@ -213,10 +225,10 @@
                 <td>Stream response as SSE. <strong>Default: true</strong> — pass <code>"stream": false</code> explicitly if you want a single JSON response instead.</td>
               </tr>
             </tbody>
-          </table>
+          </table></div>
         </div>
 
-        <h3>Example Response <span style="font-weight:400;color:var(--text-muted);font-size:0.85rem;">(non-streaming, <code>stream: false</code>)</span></h3>
+        <h3>Example Response <span style="font-weight:400;color:var(--ink-muted);font-size:0.85rem;">(non-streaming, <code>stream: false</code>)</span></h3>
         <div class="code-block-wrapper">
           <button class="copy-btn" onclick="copyCode(this)">Copy</button>
           <pre><code class="language-json">{
@@ -250,7 +262,7 @@
         </div>
 
         <h3>Supported Models</h3>
-        <table class="param-table">
+        <div class="table-scroll"><table class="param-table">
           <thead>
             <tr>
               <th>Model</th>
@@ -287,13 +299,13 @@
               <td><code>gemini-3.1-pro-preview</code></td><td>Google</td><td>Flagship</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
         <p style="margin-top:0.75rem;">See exact per-model pricing on the <a href="pricing.html">Pricing page</a>.</p>
 
         <h2 id="error-handling">Error Handling</h2>
         <p>TokenForge uses standard HTTP status codes and returns JSON error responses.</p>
 
-        <table class="param-table">
+        <div class="table-scroll"><table class="param-table">
           <thead>
             <tr>
               <th>Status</th>
@@ -328,7 +340,7 @@
               <td>Upstream provider error. Retry recommended.</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
 
         <h2 id="sdks">SDKs & Libraries</h2>
         <p>Use any OpenAI-compatible SDK — just change the base URL and use your <code>tf_sk_...</code> key. No custom client required.</p>
@@ -404,6 +416,28 @@ console.log(response.choices[0].message.content);</code></pre>
     </main>
   </div>
 
+  <footer class="tf-footer docs-footer">
+    <div class="container tf-footer-grid">
+      <div>
+        <a href="index.html" class="tf-footer-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true"><polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/><circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/></svg>
+          TokenForge
+        </a>
+        <div class="tf-footer-tagline">Intelligence, refined.</div>
+      </div>
+      <div class="tf-footer-links">
+        <a href="index.html#providers">Providers</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="docs.html">Docs</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="terms.html">Terms</a>
+      </div>
+    </div>
+    <div class="container">
+      <div class="tf-footer-bottom">© 2026 TokenForge. Currently routing OpenAI, Anthropic and Google — pricing verified July 2026.</div>
+    </div>
+  </footer>
+
   <script>
     hljs.highlightAll();
 
@@ -419,7 +453,9 @@ console.log(response.choices[0].message.content);</code></pre>
     }
 
     function toggleSidebar() {
-      document.querySelector('.docs-sidebar').classList.toggle('active');
+      const sidebar = document.getElementById('docsSidebar');
+      const open = sidebar.classList.toggle('active');
+      document.getElementById('sidebarToggle').setAttribute('aria-expanded', String(open));
     }
   </script>
   <script src="js/main.js"></script>

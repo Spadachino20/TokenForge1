@@ -8,23 +8,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="db-nav">
-  <a href="index.html" class="db-brand">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" width="20" height="20" aria-hidden="true">
-      <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
-      <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
-    </svg>
-    TokenForge
-  </a>
-  <div class="db-nav-right">
-    <span id="userEmail"></span>
-    <a href="#" id="logoutBtn">Log Out</a>
+<nav class="tf-nav tf-nav--app">
+  <div class="tf-nav-inner">
+    <a href="index.html" class="tf-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true">
+        <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
+        <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
+      </svg>
+      TokenForge <span class="tf-brand-ctx">/ Dashboard</span>
+    </a>
+    <div class="tf-nav-actions">
+      <span class="tf-nav-user" id="userEmail"></span>
+      <a href="docs.html" class="tf-nav-link">Docs</a>
+      <a href="#" id="logoutBtn" class="tf-nav-link">Log Out</a>
+    </div>
   </div>
 </nav>
 
@@ -33,16 +37,20 @@
   <!-- SIDEBAR -->
   <aside class="db-sidebar">
     <a href="#" class="active" data-section="overview">
-      <span>📊</span> Overview
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V10M10 19V5M16 19v-6M20 19H3"/></svg>
+      Overview
     </a>
     <a href="#" data-section="keys">
-      <span>🔑</span> API Keys
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3.2"/><path d="M11.2 12H21M18 12v3M15 12v2"/></svg>
+      API Keys
     </a>
     <a href="#" data-section="projects">
-      <span>📁</span> Projects
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h3.6l2 2.4H19a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Projects
     </a>
     <a href="#" data-section="billing">
-      <span>💳</span> Billing
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+      Billing
     </a>
   </aside>
 
@@ -64,22 +72,22 @@
       <button class="db-add-btn" id="addCreditsBtn">+ Add Credits</button>
     </div>
 
-    <div class="db-card" id="rechargePanel" style="margin-bottom:1.25rem;padding:1rem 1.1rem;">
+    <div class="db-card" id="rechargePanel">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div>
-          <div style="font-weight:700;color:#fff;margin-bottom:0.25rem">Pay as you go</div>
-          <div style="color:#888;font-size:0.9rem">Top up any amount in USD and continue to the crypto checkout.</div>
+          <div class="db-card-title">Pay as you go</div>
+          <div class="db-card-sub">Top up any amount in USD and continue to the crypto checkout.</div>
         </div>
         <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
-          <input id="rechargeAmountInput" type="number" min="1" step="1" value="10" aria-label="Amount in USD" style="width:120px;padding:0.65rem 0.75rem;border-radius:8px;border:1px solid #1F2937;background:#000;color:#fff;outline:none;">
+          <input id="rechargeAmountInput" class="db-input" type="number" min="1" step="1" value="10" aria-label="Amount in USD" style="width:120px;">
           <button class="db-add-btn" id="continueRechargeBtn">Continue</button>
         </div>
       </div>
-      <div id="rechargeConfirm" style="display:none;margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid #1F2937;">
-        <div style="color:#888;font-size:0.9rem;margin-bottom:0.6rem">You will be redirected to the crypto payment flow for <strong id="rechargeConfirmAmount">$10</strong>.</div>
+      <div id="rechargeConfirm" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line-soft);">
+        <div class="db-card-sub" style="margin-bottom:0.75rem;">You will be redirected to the crypto payment flow for <strong id="rechargeConfirmAmount" style="color:var(--ink);">$10</strong>.</div>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
           <button class="db-add-btn" id="confirmRechargeBtn">Confirm payment</button>
-          <button style="padding:0.6rem 0.9rem;border-radius:8px;border:1px solid #1F2937;background:transparent;color:#888;cursor:pointer;" id="cancelRechargeBtn">Cancel</button>
+          <button class="db-btn" id="cancelRechargeBtn">Cancel</button>
         </div>
       </div>
     </div>
@@ -88,21 +96,27 @@
     <div class="db-section active" id="section-overview">
       <div class="db-section-header">
         <h2>Overview</h2>
-        <button class="db-refresh" onclick="loadAll()">🔄 Refresh</button>
+        <button class="db-refresh" onclick="loadAll()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-.9 4.5"/><path d="M20 5v6h-6"/></svg>
+          Refresh
+        </button>
       </div>
 
       <div class="db-chart-wrap">
-        <div class="db-filters">
-  <button class="db-filter active" data-period="today">Today</button>
-  <button class="db-filter" data-period="yesterday">Yesterday</button>
-  <button class="db-filter" data-period="date">Pick Date</button>
-</div>
-<div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:1rem;gap:0.5rem">
-  <button class="db-filter active" id="currencyUsd" onclick="setCurrency('usd')">USD $</button>
-  <button class="db-filter" id="currencyTfc" onclick="setCurrency('tfc')">TFC</button>
+        <div class="db-chart-bar">
+          <div class="db-filters">
+            <button class="db-filter active" data-period="today">Today</button>
+            <button class="db-filter" data-period="yesterday">Yesterday</button>
+            <button class="db-filter" data-period="date">Pick Date</button>
+          </div>
+          <div class="db-filters">
+            <button class="db-filter active" id="currencyUsd" onclick="setCurrency('usd')">USD $</button>
+            <button class="db-filter" id="currencyTfc" onclick="setCurrency('tfc')">TFC</button>
+          </div>
         </div>
         <canvas id="usageChart" height="90"></canvas>
         <div id="chartEmpty" class="db-empty" style="display:none">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V10M10 19v-4M16 19v-8M20 19H3"/></svg>
           No usage data for this period yet.
         </div>
       </div>
@@ -119,7 +133,10 @@
         <strong>Master Key</strong> que funciona en todos los proyectos.
       </p>
       <div id="keysList">
-        <div class="db-empty">No API keys yet. Create one to get started.</div>
+        <div class="db-empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3.2"/><path d="M11.2 12H21M18 12v3M15 12v2"/></svg>
+          No API keys yet. Create one to get started.
+        </div>
       </div>
     </div>
 
@@ -130,7 +147,10 @@
         <button class="db-add-btn" id="createProjectBtn">+ New Project</button>
       </div>
       <div id="projectsList">
-        <div class="db-empty">No projects yet. Create one to track usage separately.</div>
+        <div class="db-empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h3.6l2 2.4H19a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          No projects yet. Create one to track usage separately.
+        </div>
       </div>
     </div>
 
@@ -140,7 +160,10 @@
         <h2>Billing History</h2>
       </div>
       <div class="db-card" id="billingList">
-        <div class="db-empty">No transactions yet.</div>
+        <div class="db-empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+          No transactions yet.
+        </div>
       </div>
     </div>
 

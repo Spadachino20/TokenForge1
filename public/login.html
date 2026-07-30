@@ -5,27 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' *; connect-src 'self' https://cdn.jsdelivr.net https://primary-production-f8470.up.railway.app https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
     <title>Login - TokenForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="glow glow-cyan"></div>
+    <div class="glow glow-ember"></div>
+
     <div class="auth-container">
         <div class="auth-box">
+            <a href="index.html" class="auth-mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" aria-hidden="true">
+                    <polygon points="12 3 21 8.2 21 18.8 12 24 3 18.8 3 8.2"/>
+                    <circle cx="12" cy="13.5" r="2.5" fill="#00f7ff"/>
+                </svg>
+                TokenForge
+            </a>
             <h1>Welcome Back</h1>
             <p>Sign in to your TokenForge account</p>
             <form id="login-form">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" autocomplete="email" placeholder="you@company.com" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required minlength="8">
+                    <input type="password" id="password" name="password" autocomplete="current-password" required minlength="8">
                 </div>
                 <button type="submit" class="btn-primary">Sign In</button>
             </form>
-            <p id="login-message" class="message"></p>
+            <p id="login-message" class="message" role="alert" aria-live="polite"></p>
             <div class="auth-links">
-                <p>Don't have an account? <a href="signup.html" style="color:var(--primary)">Sign up</a></p>
+                <p>Don't have an account? <a href="signup.html">Sign up</a></p>
             </div>
         </div>
     </div>
