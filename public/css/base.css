@@ -444,6 +444,7 @@ p {
 
 .tf-nav-toggle {
   display: none;
+  flex-shrink: 0;
   background: none;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-sm);

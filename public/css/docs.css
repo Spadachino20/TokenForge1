@@ -550,6 +550,11 @@
     display: inline-flex;
   }
 
+  /* The menu button needs the room; Dashboard stays reachable in the footer. */
+  .tf-nav--app .tf-nav-actions .tf-nav-link {
+    display: none;
+  }
+
   .param-table {
     font-size: var(--text-sm);
   }

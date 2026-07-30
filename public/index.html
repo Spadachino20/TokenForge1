@@ -98,12 +98,13 @@ section{padding:120px 0;}
 
 /* ============ PRICING ============ */
 .pricing-top{display:grid;grid-template-columns:1fr 1.15fr;gap:3.5rem;align-items:center;margin-bottom:3.5rem;}
+.pricing-top>*,.calc>*{min-width:0;}
 .ledger{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
   padding:34px;font-family:var(--font-mono);font-size:.84rem;}
-.ledger-row{display:flex;justify-content:space-between;padding:1rem 0;border-bottom:1px dashed var(--line-soft);}
+.ledger-row{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;padding:1rem 0;border-bottom:1px dashed var(--line-soft);}
 .ledger-row:last-child{border-bottom:none;}
-.ledger-key{color:var(--ink-muted);}
-.ledger-val{color:var(--ink);}
+.ledger-key{color:var(--ink-muted);min-width:0;overflow-wrap:anywhere;}
+.ledger-val{color:var(--ink);min-width:0;overflow-wrap:anywhere;}
 .ledger-val .arrow{color:var(--cyan);margin-right:6px;}
 
 .price-table-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--surface);}
