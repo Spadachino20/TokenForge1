@@ -45,12 +45,21 @@
 .hero-ctas{display:flex;gap:1.2rem;margin-bottom:1.3rem;flex-wrap:wrap;}
 .hero-micro{font-family:var(--font-mono);font-size:.74rem;color:var(--ink-faint);}
 
-/* schematic diagram */
+/* Routing schematic.
+   On desktop it leaves the grid, scales past the right edge and drops behind
+   the copy, masked away where the text sits. On phones it stays in flow. */
 .hero-visual{display:flex;justify-content:center;}
-.schema{width:100%;max-width:460px;}
+.schema{width:100%;max-width:460px;overflow:visible;}
 .schema-line{fill:none;stroke:var(--cyan);stroke-width:1.4;opacity:.4;}
-.schema-line--out{stroke:var(--ember);opacity:.75;stroke-dasharray:4 7;animation:flow 2s linear infinite;}
+
+/* One idea, told once: requests travel inward to the hub, the answer leaves. */
 @keyframes flow{to{stroke-dashoffset:-22;}}
+@keyframes flowIn{to{stroke-dashoffset:-24;}}
+.schema-line--in{stroke-dasharray:3 9;animation:flowIn 2.6s linear infinite;}
+.schema-line--in:nth-of-type(2){animation-delay:-.85s;}
+.schema-line--in:nth-of-type(3){animation-delay:-1.7s;}
+.schema-line--out{stroke:var(--ember);opacity:.75;stroke-dasharray:4 7;animation:flow 2s linear infinite;}
+
 .schema-hex{fill:rgba(0,247,255,.045);stroke:var(--cyan);stroke-width:1.4;}
 .schema-hex-inner{fill:rgba(255,122,61,.10);stroke:var(--ember);stroke-width:1.2;}
 .schema-core{fill:var(--ember);filter:drop-shadow(0 0 6px rgba(255,122,61,.8));}
@@ -59,6 +68,26 @@
 .schema-chip{fill:var(--surface);stroke:var(--line-soft);}
 .schema-chip-text{font-family:var(--font-mono);font-size:11px;fill:var(--ink);}
 .schema-chip-text--muted{fill:var(--ink-faint);font-size:9.5px;}
+
+@media(min-width:901px){
+  .hero{position:relative;overflow:hidden;}
+  .hero>.container{position:relative;z-index:1;}
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-content{max-width:640px;}
+  .hero-visual{
+    position:absolute;top:50%;right:-7%;transform:translateY(-50%);
+    width:min(64vw,880px);z-index:0;pointer-events:none;
+    /* fade it out across the column the copy occupies */
+    -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.35) 26%,#000 52%);
+    mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.35) 26%,#000 52%);
+  }
+  .schema{max-width:none;}
+  /* larger canvas, so the linework thins to stay a hairline */
+  .schema-line{stroke-width:.85;}
+  .schema-hex{stroke-width:.9;}
+  .schema-hex-inner{stroke-width:.8;}
+  .schema-node polygon,.schema-node rect,.schema-node path{stroke-width:.85;}
+}
 
 /* ============ METRICS ============ */
 .metrics{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
@@ -284,9 +313,9 @@ section{padding:120px 0;}
 
       <div class="hero-visual">
         <svg class="schema" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path class="schema-line" d="M90,70 C90,140 150,175 186,198"/>
-          <path class="schema-line" d="M240,55 L240,168"/>
-          <path class="schema-line" d="M390,70 C390,140 330,175 294,198"/>
+          <path class="schema-line schema-line--in" d="M90,70 C90,140 150,175 186,198"/>
+          <path class="schema-line schema-line--in" d="M240,55 L240,168"/>
+          <path class="schema-line schema-line--in" d="M390,70 C390,140 330,175 294,198"/>
           <path class="schema-line schema-line--out" d="M240,292 L240,348"/>
 
           <polygon class="schema-hex" points="240,168 291.9,198 291.9,258 240,288 188.1,258 188.1,198"/>
