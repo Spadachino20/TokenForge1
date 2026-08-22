@@ -12,11 +12,57 @@
 <style>
 /* Landing-only styles. Tokens, reset, buttons, nav and footer live in base.css. */
 
+/* ============ GRAIN ============ */
+/* A fixed, pointer-events-none noise layer so flat dark sections keep some
+   texture instead of reading as a sterile vector fill. */
+.grain{
+  position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* ============ REVEAL ============ */
-.reveal{opacity:0;transform:translateY(14px);transition:opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease);}
-.reveal.is-visible{opacity:1;transform:translateY(0);}
+/* Enter recipe: opacity + a short rise + a touch of blur so content feels
+   like it's materializing into focus rather than just fading in. */
+.reveal{
+  opacity:0;transform:translateY(14px);filter:blur(4px);
+  transition:opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease), filter var(--dur-3) var(--ease);
+}
+.reveal.is-visible{opacity:1;transform:translateY(0);filter:blur(0);}
 @media (prefers-reduced-motion:reduce){
-  .reveal{opacity:1;transform:none;}
+  .reveal{opacity:1;transform:none;filter:none;}
+}
+
+/* ============ HEADLINE STAGGER ============ */
+/* Word-level stagger on load. Negative delay math keeps this to one rule —
+   each word just reads --i off itself. Skips entirely under reduced motion. */
+.stagger-word{
+  display:inline-block;opacity:0;transform:translateY(.35em);filter:blur(6px);
+  animation:word-in .7s var(--ease) forwards;
+  animation-delay:calc(var(--i) * 45ms + 120ms);
+}
+@keyframes word-in{to{opacity:1;transform:translateY(0);filter:blur(0);}}
+@media (prefers-reduced-motion:reduce){
+  .stagger-word{animation:none;opacity:1;transform:none;filter:none;}
+}
+
+/* ============ SPOTLIGHT CARD ============ */
+/* Cursor-tracked glow: JS only ever writes --mx/--my (two custom props, not
+   a transform), so the cost stays a single background repaint, not layout. */
+.spot-card{position:relative;isolation:isolate;}
+.spot-card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;opacity:0;
+  transition:opacity .4s var(--ease);pointer-events:none;
+  background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%), rgba(0,247,255,.14), transparent 65%);
+}
+.spot-card:hover::before{opacity:1;}
+@media (prefers-reduced-motion:reduce){
+  .spot-card::before{transition:none;}
+}
+
+/* ============ HERO PARALLAX ============ */
+[data-parallax]{will-change:transform;}
+@media (prefers-reduced-motion:reduce){
+  [data-parallax]{transform:none !important;}
 }
 
 /* ============ HERO ============ */
@@ -48,7 +94,7 @@
 /* Routing schematic.
    On desktop it leaves the grid, scales past the right edge and drops behind
    the copy, masked away where the text sits. On phones it stays in flow. */
-.hero-visual{display:flex;justify-content:center;}
+.hero-visual{display:flex;justify-content:center;transform:translateY(var(--parallax-y,0));}
 .schema{width:100%;max-width:460px;overflow:visible;}
 .schema-line{fill:none;stroke:var(--cyan);stroke-width:1.4;opacity:.4;}
 
@@ -90,15 +136,26 @@
 }
 
 /* ============ METRICS ============ */
-.metrics{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
-  padding:44px 0;background:var(--surface-sunken);}
+/* A glass panel floating over the hero/providers seam instead of a flat
+   full-width strip — true glassmorphism: blur, a 1px inner border, and an
+   inset highlight to fake edge refraction, not just backdrop-filter alone. */
+.metrics{position:relative;z-index:1;padding:0 0 1px;margin-top:-64px;}
+.metrics-panel{
+  background:rgba(13,15,18,.62);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);
+  border:1px solid var(--line-strong);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-3), inset 0 1px 0 rgba(255,255,255,.06);
+  padding:38px 2rem;
+}
 .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);}
 .metric{padding:0 2rem;border-right:1px solid var(--line-soft);}
 .metric:last-child{border-right:none;}
-.metric-num{font-family:var(--font-sans);font-weight:800;font-size:2.2rem;color:var(--ink);line-height:1;margin-bottom:.5rem;}
+.metric-num{font-family:var(--font-sans);font-weight:800;font-size:2.2rem;color:var(--ink);line-height:1;margin-bottom:.5rem;font-variant-numeric:tabular-nums;}
 .metric-label{font-family:var(--font-mono);color:var(--cyan);font-size:.68rem;letter-spacing:.1em;margin-bottom:.35rem;}
 .metric-desc{font-family:var(--font-sans);color:var(--ink-muted);font-size:.88rem;line-height:1.55;}
-@media(max-width:880px){.metrics-grid{grid-template-columns:1fr 1fr;gap:1.8rem 0;}
+@media(max-width:880px){
+  .metrics{margin-top:-40px;}
+  .metrics-panel{padding:28px 1.2rem;}
+  .metrics-grid{grid-template-columns:1fr 1fr;gap:1.8rem 0;}
   .metric{border-right:none;padding:0 1rem;}
   .metric:nth-child(odd){border-right:1px solid var(--line-soft);}}
 
@@ -111,10 +168,26 @@ section{padding:120px 0;}
 .section-sub{margin-top:.9rem;font-size:var(--text-md);line-height:1.65;max-width:54ch;}
 
 /* ============ PROVIDERS ============ */
-.providers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
+/* Bento, not three equal columns: the recap tile spans the full second row
+   so the grid reads as one modular block instead of a repeated card row. */
+.providers-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:auto;gap:1.4rem;}
 .provider-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
-  padding:36px;transition:border-color .3s;}
-.provider-card:hover{border-color:var(--cyan-dimmer);}
+  padding:36px;transition:border-color .3s var(--ease), transform .3s var(--ease);}
+.provider-card:hover{border-color:var(--cyan-dimmer);transform:translateY(-3px);}
+.provider-card:nth-child(2){transform:translateY(-14px);}
+.provider-card:nth-child(2):hover{transform:translateY(-17px);}
+@media(max-width:880px){.provider-card:nth-child(2){transform:none;}}
+.provider-recap{
+  grid-column:1 / -1;background:linear-gradient(135deg, var(--surface-hi), var(--surface));
+  border:1px solid var(--line-soft);border-radius:var(--r-xl);padding:34px 40px;
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+}
+.provider-recap-text{font-family:var(--font-sans);font-size:1.05rem;color:var(--ink-muted);max-width:44ch;}
+.provider-recap-text strong{color:var(--ink);font-weight:600;}
+.provider-recap-code{
+  font-family:var(--font-mono);font-size:.82rem;color:var(--cyan);background:var(--obsidian);
+  border:1px solid var(--line-soft);border-radius:var(--r-md);padding:1rem 1.3rem;white-space:pre;line-height:1.6;
+}
 .provider-mark{width:38px;height:38px;margin-bottom:1.3rem;}
 .provider-mark svg{width:100%;height:100%;}
 .provider-name{font-family:var(--font-sans);font-weight:700;font-size:1.15rem;margin-bottom:.5rem;}
@@ -203,14 +276,27 @@ section{padding:120px 0;}
 @media(max-width:880px){.ledger-features{grid-template-columns:1fr;}}
 
 /* ============ USE CASES ============ */
-.usecases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
-.usecase-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);padding:36px;
-  transition:border-color var(--dur-2) var(--ease), background var(--dur-2) var(--ease);}
-.usecase-card:hover{border-color:var(--cyan-dimmer);background:var(--surface-hi);}
-.usecase-label{font-family:var(--font-mono);color:var(--cyan);font-size:.68rem;letter-spacing:.12em;margin-bottom:1.3rem;display:block;}
-.usecase-title{font-family:var(--font-sans);font-weight:700;font-size:1.3rem;margin-bottom:.9rem;}
-.usecase-desc{font-size:var(--text-base);line-height:1.65;}
-@media(max-width:880px){.providers-grid,.usecases-grid{grid-template-columns:1fr;}}
+/* Editorial numbered list instead of a third row of equal cards: a serif
+   index column plus a right-aligned label breaks the card-grid rhythm the
+   page has used twice already by this point. */
+.usecases-list{border-top:1px solid var(--line-soft);}
+.usecase-row{
+  display:grid;grid-template-columns:110px 1fr auto;gap:2.2rem;align-items:baseline;
+  padding:2.4rem 0;border-bottom:1px solid var(--line-soft);
+  transition:padding var(--dur-2) var(--ease);
+}
+.usecase-row:hover{padding-left:.6rem;}
+.usecase-index{font-family:var(--font-serif);font-style:italic;font-weight:500;font-size:2.4rem;color:var(--ink-faint);line-height:1;}
+.usecase-body{min-width:0;}
+.usecase-title{font-family:var(--font-sans);font-weight:700;font-size:1.4rem;margin-bottom:.6rem;color:var(--ink);}
+.usecase-desc{font-size:var(--text-base);line-height:1.65;max-width:56ch;}
+.usecase-label{font-family:var(--font-mono);color:var(--cyan);font-size:.7rem;letter-spacing:.12em;white-space:nowrap;text-align:right;align-self:start;padding-top:.3rem;}
+@media(max-width:880px){
+  .providers-grid{grid-template-columns:1fr;}
+  .usecase-row{grid-template-columns:56px 1fr;padding:1.8rem 0;}
+  .usecase-index{font-size:1.8rem;}
+  .usecase-label{grid-column:1 / -1;text-align:left;}
+}
 
 /* ============ COMPARISON ============ */
 .compare-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--surface);}
@@ -226,14 +312,19 @@ section{padding:120px 0;}
 .no{color:var(--ink-faint);}
 
 /* ============ SERVICES ============ */
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
-.service-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);padding:30px;
-  transition:border-color var(--dur-2) var(--ease), background var(--dur-2) var(--ease);}
-.service-card:hover{border-color:var(--cyan-dimmer);background:var(--surface-hi);}
+/* True bento: two wide tiles (the two things people search for first —
+   unified endpoint, real-time dashboard) plus four small ones, instead of
+   six equal-size cards in two generic rows. */
+.services-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:auto;gap:1.2rem;}
+.service-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:30px;
+  transition:border-color var(--dur-2) var(--ease), background var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);}
+.service-card:hover{border-color:var(--cyan-dimmer);background:var(--surface-hi);transform:translateY(-2px);}
+.service-card--wide{grid-column:span 2;}
 .service-icon{width:26px;height:26px;margin-bottom:1.1rem;color:var(--cyan);}
 .service-title{font-family:var(--font-sans);font-weight:600;font-size:1rem;margin-bottom:.5rem;color:var(--ink);}
-.service-desc{font-size:var(--text-base);line-height:1.6;}
-@media(max-width:880px){.services-grid{grid-template-columns:1fr;}}
+.service-desc{font-size:var(--text-base);line-height:1.6;max-width:38ch;}
+@media(max-width:880px){.services-grid{grid-template-columns:1fr 1fr;}.service-card--wide{grid-column:span 2;}}
+@media(max-width:540px){.services-grid{grid-template-columns:1fr;}.service-card--wide{grid-column:span 1;}}
 
 /* ============ WAITLIST ============ */
 .waitlist-box{max-width:680px;margin:0 auto;text-align:center;background:var(--surface);
@@ -299,8 +390,8 @@ section{padding:120px 0;}
       <div class="hero-content">
         <div class="hero-badge"><span class="pulse"></span> UPDATED · JULY 2026</div>
         <h1 class="hero-title">
-          <span class="l1">One key.</span>
-          <span class="l2">Three engines, forged into one.</span>
+          <span class="l1"><span class="stagger-word" style="--i:0">One</span> <span class="stagger-word" style="--i:1">key.</span></span>
+          <span class="l2"><span class="stagger-word" style="--i:2">Three</span> <span class="stagger-word" style="--i:3">engines,</span> <span class="stagger-word" style="--i:4">forged</span> <span class="stagger-word" style="--i:5">into</span> <span class="stagger-word" style="--i:6">one.</span></span>
         </h1>
         <div class="hero-models">gpt-5.6-sol · claude-opus-4-8 · gemini-3.1-pro</div>
         <p class="hero-desc">TokenForge routes a single OpenAI-compatible endpoint across OpenAI, Anthropic and Google. Prepaid TFC credits, a fixed 20% markup, and zero subscriptions — you only ever pay for the tokens you actually burn.</p>
@@ -311,7 +402,7 @@ section{padding:120px 0;}
         <p class="hero-micro">// No card required — from $10 USD in stablecoins</p>
       </div>
 
-      <div class="hero-visual">
+      <div class="hero-visual" data-parallax>
         <svg class="schema" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path class="schema-line schema-line--in" d="M90,70 C90,140 150,175 186,198"/>
           <path class="schema-line schema-line--in" d="M240,55 L240,168"/>
@@ -345,12 +436,16 @@ section{padding:120px 0;}
   </section>
 
   <!-- METRICS -->
-  <section class="metrics" style="padding:44px 0;">
-    <div class="container metrics-grid">
-      <div class="metric"><div class="metric-num">3</div><div class="metric-label">PROVIDERS_UNIFIED</div><div class="metric-desc">OpenAI, Anthropic, Google — one endpoint.</div></div>
-      <div class="metric"><div class="metric-num">$0</div><div class="metric-label">PLATFORM_FEE</div><div class="metric-desc">No subscriptions, no seats, ever.</div></div>
-      <div class="metric"><div class="metric-num">20%</div><div class="metric-label">MARKUP_FIXED</div><div class="metric-desc">Same rate on every model, always visible.</div></div>
-      <div class="metric"><div class="metric-num">$10</div><div class="metric-label">MIN_DEPOSIT</div><div class="metric-desc">Stablecoins in, 1 TFC = $1 USD.</div></div>
+  <section class="metrics">
+    <div class="container">
+      <div class="metrics-panel reveal">
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-num">3</div><div class="metric-label">PROVIDERS_UNIFIED</div><div class="metric-desc">OpenAI, Anthropic, Google — one endpoint.</div></div>
+          <div class="metric"><div class="metric-num">$0</div><div class="metric-label">PLATFORM_FEE</div><div class="metric-desc">No subscriptions, no seats, ever.</div></div>
+          <div class="metric"><div class="metric-num">20%</div><div class="metric-label">MARKUP_FIXED</div><div class="metric-desc">Same rate on every model, always visible.</div></div>
+          <div class="metric"><div class="metric-num">$10</div><div class="metric-label">MIN_DEPOSIT</div><div class="metric-desc">Stablecoins in, 1 TFC = $1 USD.</div></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -364,7 +459,7 @@ section{padding:120px 0;}
       </div>
 
       <div class="providers-grid">
-        <div class="provider-card reveal">
+        <div class="provider-card spot-card reveal">
           <div class="provider-mark"><svg viewBox="0 0 40 40" fill="none" stroke="#00f7ff" stroke-width="1.4"><polygon points="20,4 34,12 34,28 20,36 6,28 6,12"/></svg></div>
           <div class="provider-name">OpenAI</div>
           <p class="provider-desc">General-purpose reasoning and the broadest tool ecosystem. GA since July 9, 2026.</p>
@@ -375,7 +470,7 @@ section{padding:120px 0;}
           </div>
         </div>
 
-        <div class="provider-card reveal">
+        <div class="provider-card spot-card reveal">
           <div class="provider-mark"><svg viewBox="0 0 40 40" fill="none" stroke="#00f7ff" stroke-width="1.4"><rect x="8" y="8" width="24" height="24" transform="rotate(45 20 20)"/></svg></div>
           <div class="provider-name">Anthropic</div>
           <p class="provider-desc">Careful reasoning, million-token context, and the deepest coding benchmarks.</p>
@@ -386,7 +481,7 @@ section{padding:120px 0;}
           </div>
         </div>
 
-        <div class="provider-card reveal">
+        <div class="provider-card spot-card reveal">
           <div class="provider-mark"><svg viewBox="0 0 40 40" fill="none" stroke="#00f7ff" stroke-width="1.4"><path d="M20,4 L23,17 L36,20 L23,23 L20,36 L17,23 L4,20 L17,17 Z"/></svg></div>
           <div class="provider-name">Google</div>
           <p class="provider-desc">The largest context windows at every price tier — 1M tokens on every model.</p>
@@ -395,6 +490,11 @@ section{padding:120px 0;}
             <div class="tier-row"><span class="tname">gemini-3.5-flash</span><span class="tier-badge">balanced</span></div>
             <div class="tier-row"><span class="tname">gemini-3.1-pro</span><span class="tier-badge">flagship</span></div>
           </div>
+        </div>
+
+        <div class="provider-recap reveal">
+          <p class="provider-recap-text">Same <strong>request body</strong> on every model — only the <code>model</code> field changes. TokenForge translates auth, format and billing underneath.</p>
+          <div class="provider-recap-code">"model": "claude-sonnet-5"<br>"model": "gpt-5.6-terra"<br>"model": "gemini-3.5-flash"</div>
         </div>
       </div>
     </div>
@@ -534,21 +634,30 @@ section{padding:120px 0;}
         <span class="eyebrow">// Who it's for</span>
         <h2 class="section-title">Built for people <em>watching their runway.</em></h2>
       </div>
-      <div class="usecases-grid">
-        <div class="usecase-card reveal">
+      <div class="usecases-list">
+        <div class="usecase-row reveal">
+          <span class="usecase-index">01</span>
+          <div class="usecase-body">
+            <h3 class="usecase-title">Instant iteration.</h3>
+            <p class="usecase-desc">Test ideas across three providers without three billing portals or three sets of API keys to rotate.</p>
+          </div>
           <span class="usecase-label">DEVELOPERS</span>
-          <h3 class="usecase-title">Instant iteration.</h3>
-          <p class="usecase-desc">Test ideas across three providers without three billing portals or three sets of API keys to rotate.</p>
         </div>
-        <div class="usecase-card reveal">
+        <div class="usecase-row reveal">
+          <span class="usecase-index">02</span>
+          <div class="usecase-body">
+            <h3 class="usecase-title">Total runway control.</h3>
+            <p class="usecase-desc">Issue keys per environment, cap each one with a hard budget, and never see a catastrophic bill.</p>
+          </div>
           <span class="usecase-label">STARTUPS</span>
-          <h3 class="usecase-title">Total runway control.</h3>
-          <p class="usecase-desc">Issue keys per environment, cap each one with a hard budget, and never see a catastrophic bill.</p>
         </div>
-        <div class="usecase-card reveal">
-          <span class="usecase-label">STUDENTS & EXPLORERS</span>
-          <h3 class="usecase-title">Unbound exploration.</h3>
-          <p class="usecase-desc">Access frontier models paying exactly for the tokens you consume — no subscription to justify.</p>
+        <div class="usecase-row reveal">
+          <span class="usecase-index">03</span>
+          <div class="usecase-body">
+            <h3 class="usecase-title">Unbound exploration.</h3>
+            <p class="usecase-desc">Access frontier models paying exactly for the tokens you consume — no subscription to justify.</p>
+          </div>
+          <span class="usecase-label">STUDENTS &amp; EXPLORERS</span>
         </div>
       </div>
     </div>
@@ -563,32 +672,32 @@ section{padding:120px 0;}
         <h2 class="section-title">Everything you need, <em>nothing you don't.</em></h2>
       </div>
       <div class="services-grid">
-        <div class="service-card reveal">
+        <div class="service-card service-card--wide spot-card reveal">
           <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/></svg>
           <div class="service-title">Unified endpoint</div>
           <p class="service-desc">One OpenAI-compatible key routes to OpenAI, Anthropic and Google — swap models with one parameter.</p>
         </div>
-        <div class="service-card reveal">
+        <div class="service-card spot-card reveal">
           <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16"/></svg>
           <div class="service-title">Per-project budgets</div>
           <p class="service-desc">Set a spending ceiling per project or environment — no code changes required.</p>
         </div>
-        <div class="service-card reveal">
+        <div class="service-card spot-card reveal">
           <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7z"/></svg>
           <div class="service-title">Auto-block</div>
           <p class="service-desc">Requests stop the instant a project's budget runs out — no overage, ever.</p>
         </div>
-        <div class="service-card reveal">
+        <div class="service-card spot-card reveal">
           <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
           <div class="service-title">Balance alerts</div>
           <p class="service-desc">Email alerts at 20% and 10% of your remaining balance, so you never run dry mid-project.</p>
         </div>
-        <div class="service-card reveal">
+        <div class="service-card service-card--wide spot-card reveal">
           <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
           <div class="service-title">Real-time dashboard</div>
-          <p class="service-desc">Track spend, requests and latency per model, live, as they happen.</p>
+          <p class="service-desc">Track spend, requests and latency per model, live, as they happen, on a Chart.js ledger visualized below.</p>
         </div>
-        <div class="service-card reveal">
+        <div class="service-card spot-card reveal">
           <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18V6M10 18V10M16 18V3"/></svg>
           <div class="service-title">TFC ledger</div>
           <p class="service-desc">A running, visual breakdown of every credit spent, by provider and by project.</p>
@@ -642,12 +751,42 @@ section{padding:120px 0;}
 </footer>
 
 <script>
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // reveal on scroll
 const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); } });
 },{threshold:.15});
 revealEls.forEach(el=>io.observe(el));
+
+// spotlight cards: track the cursor per-card, writing only --mx/--my so the
+// browser repaints a background instead of recalculating layout.
+if(!prefersReducedMotion){
+  document.querySelectorAll('.spot-card').forEach(card=>{
+    card.addEventListener('mousemove', e=>{
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  // hero parallax: a slow drift tied to scroll position, capped so the
+  // routing schematic never drifts far enough to feel unmoored.
+  const parallaxEl = document.querySelector('[data-parallax]');
+  if(parallaxEl){
+    let ticking = false;
+    const updateParallax = ()=>{
+      const y = Math.max(-40, Math.min(40, window.scrollY * -0.08));
+      parallaxEl.style.setProperty('--parallax-y', y + 'px');
+      ticking = false;
+    };
+    window.addEventListener('scroll', ()=>{
+      if(!ticking){ requestAnimationFrame(updateParallax); ticking = true; }
+    }, { passive:true });
+    updateParallax();
+  }
+}
 
 // calculator
 const outputPrices = { sonnet: 15, terra: 15, gemini: 9 }; // provider $/1M output tokens
